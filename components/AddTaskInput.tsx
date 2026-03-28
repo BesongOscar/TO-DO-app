@@ -24,6 +24,8 @@ const AddTaskInput: React.FC<AddTaskInputProps> = ({ onAddTask }) => {
         placeholderTextColor="#8a8886"
         value={taskText}
         onChangeText={setTaskText}
+        onSubmitEditing={handleAddTask}
+        returnKeyType="done"
       />
       <TouchableOpacity style={styles.addTaskButton} onPress={handleAddTask}>
         <Text style={styles.addTaskIcon}>+</Text>

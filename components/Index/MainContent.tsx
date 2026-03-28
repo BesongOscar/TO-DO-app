@@ -5,6 +5,7 @@ import ListHeader from "../ListHeader";
 import SuggestionsBanner from "../SuggestionBanner";
 import AddTaskInput from "../AddTaskInput";
 import TasksList from "../TaskList";
+import CompletedSection from "../CompletedSection";
 import { Task, ListItem } from "../../types";
 
 const filterTasks = (tasks: Task[], list: ListItem): Task[] => {

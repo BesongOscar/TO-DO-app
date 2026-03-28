@@ -1,10 +1,4 @@
-import {
-  View,
-  StatusBar,
-  Animated,
-  Dimensions,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Animated, TouchableWithoutFeedback } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useRef } from "react";
 import styles from "../styles/styles";
@@ -13,33 +7,34 @@ import Sidebar from "../components/SideBar";
 import MainContent from "../components/Index/MainContent";
 import RightPanel from "../components/Index/RightPanel";
 import { sidebarLists, customLists } from "../constants/Lists";
-import { Task, ListItem } from "../types";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import { ListItem } from "../types";
+import { useTasks } from "../context/TasksContext";
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: "1", text: "Review quarterly reports",        completed: false, important: true,  myDay: true  },
-    { id: "2", text: "Call client about project update", completed: false, important: false, myDay: true  },
-    { id: "3", text: "Prepare presentation slides",      completed: false, important: true,  myDay: true  },
-    { id: "4", text: "Team meeting at 3 PM",             completed: false, important: false, myDay: false },
-    { id: "5", text: "Update project documentation",     completed: true,  important: false, myDay: false },
-    { id: "6", text: "Send weekly status report",        completed: true,  important: false, myDay: false },
-  ]);
+  const {
+    tasks,
+    counts,
+    addTask,
+    toggleTask,
+    toggleImportant,
+    deleteTask,
+    updateTask,
+  } = useTasks();
 
-  const [currentList, setCurrentList]     = useState<ListItem>({ id: "1", name: "My Day", icon: "☀️", color: "#0078d4", filterKey: "myDay" });
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>("1");
+  const [currentList, setCurrentList] = useState<ListItem>(
+    { id: "1", name: "My Day", icon: "☀️", color: "#0078d4", filterKey: "myDay" }
+  );
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
 
-  const selectedTask: Task | undefined = tasks.find((task) => task.id === selectedTaskId);
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId);
 
-  // Sidebar animation
-  const sidebarAnim = useRef(new Animated.Value(-250)).current;
+  const sidebarAnim = useRef(new Animated.Value(-280)).current;
 
   const toggleSidebar = (): void => {
     if (sidebarVisible) {
       Animated.timing(sidebarAnim, {
-        toValue: -250,
+        toValue: -280,
         duration: 250,
         useNativeDriver: true,
       }).start(() => setSidebarVisible(false));
@@ -53,32 +48,16 @@ const App: React.FC = () => {
     }
   };
 
-  // Task handlers
   const handleAddTask = (text: string): void => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      text,
-      completed: false,
-      important: false,
-      myDay: currentList.name === "My Day",
-    };
-    setTasks((prev) => [...prev, newTask]);
+    addTask(text, currentList.name);
   };
 
   const handleToggleTask = (taskId: string): void => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task,
-      ),
-    );
+    toggleTask(taskId);
   };
 
   const handleStarToggle = (taskId: string): void => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, important: !task.important } : task,
-      ),
-    );
+    toggleImportant(taskId);
   };
 
   const handleSelectTask = (taskId: string): void => {
@@ -86,41 +65,48 @@ const App: React.FC = () => {
   };
 
   const handleEditTask = (taskId: string, newText: string): void => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, text: newText } : task,
-      ),
-    );
+    updateTask(taskId, { text: newText });
   };
 
   const handleDeleteTask = (taskId: string): void => {
-    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+    deleteTask(taskId);
     if (selectedTaskId === taskId) {
       setSelectedTaskId(null);
     }
   };
 
-  // Dynamic counts for sidebar lists
   const getCount = (list: ListItem): number => {
     switch (list.filterKey) {
-      case "myDay":     return tasks.filter((t) => t.myDay && !t.completed).length;
-      case "important": return tasks.filter((t) => t.important && !t.completed).length;
-      case "completed": return tasks.filter((t) => t.completed).length;
-      case "all":       return tasks.length;
-      case "planned":   return tasks.filter((t) => Boolean(t.dueDate)).length;
-      case "tasks":     return tasks.filter((t) => !t.myDay && !t.important && !t.completed).length;
-      case "listId":    return tasks.filter((t) => t.listId === list.id && !t.completed).length;
-      default:          return 0;
+      case "myDay":
+        return counts.myDay;
+      case "important":
+        return counts.important;
+      case "completed":
+        return counts.completed;
+      case "all":
+        return counts.all;
+      case "planned":
+        return counts.planned;
+      case "tasks":
+        return counts.tasks;
+      case "listId":
+        return tasks.filter((t) => t.listId === list.id && !t.completed).length;
+      default:
+        return 0;
     }
   };
 
-  const liveSidebarLists: ListItem[] = sidebarLists.map((l) => ({ ...l, count: getCount(l) }));
-  const liveCustomLists: ListItem[]  = customLists.map((l)  => ({ ...l, count: getCount(l) }));
+  const liveSidebarLists: ListItem[] = sidebarLists.map((l) => ({
+    ...l,
+    count: getCount(l),
+  }));
+  const liveCustomLists: ListItem[] = customLists.map((l) => ({
+    ...l,
+    count: getCount(l),
+  }));
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0078d4" />
-
       <Header
         onMenuPress={toggleSidebar}
         onSearchPress={() => console.log("Search pressed")}
@@ -164,9 +150,9 @@ const App: React.FC = () => {
           onDelete={handleDeleteTask}
         />
 
-        {selectedTask && (
+        {selectedTaskId && tasks.find((t) => t.id === selectedTaskId) && (
           <RightPanel
-            selectedTask={selectedTask}
+            selectedTask={tasks.find((t) => t.id === selectedTaskId)!}
             onClose={() => setSelectedTaskId(null)}
           />
         )}

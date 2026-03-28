@@ -76,7 +76,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addTask = useCallback((text: string, listName = "My Day"): void => {
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       text: text.trim(),
       completed: false,
       important: false,
