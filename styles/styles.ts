@@ -5,6 +5,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  searchHeader: {
+    backgroundColor: "#0078d4",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    height: 56,
+  },
+  searchBackButton: {
+    padding: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 18,
+    color: "white",
+    paddingHorizontal: 12,
+  },
 
   // Header
   topHeader: {
@@ -156,7 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: 15,
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#f3f2f1",
@@ -189,7 +212,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#fff4ce",
-    paddingHorizontal: 24,
+    paddingHorizontal: 15,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#f3f2f1",
@@ -220,7 +243,7 @@ const styles = StyleSheet.create({
   addTaskContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#f3f2f1",
@@ -249,16 +272,17 @@ const styles = StyleSheet.create({
 
   // Tasks List
   tasksContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     paddingBottom: 40,
   },
   taskItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: 5,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#f8f9fa",
+    justifyContent: "space-between",
   },
   taskCheckbox: {
     marginRight: 16,

@@ -39,7 +39,11 @@ const RightPanel: React.FC<RightPanelProps> = ({ selectedTask, onClose }) => {
       {/* Detail option rows */}
       <View style={styles.taskDetailContent}>
         {DETAIL_OPTIONS.map((option) => (
-          <DetailOption key={option.text} icon={option.icon} text={option.text} />
+          <DetailOption
+            key={option.text}
+            icon={option.icon}
+            text={option.text}
+          />
         ))}
       </View>
 

@@ -6,18 +6,27 @@ import SuggestionsBanner from "../SuggestionBanner";
 import AddTaskInput from "../AddTaskInput";
 import TasksList from "../TaskList";
 import CompletedSection from "../CompletedSection";
+import EmptyState from "../EmptyState";
 import { Task, ListItem } from "../../types";
 
 const filterTasks = (tasks: Task[], list: ListItem): Task[] => {
   switch (list.filterKey) {
-    case "myDay":     return tasks.filter((t) => t.myDay);
-    case "important": return tasks.filter((t) => t.important);
-    case "completed": return tasks.filter((t) => t.completed);
-    case "all":       return tasks;
-    case "planned":   return tasks.filter((t) => Boolean(t.dueDate));
-    case "tasks":     return tasks.filter((t) => !t.myDay && !t.important);
-    case "listId":    return tasks.filter((t) => t.listId === list.id);
-    default:          return tasks;
+    case "myDay":
+      return tasks.filter((t) => t.myDay);
+    case "important":
+      return tasks.filter((t) => t.important);
+    case "completed":
+      return tasks.filter((t) => t.completed);
+    case "all":
+      return tasks;
+    case "planned":
+      return tasks.filter((t) => Boolean(t.dueDate));
+    case "tasks":
+      return tasks.filter((t) => !t.myDay && !t.important);
+    case "listId":
+      return tasks.filter((t) => t.listId === list.id);
+    default:
+      return tasks;
   }
 };
 
@@ -30,6 +39,8 @@ interface MainContentProps {
   onStarToggle: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
@@ -41,15 +52,22 @@ const MainContent: React.FC<MainContentProps> = ({
   onStarToggle,
   onEdit,
   onDelete,
+  refreshing = false,
+  onRefresh,
 }) => {
   const [showBanner, setShowBanner] = useState<boolean>(true);
 
-  const filteredTasks  = filterTasks(tasks, currentList);
-  const pendingTasks   = filteredTasks.filter((t) => !t.completed);
+  const filteredTasks = filterTasks(tasks, currentList);
+  const pendingTasks = filteredTasks.filter((t) => !t.completed);
   const completedTasks = filteredTasks.filter((t) => t.completed);
 
-  const hour      = new Date().getHours();
-  const greeting  = hour < 12 ? "Good morning!" : hour < 18 ? "Good afternoon!" : "Good evening!";
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12
+      ? "Good morning!"
+      : hour < 18
+        ? "Good afternoon!"
+        : "Good evening!";
   const todayDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -69,15 +87,34 @@ const MainContent: React.FC<MainContentProps> = ({
 
       <AddTaskInput onAddTask={onAddTask} />
 
-      <TasksList
-        pendingTasks={pendingTasks}
-        completedTasks={completedTasks}
-        onToggleTask={onToggleTask}
-        onSelectTask={onSelectTask}
-        onStarToggle={onStarToggle}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
+      {filteredTasks.length === 0 ? (
+        <EmptyState
+          title={
+            currentList.filterKey === "all" &&
+            currentList.name === "Search Results"
+              ? "No results found"
+              : `No tasks in "${currentList.name}"`
+          }
+          message={
+            currentList.filterKey === "all" &&
+            currentList.name === "Search Results"
+              ? "Try a different search term"
+              : "Add a task below to get started"
+          }
+        />
+      ) : (
+        <TasksList
+          pendingTasks={pendingTasks}
+          completedTasks={completedTasks}
+          onToggleTask={onToggleTask}
+          onSelectTask={onSelectTask}
+          onStarToggle={onStarToggle}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      )}
     </View>
   );
 };

@@ -69,7 +69,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
     return (
       <View style={styles.taskItem}>
         <TouchableOpacity
-          style={[styles.taskCheckbox, task.completed && styles.taskCheckboxCompleted]}
+          style={[
+            styles.taskCheckbox,
+            task.completed && styles.taskCheckboxCompleted,
+          ]}
           onPress={onToggle}
           activeOpacity={0.7}
         >
@@ -87,11 +90,19 @@ const TaskItem: React.FC<TaskItemProps> = ({
           multiline={false}
         />
 
-        <TouchableOpacity onPress={handleSaveEdit} style={localStyles.editAction} activeOpacity={0.7}>
+        <TouchableOpacity
+          onPress={handleSaveEdit}
+          style={localStyles.editAction}
+          activeOpacity={0.7}
+        >
           <Ionicons name="checkmark" size={20} color="#0078d4" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleCancelEdit} style={localStyles.editAction} activeOpacity={0.7}>
+        <TouchableOpacity
+          onPress={handleCancelEdit}
+          style={localStyles.editAction}
+          activeOpacity={0.7}
+        >
           <Ionicons name="close" size={20} color="#8a8886" />
         </TouchableOpacity>
       </View>
@@ -107,29 +118,50 @@ const TaskItem: React.FC<TaskItemProps> = ({
         onLongPress={handleLongPress}
         delayLongPress={400}
         activeOpacity={0.7}
+        accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
+        accessibilityRole="button"
       >
-        <TouchableOpacity
-          style={[styles.taskCheckbox, task.completed && styles.taskCheckboxCompleted]}
-          onPress={onToggle}
-          activeOpacity={0.7}
-        >
-          {task.completed && <Text style={styles.checkmark}>✔</Text>}
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row"}}>
+          <TouchableOpacity
+            style={[
+              styles.taskCheckbox,
+              task.completed && styles.taskCheckboxCompleted,
+            ]}
+            onPress={onToggle}
+            activeOpacity={0.7}
+            accessibilityLabel={
+              task.completed
+                ? "Mark task as incomplete"
+                : "Mark task as complete"
+            }
+            accessibilityRole="checkbox"
+          >
+            {task.completed && <Text style={styles.checkmark}>✔</Text>}
+          </TouchableOpacity>
 
-        <Text
-          style={task.completed ? styles.taskTextCompleted : styles.taskText}
-          numberOfLines={2}
-        >
-          {task.text}
-        </Text>
+          <Text
+            style={task.completed ? styles.taskTextCompleted : styles.taskText}
+            numberOfLines={2}
+          >
+            {task.text}
+          </Text>
 
-        <TouchableOpacity onPress={onStarToggle} style={styles.starButton} activeOpacity={0.7}>
-          <Ionicons
-            name={task.important ? "star" : "star-outline"}
-            size={20}
-            color={task.important ? "#FFD700" : "#ccc"}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onStarToggle}
+            style={styles.starButton}
+            activeOpacity={0.7}
+            accessibilityLabel={
+              task.important ? "Remove importance" : "Mark as important"
+            }
+            accessibilityRole="button"
+          >
+            <Ionicons
+              name={task.important ? "star" : "star-outline"}
+              size={20}
+              color={task.important ? "#FFD700" : "#ccc"}
+            />
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
 
       {/* Long-press context menu */}
@@ -139,7 +171,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
       >
-        <Pressable style={localStyles.modalOverlay} onPress={() => setMenuVisible(false)}>
+        <Pressable
+          style={localStyles.modalOverlay}
+          onPress={() => setMenuVisible(false)}
+        >
           <View style={localStyles.menuCard}>
             <Text style={localStyles.menuTaskPreview} numberOfLines={1}>
               {task.text}
@@ -147,14 +182,37 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
             <View style={localStyles.menuDivider} />
 
-            <TouchableOpacity style={localStyles.menuItem} onPress={handleMenuEdit} activeOpacity={0.7}>
-              <Ionicons name="pencil-outline" size={18} color="#323130" style={localStyles.menuIcon} />
+            <TouchableOpacity
+              style={localStyles.menuItem}
+              onPress={handleMenuEdit}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="pencil-outline"
+                size={18}
+                color="#323130"
+                style={localStyles.menuIcon}
+              />
               <Text style={localStyles.menuItemText}>Edit task</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={localStyles.menuItem} onPress={handleMenuDelete} activeOpacity={0.7}>
-              <Ionicons name="trash-outline" size={18} color="#d13438" style={localStyles.menuIcon} />
-              <Text style={[localStyles.menuItemText, localStyles.menuItemDestructive]}>
+            <TouchableOpacity
+              style={localStyles.menuItem}
+              onPress={handleMenuDelete}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="trash-outline"
+                size={18}
+                color="#d13438"
+                style={localStyles.menuIcon}
+              />
+              <Text
+                style={[
+                  localStyles.menuItemText,
+                  localStyles.menuItemDestructive,
+                ]}
+              >
                 Delete task
               </Text>
             </TouchableOpacity>
@@ -166,7 +224,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
               onPress={() => setMenuVisible(false)}
               activeOpacity={0.7}
             >
-              <Text style={[localStyles.menuItemText, localStyles.menuItemCancel]}>Cancel</Text>
+              <Text
+                style={[localStyles.menuItemText, localStyles.menuItemCancel]}
+              >
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </Pressable>

@@ -5,14 +5,15 @@
     "jsx": "react-native",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"],
+      "assets/*": ["./assets/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".expo/types/**/*.d.ts"
+    ".expo/types/**/*.d.ts",
+    "types/**/*.d.ts"
   ]
 }

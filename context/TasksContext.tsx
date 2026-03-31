@@ -26,12 +26,14 @@ const DEFAULT_TASKS: Task[] = [
 interface TasksContextValue {
   tasks: Task[];
   loading: boolean;
+  refreshing: boolean;
   counts: TaskCounts;
-  addTask: (text: string, listName?: string) => void;
+  addTask: (text: string, listName?: string, listId?: string) => void;
   toggleTask: (taskId: string) => void;
   toggleImportant: (taskId: string) => void;
   deleteTask: (taskId: string) => void;
   updateTask: (taskId: string, updates: Partial<Task>) => void;
+  refreshTasks: () => Promise<void>;
 }
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -41,6 +43,7 @@ const TasksContext = createContext<TasksContextValue | null>(null);
 export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   // ── Load persisted tasks on first mount ──────────────────────────────────
   useEffect(() => {
@@ -48,7 +51,13 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored !== null) {
-          setTasks(JSON.parse(stored) as Task[]);
+          const parsed = JSON.parse(stored) as Task[];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setTasks(parsed);
+          } else {
+            setTasks(DEFAULT_TASKS);
+            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS));
+          }
         } else {
           setTasks(DEFAULT_TASKS);
           await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS));
@@ -74,13 +83,14 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // ── Task actions ─────────────────────────────────────────────────────────
 
-  const addTask = useCallback((text: string, listName = "My Day"): void => {
+  const addTask = useCallback((text: string, listName = "My Day", listId?: string): void => {
     const newTask: Task = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       text: text.trim(),
       completed: false,
       important: false,
       myDay: listName === "My Day",
+      listId: listId,
     };
     setTasks((prev) => [newTask, ...prev]);
   }, []);
@@ -107,6 +117,23 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
   }, []);
 
+  const refreshTasks = useCallback(async (): Promise<void> => {
+    setRefreshing(true);
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored !== null) {
+        const parsed = JSON.parse(stored) as Task[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTasks(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to refresh tasks:", e);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   // ── Derived counts ───────────────────────────────────────────────────────
   const counts = useMemo<TaskCounts>(
     () => ({
@@ -123,12 +150,14 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const value: TasksContextValue = {
     tasks,
     loading,
+    refreshing,
     counts,
     addTask,
     toggleTask,
     toggleImportant,
     deleteTask,
     updateTask,
+    refreshTasks,
   };
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

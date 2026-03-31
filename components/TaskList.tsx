@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, RefreshControl } from "react-native";
 import TaskItem from "./TaskItem";
 import styles from "../styles/styles";
 import { Task } from "../types";
@@ -12,6 +12,8 @@ interface TasksListProps {
   onStarToggle: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
 const TasksList: React.FC<TasksListProps> = ({
@@ -22,9 +24,23 @@ const TasksList: React.FC<TasksListProps> = ({
   onStarToggle,
   onEdit,
   onDelete,
+  refreshing = false,
+  onRefresh,
 }) => {
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.tasksContainer}>
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={styles.tasksContainer}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#0078d4"
+          />
+        ) : undefined
+      }
+    >
       {pendingTasks.map((task) => (
         <TaskItem
           key={task.id}
