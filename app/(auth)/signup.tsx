@@ -10,13 +10,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthButton } from "@/components/(auth)/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+export const signupValidationSchema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string().required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), "Password must match"], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 
 export default function Signup() {
   const { width } = useWindowDimensions();
   const imageSize = Math.min(width * 0.5, 140);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -41,74 +48,111 @@ export default function Signup() {
         Please enter the code we just sent to your email
       </Text>
 
-      <View style={styles.formContainer}>
-        <View style={styles.TextInputContainer}>
-          <Ionicons name="person" size={20} color={"#999"} />
-          <TextInput
-            placeholder="Username"
-            style={styles.input}
-            placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
-        <View
-          style={[
-            styles.TextInputContainer,
-            { justifyContent: "space-between" },
-          ]}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <Ionicons name="lock-closed" size={20} color={"#999"} />
-            <TextInput
-              placeholder="Password"
-              style={styles.input}
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-            />
-          </View>
-          <Ionicons
-            name={showPassword ? "eye-off" : "eye"}
-            size={20}
-            color={"#999"}
-            onPress={() => setShowPassword(!showPassword)}
-          />
-        </View>
-        <View
-          style={[
-            styles.TextInputContainer,
-            { justifyContent: "space-between" },
-          ]}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <Ionicons name="lock-closed" size={20} color={"#999"} />
-            <TextInput
-              placeholder="Confirm Password"
-              style={styles.input}
-              value={confirmPassword}
-              placeholderTextColor="#999"
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showConfirmPassword}
-            />
-          </View>
-          <Ionicons
-            name={showConfirmPassword ? "eye-off" : "eye"}
-            size={20}
-            color={"#999"}
-            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-          />
-        </View>
-      </View>
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+          confirmPassword: "",
+        }}
+        validationSchema={signupValidationSchema}
+        onSubmit={(values) => console.log(values)}
+      >
+        {({
+          handleChange,
+          handleSubmit,
+          handleBlur,
+          values,
+          errors,
+          touched,
+        }) => (
+          <View style={styles.formContainer}>
+            {/* Username Input */}
+            <View style={styles.TextInputContainer}>
+              <Ionicons name="person" size={20} color={"#999"} />
+              <TextInput
+                placeholder="Username"
+                style={styles.input}
+                placeholderTextColor="#999"
+                value={values.username}
+                onChangeText={handleChange("username")}
+              />
+              {touched.username && errors.username && (
+                <Text style={{ color: "red" }}>{errors.username}</Text>
+              )}
+            </View>
 
-      <AuthButton
-        text="Sign Up"
-        color="#0078d4"
-        textColor="white"
-        borderColor="#0078d4"
-        onPress={() => console.log("Sign Up pressed")}
-      />
+            {/* Password Input */}
+            <View
+              style={[
+                styles.TextInputContainer,
+                { justifyContent: "space-between" },
+              ]}
+            >
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <TextInput
+                  placeholder="Password"
+                  style={styles.input}
+                  placeholderTextColor="#999"
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  secureTextEntry={!showPassword}
+                />
+                {touched.password && errors.password && (
+                  <Text style={{ color: "red" }}>{errors.password}</Text>
+                )}
+              </View>
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={20}
+                color={"#999"}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            </View>
+
+            {/* Confirm Password Input */}
+            <View
+              style={[
+                styles.TextInputContainer,
+                { justifyContent: "space-between" },
+              ]}
+            >
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <TextInput
+                  placeholder="Confirm Password"
+                  style={styles.input}
+                  value={values.confirmPassword}
+                  placeholderTextColor="#999"
+                  onChangeText={handleChange("confirmPassword")}
+                  secureTextEntry={!showConfirmPassword}
+                />
+                {touched.confirmPassword && errors.confirmPassword && (
+                  <Text style={{ color: "red" }}>{errors.confirmPassword}</Text>
+                )}
+              </View>
+              <Ionicons
+                name={showConfirmPassword ? "eye-off" : "eye"}
+                size={20}
+                color={"#999"}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              />
+            </View>
+
+            <AuthButton
+              text="Sign Up"
+              color="#0078d4"
+              textColor="white"
+              borderColor="#0078d4"
+              onPress={handleSubmit}
+            />
+          </View>
+        )}
+      </Formik>
 
       <Text style={styles.orText}>Or</Text>
 

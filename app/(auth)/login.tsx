@@ -11,12 +11,17 @@ import { AuthButton } from "@/components/(auth)/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+export const loginValidationSchema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string().required("Password is required"),
+});
 
 export default function Login() {
   const { width } = useWindowDimensions();
   const imageSize = Math.min(width * 0.5, 140);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
@@ -41,54 +46,83 @@ export default function Login() {
         </View>
       </View>
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>
-        Sign in to continue to your account
-      </Text>
+      <Text style={styles.subtitle}>Sign in to continue to your account</Text>
 
-      <View style={styles.formContainer}>
-        <View style={styles.TextInputContainer}>
-          <Ionicons name="person" size={20} color={"#999"} />
-          <TextInput
-            placeholder="Username"
-            style={styles.input}
-            placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
-        <View
-          style={[
-            styles.TextInputContainer,
-            { justifyContent: "space-between" },
-          ]}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <Ionicons name="lock-closed" size={20} color={"#999"} />
-            <TextInput
-              placeholder="Password"
-              style={styles.input}
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+        }}
+        onSubmit={(values) => console.log("Form submitted:", values)}
+        validationSchema={loginValidationSchema}
+      >
+        {({
+          handleChange,
+          handleSubmit,
+          handleBlur,
+          values,
+          touched,
+          errors,
+        }) => (
+          <View style={styles.formContainer}>
+            {/* Username Input */}
+            <View style={styles.TextInputContainer}>
+              <Ionicons name="person" size={20} color={"#999"} />
+              <TextInput
+                placeholder="Username"
+                style={styles.input}
+                placeholderTextColor="#999"
+                value={values.username}
+                onChangeText={handleChange("username")}
+                onBlur={handleBlur("username")}
+              />
+            </View>
+            {touched.username && errors.username && (
+              <Text style={styles.errorText}>{errors.username}</Text>
+            )}
+
+            {/* Password Input */}
+            <View
+              style={[
+                styles.TextInputContainer,
+                { justifyContent: "space-between" },
+              ]}
+            >
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <TextInput
+                  placeholder="Password"
+                  style={styles.input}
+                  placeholderTextColor="#999"
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  secureTextEntry={!showPassword}
+                />
+              </View>
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={20}
+                color={"#999"}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            </View>
+            {touched.password && errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+
+            <AuthButton
+              text="Sign In"
+              color="#0078d4"
+              textColor="white"
+              borderColor="#0078d4"
+              onPress={handleSubmit}
             />
           </View>
-          <Ionicons
-            name={showPassword ? "eye-off" : "eye"}
-            size={20}
-            color={"#999"}
-            onPress={() => setShowPassword(!showPassword)}
-          />
-        </View>
-      </View>
-
-      <AuthButton
-        text="Sign In"
-        color="#0078d4"
-        textColor="white"
-        borderColor="#0078d4"
-        onPress={handleSignIn}
-      />
+        )}
+      </Formik>
 
       <Text style={styles.orText}>Or</Text>
 
@@ -190,5 +224,12 @@ const styles = StyleSheet.create({
     color: "#0078d4",
     fontWeight: "600",
     marginLeft: 4,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 16,
   },
 });
