@@ -75,11 +75,12 @@ export default function Signup() {
                 placeholderTextColor="#999"
                 value={values.username}
                 onChangeText={handleChange("username")}
+                onBlur={handleBlur("username")}
               />
-              {touched.username && errors.username && (
-                <Text style={{ color: "red" }}>{errors.username}</Text>
-              )}
             </View>
+            {touched.username && errors.username && (
+              <Text style={styles.errorText}>{errors.username}</Text>
+            )}
 
             {/* Password Input */}
             <View
@@ -98,11 +99,9 @@ export default function Signup() {
                   placeholderTextColor="#999"
                   value={values.password}
                   onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
                   secureTextEntry={!showPassword}
                 />
-                {touched.password && errors.password && (
-                  <Text style={{ color: "red" }}>{errors.password}</Text>
-                )}
               </View>
               <Ionicons
                 name={showPassword ? "eye-off" : "eye"}
@@ -111,6 +110,9 @@ export default function Signup() {
                 onPress={() => setShowPassword(!showPassword)}
               />
             </View>
+            {touched.password && errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
 
             {/* Confirm Password Input */}
             <View
@@ -129,11 +131,9 @@ export default function Signup() {
                   value={values.confirmPassword}
                   placeholderTextColor="#999"
                   onChangeText={handleChange("confirmPassword")}
+                  onBlur={handleBlur("confirmPassword")}
                   secureTextEntry={!showConfirmPassword}
                 />
-                {touched.confirmPassword && errors.confirmPassword && (
-                  <Text style={{ color: "red" }}>{errors.confirmPassword}</Text>
-                )}
               </View>
               <Ionicons
                 name={showConfirmPassword ? "eye-off" : "eye"}
@@ -142,6 +142,9 @@ export default function Signup() {
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               />
             </View>
+            {touched.confirmPassword && errors.confirmPassword && (
+              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+            )}
 
             <AuthButton
               text="Sign Up"
@@ -254,5 +257,12 @@ const styles = StyleSheet.create({
     color: "#0078d4",
     fontWeight: "600",
     marginLeft: 4,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 16,
   },
 });
