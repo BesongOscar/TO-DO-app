@@ -5,7 +5,9 @@
     "jsx": "react-native",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/context/*": ["./src/context/*"],
+      "@/firebase/*": ["./src/firebase/*"],
       "assets/*": ["./assets/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types"],

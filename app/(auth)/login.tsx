@@ -4,6 +4,8 @@ import {
   View,
   TextInput,
   useWindowDimensions,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,9 +15,10 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { useAuth } from "@/context/AuthContext";
 
 export const loginValidationSchema = Yup.object().shape({
-  username: Yup.string().required("Username is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
 
@@ -23,10 +26,33 @@ export default function Login() {
   const { width } = useWindowDimensions();
   const imageSize = Math.min(width * 0.5, 140);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const handleSignIn = () => {
-    router.push("/main");
+  const { login, googleLogin } = useAuth();
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      await login(email, password);
+      router.push("/main");
+    } catch (error: any) {
+      Alert.alert("Login Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      await googleLogin();
+      router.push("/main");
+    } catch (error: any) {
+      Alert.alert("Google Login Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,10 +76,10 @@ export default function Login() {
 
       <Formik
         initialValues={{
-          username: "",
+          email: "",
           password: "",
         }}
-        onSubmit={(values) => console.log("Form submitted:", values)}
+        onSubmit={(values) => handleLogin(values.email, values.password)}
         validationSchema={loginValidationSchema}
       >
         {({
@@ -65,20 +91,22 @@ export default function Login() {
           errors,
         }) => (
           <View style={styles.formContainer}>
-            {/* Username Input */}
+            {/* Email Input */}
             <View style={styles.TextInputContainer}>
               <Ionicons name="person" size={20} color={"#999"} />
               <TextInput
-                placeholder="Username"
+                placeholder="Email"
                 style={styles.input}
                 placeholderTextColor="#999"
-                value={values.username}
-                onChangeText={handleChange("username")}
-                onBlur={handleBlur("username")}
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
             </View>
-            {touched.username && errors.username && (
-              <Text style={styles.errorText}>{errors.username}</Text>
+            {touched.email && errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
             )}
 
             {/* Password Input */}
@@ -127,18 +155,11 @@ export default function Login() {
       <Text style={styles.orText}>Or</Text>
 
       <AuthButton
-        text="Sign Up with Google"
+        text="Sign In with Google"
         color="#fff"
         textColor="#333"
         borderColor="#ccc"
-        onPress={() => console.log("Google Sign Up pressed")}
-      />
-      <AuthButton
-        text="Sign Up with Facebook"
-        color="#fff"
-        textColor="#333"
-        borderColor="#ccc"
-        onPress={() => console.log("Facebook Sign Up pressed")}
+        onPress={handleGoogleLogin}
       />
 
       <Text style={styles.linkText}>

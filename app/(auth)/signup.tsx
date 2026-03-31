@@ -4,6 +4,7 @@ import {
   View,
   TextInput,
   useWindowDimensions,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,12 +13,16 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "expo-router";
 
 export const signupValidationSchema = Yup.object().shape({
-  username: Yup.string().required("Username is required"),
-  password: Yup.string().required("Password is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), "Password must match"], "Passwords must match")
+    .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required"),
 });
 
@@ -26,6 +31,34 @@ export default function Signup() {
   const imageSize = Math.min(width * 0.5, 140);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const { signup, googleLogin } = useAuth();
+
+  const handleSignup = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      await signup(email, password);
+      router.push("/main");
+    } catch (error: any) {
+      Alert.alert("Signup Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      setIsLoading(true);
+      await googleLogin();
+      router.push("/main");
+    } catch (error: any) {
+      Alert.alert("Google Signup Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
@@ -50,12 +83,12 @@ export default function Signup() {
 
       <Formik
         initialValues={{
-          username: "",
+          email: "",
           password: "",
           confirmPassword: "",
         }}
+        onSubmit={(values) => handleSignup(values.email, values.password)}
         validationSchema={signupValidationSchema}
-        onSubmit={(values) => console.log(values)}
       >
         {({
           handleChange,
@@ -66,20 +99,22 @@ export default function Signup() {
           touched,
         }) => (
           <View style={styles.formContainer}>
-            {/* Username Input */}
+            {/* Email Input */}
             <View style={styles.TextInputContainer}>
               <Ionicons name="person" size={20} color={"#999"} />
               <TextInput
-                placeholder="Username"
+                placeholder="Email"
                 style={styles.input}
                 placeholderTextColor="#999"
-                value={values.username}
-                onChangeText={handleChange("username")}
-                onBlur={handleBlur("username")}
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
             </View>
-            {touched.username && errors.username && (
-              <Text style={styles.errorText}>{errors.username}</Text>
+            {touched.email && errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
             )}
 
             {/* Password Input */}
@@ -164,14 +199,7 @@ export default function Signup() {
         color="#fff"
         textColor="#333"
         borderColor="#ccc"
-        onPress={() => console.log("Google Sign Up pressed")}
-      />
-      <AuthButton
-        text="Sign Up with Facebook"
-        color="#fff"
-        textColor="#333"
-        borderColor="#ccc"
-        onPress={() => console.log("Facebook Sign Up pressed")}
+        onPress={handleGoogleSignup}
       />
 
       <Text style={styles.linkText}>
