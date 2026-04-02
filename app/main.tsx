@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import  { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
 import styles from "../styles/styles";
 import Header from "../components/Index/header";
@@ -37,23 +37,8 @@ const App: React.FC = () => {
 
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.replace("/login");
-    }           ` `
-  }, [authLoading, user]);
 
-  if (authLoading || !user) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0078d4" />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
+  // ── ALL hooks must be declared before any conditional return ──────────────
   const [currentList, setCurrentList] = useState<ListItem>({
     id: "1",
     name: "My Day",
@@ -66,10 +51,23 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
 
-  // Always initialize animation ref - will be used after loading
-  const sidebarAnimRef = useRef<Animated.Value | null>(null);
-  if (!sidebarAnimRef.current) {
-    sidebarAnimRef.current = new Animated.Value(-280);
+  const sidebarAnimRef = useRef<Animated.Value>(new Animated.Value(-280));
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/login");
+    }
+  }, [authLoading, user]);
+
+  // ── Early returns AFTER all hooks ─────────────────────────────────────────
+  if (authLoading || !user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0078d4" />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   if (loading) {
@@ -82,18 +80,19 @@ const App: React.FC = () => {
     );
   }
 
+  // ── Derived values ────────────────────────────────────────────────────────
   const selectedTask = tasks.find((task) => task.id === selectedTaskId);
 
   const toggleSidebar = (): void => {
     if (sidebarVisible) {
-      Animated.timing(sidebarAnimRef.current!, {
+      Animated.timing(sidebarAnimRef.current, {
         toValue: -280,
         duration: 250,
         useNativeDriver: true,
       }).start(() => setSidebarVisible(false));
     } else {
       setSidebarVisible(true);
-      Animated.timing(sidebarAnimRef.current!, {
+      Animated.timing(sidebarAnimRef.current, {
         toValue: 0,
         duration: 250,
         useNativeDriver: true,
@@ -165,7 +164,6 @@ const App: React.FC = () => {
         t.text.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : tasks;
-
   return (
     <SafeAreaView style={styles.container}>
       {searchVisible ? (

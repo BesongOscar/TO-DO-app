@@ -121,7 +121,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
         accessibilityRole="button"
       >
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
           <TouchableOpacity
             style={[
               styles.taskCheckbox,
@@ -145,23 +145,22 @@ const TaskItem: React.FC<TaskItemProps> = ({
           >
             {task.text}
           </Text>
-
-          <TouchableOpacity
-            onPress={onStarToggle}
-            style={styles.starButton}
-            activeOpacity={0.7}
-            accessibilityLabel={
-              task.important ? "Remove importance" : "Mark as important"
-            }
-            accessibilityRole="button"
-          >
-            <Ionicons
-              name={task.important ? "star" : "star-outline"}
-              size={20}
-              color={task.important ? "#FFD700" : "#ccc"}
-            />
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={onStarToggle}
+          style={styles.starButton}
+          activeOpacity={0.7}
+          accessibilityLabel={
+            task.important ? "Remove importance" : "Mark as important"
+          }
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name={task.important ? "star" : "star-outline"}
+            size={20}
+            color={task.important ? "#FFD700" : "#ccc"}
+          />
+        </TouchableOpacity>
       </TouchableOpacity>
 
       {/* Long-press context menu */}

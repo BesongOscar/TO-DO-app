@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "src/context/AuthContext";
 
 export const loginValidationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),

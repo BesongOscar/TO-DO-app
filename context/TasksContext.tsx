@@ -8,18 +8,56 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Task, TaskCounts } from "../types";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "src/firebase/config";
 
 // ─── Storage key ──────────────────────────────────────────────────────────────
-const STORAGE_KEY = "@tasks";
+const STORAGE_KEY = (uid: string) => "@tasks_${uid}";
 
 // ─── Default seed data (only used on very first launch) ───────────────────────
 const DEFAULT_TASKS: Task[] = [
-  { id: "1", text: "Review quarterly reports",         completed: false, important: true,  myDay: true  },
-  { id: "2", text: "Call client about project update", completed: false, important: false, myDay: true  },
-  { id: "3", text: "Prepare presentation slides",      completed: false, important: true,  myDay: true  },
-  { id: "4", text: "Team meeting at 3 PM",             completed: false, important: false, myDay: false },
-  { id: "5", text: "Update project documentation",     completed: true,  important: false, myDay: false },
-  { id: "6", text: "Send weekly status report",        completed: true,  important: false, myDay: false },
+  {
+    id: "1",
+    text: "Review quarterly reports",
+    completed: false,
+    important: true,
+    myDay: true,
+  },
+  {
+    id: "2",
+    text: "Call client about project update",
+    completed: false,
+    important: false,
+    myDay: true,
+  },
+  {
+    id: "3",
+    text: "Prepare presentation slides",
+    completed: false,
+    important: true,
+    myDay: true,
+  },
+  {
+    id: "4",
+    text: "Team meeting at 3 PM",
+    completed: false,
+    important: false,
+    myDay: false,
+  },
+  {
+    id: "5",
+    text: "Update project documentation",
+    completed: true,
+    important: false,
+    myDay: false,
+  },
+  {
+    id: "6",
+    text: "Send weekly status report",
+    completed: true,
+    important: false,
+    myDay: false,
+  },
 ];
 
 // ─── Context shape ────────────────────────────────────────────────────────────
@@ -40,70 +78,94 @@ interface TasksContextValue {
 const TasksContext = createContext<TasksContextValue | null>(null);
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
-export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // ── Load persisted tasks on first mount ──────────────────────────────────
+  // ── Track the signed-in user ──────────────────────────────────────────────
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Load tasks whenever the user changes (including on first mount)
   useEffect(() => {
     const loadTasks = async (): Promise<void> => {
+      setLoading(true);
       try {
-        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (!currentUser) {
+          // No user signed in — clear tasks so nothing leaks between accounts.
+          setTasks([]);
+          return;
+        }
+
+        const key = STORAGE_KEY(currentUser.uid);
+        const stored = await AsyncStorage.getItem(key);
+
         if (stored !== null) {
           const parsed = JSON.parse(stored) as Task[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setTasks(parsed);
-          } else {
-            setTasks(DEFAULT_TASKS);
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS));
-          }
+          setTasks(Array.isArray(parsed) ? parsed : []);
         } else {
-          setTasks(DEFAULT_TASKS);
-          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS));
+          // First time this user logs in — start with an empty list.
+          setTasks([]);
+          await AsyncStorage.setItem(key, JSON.stringify([]));
         }
       } catch (e) {
         console.warn("Failed to load tasks from storage:", e);
-        setTasks(DEFAULT_TASKS);
+        setTasks([]);
       } finally {
         setLoading(false);
       }
     };
 
     loadTasks();
-  }, []);
+  }, [currentUser]);
 
-  // ── Persist to AsyncStorage whenever tasks change (after initial load) ───
+  //Persist to AsyncStorage whenever tasks change (after initial load)
   useEffect(() => {
-    if (loading) return;
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)).catch((e) =>
+    if (loading || !currentUser) return;
+    const key = STORAGE_KEY(currentUser.uid);
+    AsyncStorage.setItem(key, JSON.stringify(tasks)).catch((e) =>
       console.warn("Failed to persist tasks:", e),
     );
-  }, [tasks, loading]);
+  }, [tasks, loading, currentUser]);
 
   // ── Task actions ─────────────────────────────────────────────────────────
 
-  const addTask = useCallback((text: string, listName = "My Day", listId?: string): void => {
-    const newTask: Task = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-      text: text.trim(),
-      completed: false,
-      important: false,
-      myDay: listName === "My Day",
-      listId: listId,
-    };
-    setTasks((prev) => [newTask, ...prev]);
-  }, []);
+  const addTask = useCallback(
+    (text: string, listName = "My Day", listId?: string): void => {
+      const newTask: Task = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        text: text.trim(),
+        completed: false,
+        important: false,
+        myDay: listName === "My Day",
+        listId: listId,
+      };
+      setTasks((prev) => [newTask, ...prev]);
+    },
+    [],
+  );
 
   const toggleTask = useCallback((taskId: string): void => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t)),
+      prev.map((t) =>
+        t.id === taskId ? { ...t, completed: !t.completed } : t,
+      ),
     );
   }, []);
 
   const toggleImportant = useCallback((taskId: string): void => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, important: !t.important } : t)),
+      prev.map((t) =>
+        t.id === taskId ? { ...t, important: !t.important } : t,
+      ),
     );
   }, []);
 
@@ -111,19 +173,24 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   }, []);
 
-  const updateTask = useCallback((taskId: string, updates: Partial<Task>): void => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, ...updates } : t)),
-    );
-  }, []);
+  const updateTask = useCallback(
+    (taskId: string, updates: Partial<Task>): void => {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === taskId ? { ...t, ...updates } : t)),
+      );
+    },
+    [],
+  );
 
   const refreshTasks = useCallback(async (): Promise<void> => {
+    if (!currentUser) return;
     setRefreshing(true);
     try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      const key = STORAGE_KEY(currentUser.uid);
+      const stored = await AsyncStorage.getItem(key);
       if (stored !== null) {
         const parsed = JSON.parse(stored) as Task[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           setTasks(parsed);
         }
       }
@@ -132,17 +199,18 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [currentUser]);
 
   // ── Derived counts ───────────────────────────────────────────────────────
   const counts = useMemo<TaskCounts>(
     () => ({
-      myDay:     tasks.filter((t) => t.myDay && !t.completed).length,
+      myDay: tasks.filter((t) => t.myDay && !t.completed).length,
       important: tasks.filter((t) => t.important && !t.completed).length,
       completed: tasks.filter((t) => t.completed).length,
-      planned:   tasks.filter((t) => Boolean(t.dueDate)).length,
-      all:       tasks.length,
-      tasks:     tasks.filter((t) => !t.myDay && !t.important && !t.completed).length,
+      planned: tasks.filter((t) => Boolean(t.dueDate)).length,
+      all: tasks.length,
+      tasks: tasks.filter((t) => !t.myDay && !t.important && !t.completed)
+        .length,
     }),
     [tasks],
   );
@@ -160,7 +228,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     refreshTasks,
   };
 
-  return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;
+  return (
+    <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
+  );
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
