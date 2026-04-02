@@ -8,16 +8,6 @@ export default function Settings() {
   const router = useRouter();
   const { user, logout, loading: authLoading } = useAuth();
 
-  if (authLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0078d4" />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   const handleLogout = () => {
     Alert.alert(
       "Logout",
@@ -39,6 +29,16 @@ export default function Settings() {
       ]
     );
   };
+
+  if (authLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0078d4" />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>

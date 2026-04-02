@@ -61,7 +61,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      throw error;
+    }
   };
 
   const googleLogin = async () => {
