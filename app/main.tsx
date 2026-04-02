@@ -19,6 +19,7 @@ import RightPanel from "../components/Index/RightPanel";
 import { sidebarLists, customLists } from "../constants/Lists";
 import { ListItem } from "../types";
 import { useTasks } from "../context/TasksContext";
+import { useAuth } from "../src/context/AuthContext";
 
 const App: React.FC = () => {
   const {
@@ -35,6 +36,24 @@ const App: React.FC = () => {
   } = useTasks();
 
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/login");
+    }
+  }, [authLoading, user]);
+
+  if (authLoading || !user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0078d4" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const [currentList, setCurrentList] = useState<ListItem>({
     id: "1",
     name: "My Day",
@@ -174,7 +193,7 @@ const App: React.FC = () => {
         <Header
           onMenuPress={toggleSidebar}
           onSearchPress={() => setSearchVisible(true)}
-          onProfilePress={() => console.log("Profile press")}
+          onProfilePress={() => router.push("/settings")}
         />
       )}
 
