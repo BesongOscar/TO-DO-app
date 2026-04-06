@@ -19,7 +19,7 @@ const ListsSection: React.FC<ListsSectionProps> = ({
   onSelectList,
   onDeleteList,
 }) => {
-  const { addList, updateList, deleteList } = useCustomLists();
+  const { addList, updateList } = useCustomLists();
   const [modalVisible, setModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<CustomList | null>(null);
 
@@ -33,18 +33,17 @@ const ListsSection: React.FC<ListsSectionProps> = ({
     setModalVisible(true);
   };
 
-  const handleSave = (name: string, icon: string, color: string) => {
+  const handleSave = (name: string, icon: string) => {
     if (editingList) {
-      updateList(editingList.id, { name, icon, color });
+      updateList(editingList.id, { name, icon });
     } else {
-      addList(name, icon, color);
+      addList(name, icon);
     }
   };
 
   const handleDelete = () => {
     if (editingList && onDeleteList) {
       onDeleteList(editingList.id);
-      setModalVisible(false);
     }
   };
 
@@ -64,7 +63,6 @@ const ListsSection: React.FC<ListsSectionProps> = ({
             id: list.id,
             name: list.name,
             icon: list.icon,
-            color: list.color,
             filterKey: "listId",
           }}
           isSelected={currentList?.id === list.id}
@@ -77,7 +75,7 @@ const ListsSection: React.FC<ListsSectionProps> = ({
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSave={handleSave}
-        onDelete={editingList ? handleDelete : undefined}
+        onDelete={editingList && onDeleteList ? handleDelete : undefined}
         initialData={editingList}
       />
     </View>

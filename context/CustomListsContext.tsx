@@ -15,7 +15,7 @@ const STORAGE_KEY = (uid: string) => `@customLists_${uid}`;
 interface CustomListsContextValue {
   customLists: CustomList[];
   loading: boolean;
-  addList: (name: string, icon: string, color: string) => void;
+  addList: (name: string, icon: string) => void;
   updateList: (id: string, updates: Partial<Omit<CustomList, "id">>) => void;
   deleteList: (id: string) => void;
 }
@@ -73,12 +73,11 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     ).catch((e) => console.warn("Failed to save custom lists:", e));
   }, [customLists, loading, currentUser]);
 
-  const addList = useCallback((name: string, icon: string, color: string) => {
+  const addList = useCallback((name: string, icon: string) => {
     const newList: CustomList = {
       id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: name.trim(),
       icon,
-      color,
       createdAt: Date.now(),
     };
     setCustomLists((prev) => [newList, ...prev]);

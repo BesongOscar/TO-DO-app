@@ -125,12 +125,6 @@ const styles = StyleSheet.create({
     color: "#323130",
     flex: 1,
   },
-  sidebarColorDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 6,
-  },
   sidebarCount: {
     fontSize: 12,
     color: "#605e5c",
@@ -507,20 +501,6 @@ const styles = StyleSheet.create({
   },
   emojiText: {
     fontSize: 24,
-  },
-  colorRow: {
-    flexDirection: "row",
-    marginBottom: 20,
-  },
-  colorCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    marginRight: 12,
-  },
-  colorCircleSelected: {
-    borderWidth: 3,
-    borderColor: "#323130",
   },
   deleteListButton: {
     backgroundColor: "#d13438",

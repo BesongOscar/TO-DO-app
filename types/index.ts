@@ -14,7 +14,7 @@ export interface ListItem {
   id: string;
   name: string;
   icon: string;
-  color: string;
+  color?: string;
   filterKey: FilterKey;
   count?: number;
 }
@@ -42,6 +42,5 @@ export interface CustomList{
   id: string;
   name: string;
   icon: string;
-  color: string;
   createdAt: number;
 }

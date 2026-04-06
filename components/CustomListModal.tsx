@@ -17,15 +17,10 @@ const EMOJI_OPTIONS = [
   "🌟", "❤️", "🔥", "💡", "📷", "🎬", "🏆", "🎁",
 ];
 
-const COLOR_OPTIONS = [
-  "#5b5ea6", "#e8a87c", "#0078d4", "#107c10",
-  "#e74c3c", "#9b59b6", "#1abc9c", "#34495e",
-];
-
 interface CustomListModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (name: string, icon: string, color: string) => void;
+  onSave: (name: string, icon: string) => void;
   onDelete?: () => void;
   initialData?: CustomList | null;
 }
@@ -39,17 +34,14 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
 }) => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(EMOJI_OPTIONS[0]);
-  const [color, setColor] = useState(COLOR_OPTIONS[0]);
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
       setIcon(initialData.icon);
-      setColor(initialData.color);
     } else {
       setName("");
       setIcon(EMOJI_OPTIONS[0]);
-      setColor(COLOR_OPTIONS[0]);
     }
   }, [initialData, visible]);
 
@@ -58,7 +50,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
       Alert.alert("Error", "List name is required");
       return;
     }
-    onSave(name.trim(), icon, color);
+    onSave(name.trim(), icon);
     onClose();
   };
 
@@ -72,7 +64,6 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            // Fix: close the modal after confirming deletion
             onDelete?.();
             onClose();
           },
@@ -123,21 +114,6 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
                 >
                   <Text style={styles.emojiText}>{emoji}</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-
-            <Text style={styles.inputLabel}>Color</Text>
-            <View style={styles.colorRow}>
-              {COLOR_OPTIONS.map((c) => (
-                <TouchableOpacity
-                  key={c}
-                  style={[
-                    styles.colorCircle,
-                    { backgroundColor: c },
-                    color === c && styles.colorCircleSelected,
-                  ]}
-                  onPress={() => setColor(c)}
-                />
               ))}
             </View>
 
