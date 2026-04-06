@@ -125,6 +125,12 @@ const styles = StyleSheet.create({
     color: "#323130",
     flex: 1,
   },
+  sidebarColorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
   sidebarCount: {
     fontSize: 12,
     color: "#605e5c",

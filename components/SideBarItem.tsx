@@ -27,6 +27,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     >
       <View style={styles.sidebarItemLeft}>
         <Text style={styles.sidebarIconText}>{item.icon}</Text>
+        <View style={[styles.sidebarColorDot, { backgroundColor: item.color }]} />
         <Text style={styles.sidebarItemText}>{item.name}</Text>
       </View>
       {item.count !== undefined && (
