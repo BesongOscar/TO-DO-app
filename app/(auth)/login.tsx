@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -16,6 +15,7 @@ import { useRouter } from "expo-router";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import { useAuth } from "src/context/AuthContext";
+import { loginStyles } from "../../styles/(auth)/login";
 
 export const loginValidationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -39,7 +39,7 @@ export default function Login() {
 
   if (authLoading){
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={loginStyles.container}>
         <ActivityIndicator size={"large"} color={"#0078d4"}/>
       </SafeAreaView>
     )
@@ -70,11 +70,11 @@ export default function Login() {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
-      <View style={styles.imageContainer}>
+    <SafeAreaView edges={["top", "bottom"]} style={loginStyles.container}>
+      <View style={loginStyles.imageContainer}>
         <View
           style={[
-            styles.iconCircle,
+            loginStyles.iconCircle,
             {
               width: imageSize,
               height: imageSize,
@@ -85,8 +85,8 @@ export default function Login() {
           <Ionicons name="log-in" size={imageSize * 0.4} color="#fff" />
         </View>
       </View>
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Sign in to continue to your account</Text>
+      <Text style={loginStyles.title}>Welcome Back</Text>
+      <Text style={loginStyles.subtitle}>Sign in to continue to your account</Text>
 
       <Formik
         initialValues={{
@@ -104,13 +104,12 @@ export default function Login() {
           touched,
           errors,
         }) => (
-          <View style={styles.formContainer}>
-            {/* Email Input */}
-            <View style={styles.TextInputContainer}>
+          <View style={loginStyles.formContainer}>
+            <View style={loginStyles.textInputContainer}>
               <Ionicons name="mail" size={20} color={"#999"} />
               <TextInput
                 placeholder="Email"
-                style={styles.input}
+                style={loginStyles.input}
                 placeholderTextColor="#999"
                 value={values.email}
                 onChangeText={handleChange("email")}
@@ -120,13 +119,12 @@ export default function Login() {
               />
             </View>
             {touched.email && errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
+              <Text style={loginStyles.errorText}>{errors.email}</Text>
             )}
 
-            {/* Password Input */}
             <View
               style={[
-                styles.TextInputContainer,
+                loginStyles.textInputContainer,
                 { justifyContent: "space-between" },
               ]}
             >
@@ -136,7 +134,7 @@ export default function Login() {
                 <Ionicons name="lock-closed" size={20} color={"#999"} />
                 <TextInput
                   placeholder="Password"
-                  style={styles.input}
+                  style={loginStyles.input}
                   placeholderTextColor="#999"
                   value={values.password}
                   onChangeText={handleChange("password")}
@@ -152,7 +150,7 @@ export default function Login() {
               />
             </View>
             {touched.password && errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
+              <Text style={loginStyles.errorText}>{errors.password}</Text>
             )}
 
             <AuthButton
@@ -166,7 +164,7 @@ export default function Login() {
         )}
       </Formik>
 
-      <Text style={styles.orText}>Or</Text>
+      <Text style={loginStyles.orText}>Or</Text>
 
       <AuthButton
         text="Sign In with Google"
@@ -176,95 +174,12 @@ export default function Login() {
         onPress={handleGoogleLogin}
       />
 
-      <Text style={styles.linkText}>
+      <Text style={loginStyles.linkText}>
         Don't have an account?{" "}
-        <Link href="/signup" style={styles.link}>
+        <Link href="/signup" style={loginStyles.link}>
           Signup
         </Link>
       </Text>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-  },
-  imageContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-    position: "relative",
-  },
-  iconCircle: {
-    backgroundColor: "#0078d4",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
-  },
-  image: {
-    height: 200,
-    width: 200,
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
-    textAlign: "center",
-    paddingHorizontal: 30,
-  },
-  formContainer: {
-    width: "100%",
-    marginBottom: 10,
-  },
-  TextInputContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 50,
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-  },
-  input: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 15,
-    color: "#333",
-    paddingVertical: 0,
-  },
-  orText: {
-    fontSize: 14,
-    color: "#999",
-  },
-  linkText: {
-    flexDirection: "row",
-    marginTop: 30,
-    color: "#666",
-  },
-  link: {
-    color: "#0078d4",
-    fontWeight: "600",
-    marginLeft: 4,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginTop: -8,
-    marginBottom: 8,
-    marginLeft: 16,
-  },
-});

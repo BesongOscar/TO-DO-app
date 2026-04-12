@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import DetailOption from "../DetailOption";
+import { rightPanelStyles } from "../../styles/components/Index/RightPanel";
 import { Task, RepeatType } from "../../types";
 import CalendarPickerModal from "../Modals/CalendarPickerModal";
 import ReminderModal from "../Modals/ReminderModal";
@@ -80,17 +81,17 @@ const RightPanel: React.FC<RightPanelProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.taskTitle} numberOfLines={2}>
+    <View style={rightPanelStyles.rightPanel}>
+      <View style={rightPanelStyles.taskDetailHeader}>
+        <Text style={rightPanelStyles.taskDetailTitle} numberOfLines={2}>
           {selectedTask.text}
         </Text>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Text style={styles.closeIcon}>×</Text>
+        <TouchableOpacity onPress={onClose} style={rightPanelStyles.closeDetailPanel}>
+          <Text style={rightPanelStyles.closeDetailPanel}>×</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <View style={rightPanelStyles.taskDetailContent}>
         <DetailOption
           icon="📅"
           text={formatDateDisplay(selectedTask.dueDate)}
@@ -121,8 +122,8 @@ const RightPanel: React.FC<RightPanelProps> = ({
         />
       </View>
 
-      <View style={styles.footer}>
-        <Text style={styles.createdDate}>Created today</Text>
+      <View style={rightPanelStyles.taskDetailFooter}>
+        <Text style={rightPanelStyles.createdDate}>Created today</Text>
       </View>
 
       <CalendarPickerModal
@@ -156,49 +157,5 @@ const RightPanel: React.FC<RightPanelProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e5e9",
-  },
-  taskTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#323130",
-    flex: 1,
-    marginRight: 8,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  closeIcon: {
-    fontSize: 24,
-    color: "#605e5c",
-    fontWeight: "300",
-  },
-  content: {
-    padding: 20,
-    flexGrow: 1,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#e1e5e9",
-  },
-  createdDate: {
-    fontSize: 12,
-    color: "#8a8886",
-  },
-});
 
 export default RightPanel;

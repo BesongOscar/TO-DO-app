@@ -1,6 +1,6 @@
 import React from "react";
 import { View, FlatList, ScrollView } from "react-native";
-import styles from "../styles/styles";
+import { sideBarStyles } from "../styles/components/SideBar";
 import ListsSection from "./ListsSection";
 import { SidebarItem } from "./SideBarItem";
 import { ListItem, CustomList } from "../types";
@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onDeleteList,
 }) => {
   return (
-    <View style={styles.sidebar}>
+    <View style={sideBarStyles.sidebar}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <FlatList
           data={sidebarLists}

@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
-import styles from "../styles/styles";
+import { mainStyles } from "../styles/app/main";
 import Header from "../components/Index/header";
 import Sidebar from "../components/SideBar";
 import MainContent from "../components/Index/MainContent";
@@ -65,8 +65,8 @@ const App: React.FC = () => {
 
   if (authLoading || !user) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView style={mainStyles.container}>
+        <View style={mainStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#0078d4" />
         </View>
       </SafeAreaView>
@@ -75,8 +75,8 @@ const App: React.FC = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView style={mainStyles.container}>
+        <View style={mainStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#0078d4" />
         </View>
       </SafeAreaView>
@@ -169,21 +169,21 @@ const App: React.FC = () => {
     : tasks;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={mainStyles.container}>
       {searchVisible ? (
-        <View style={styles.searchHeader}>
+        <View style={mainStyles.searchHeader}>
           <TouchableWithoutFeedback
             onPress={() => {
               setSearchVisible(false);
               setSearchQuery("");
             }}
           >
-            <View style={styles.searchBackButton}>
+            <View style={mainStyles.searchBackButton}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </View>
           </TouchableWithoutFeedback>
           <TextInput
-            style={styles.searchInput}
+            style={mainStyles.searchInput}
             placeholder="Search tasks..."
             placeholderTextColor="rgba(255,255,255,0.7)"
             value={searchQuery}
@@ -199,17 +199,17 @@ const App: React.FC = () => {
         />
       )}
 
-      <View style={styles.mainContainer}>
+      <View style={mainStyles.mainContainer}>
         {sidebarVisible && (
           <TouchableWithoutFeedback onPress={toggleSidebar}>
-            <View style={styles.overlay} />
+            <View style={mainStyles.overlay} />
           </TouchableWithoutFeedback>
         )}
 
         {sidebarVisible && (
           <Animated.View
             style={[
-              styles.animatedSidebar,
+              mainStyles.animatedSidebar,
               { transform: [{ translateX: sidebarAnimRef.current! }] },
             ]}
           >

@@ -8,7 +8,8 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import styles from "../styles/styles";
+import { modalCommonStyles } from "../styles/modals/common";
+import { customListModalStyles } from "../styles/components/CustomListModal";
 import { CustomList } from "../types";
 
 const EMOJI_OPTIONS = [
@@ -74,29 +75,29 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
+      <View style={modalCommonStyles.modalOverlay}>
+        <View style={modalCommonStyles.modalContent}>
+          <View style={modalCommonStyles.modalHeader}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={modalCommonStyles.modalCancelText}>Cancel</Text>
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>
+            <Text style={modalCommonStyles.modalTitle}>
               {initialData ? "Edit List" : "New List"}
             </Text>
             <TouchableOpacity onPress={handleSave}>
-              <Text style={styles.modalSaveText}>Save</Text>
+              <Text style={modalCommonStyles.modalSaveText}>Save</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.modalBody}>
-            <View style={styles.listPreview}>
-              <Text style={styles.listPreviewIcon}>{icon}</Text>
-              <Text style={styles.listPreviewName}>{name || "List Name"}</Text>
+          <ScrollView style={modalCommonStyles.modalBody}>
+            <View style={customListModalStyles.listPreview}>
+              <Text style={customListModalStyles.listPreviewIcon}>{icon}</Text>
+              <Text style={customListModalStyles.listPreviewName}>{name || "List Name"}</Text>
             </View>
 
-            <Text style={styles.inputLabel}>Name</Text>
+            <Text style={customListModalStyles.inputLabel}>Name</Text>
             <TextInput
-              style={styles.listNameInput}
+              style={customListModalStyles.listNameInput}
               value={name}
               onChangeText={setName}
               placeholder="Enter list name"
@@ -104,22 +105,22 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
               maxLength={50}
             />
 
-            <Text style={styles.inputLabel}>Icon</Text>
-            <View style={styles.emojiGrid}>
+            <Text style={customListModalStyles.inputLabel}>Icon</Text>
+            <View style={customListModalStyles.emojiGrid}>
               {EMOJI_OPTIONS.map((emoji, i) => (
                 <TouchableOpacity
                   key={i}
-                  style={[styles.emojiOption, icon === emoji && styles.emojiOptionSelected]}
+                  style={[customListModalStyles.emojiOption, icon === emoji && customListModalStyles.emojiOptionSelected]}
                   onPress={() => setIcon(emoji)}
                 >
-                  <Text style={styles.emojiText}>{emoji}</Text>
+                  <Text style={customListModalStyles.emojiText}>{emoji}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             {initialData && onDelete && (
-              <TouchableOpacity style={styles.deleteListButton} onPress={handleDelete}>
-                <Text style={styles.deleteListText}>Delete List</Text>
+              <TouchableOpacity style={customListModalStyles.deleteListButton} onPress={handleDelete}>
+                <Text style={customListModalStyles.deleteListText}>Delete List</Text>
               </TouchableOpacity>
             )}
           </ScrollView>

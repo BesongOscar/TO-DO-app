@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet,Image } from "react-native";
+import { View, Text, Image } from "react-native";
+import { emptyStateStyles } from "../styles/components/EmptyState";
 
 interface EmptyStateProps {
   title: string;
@@ -9,37 +10,12 @@ const Placeholder = require("assets/empty.png")
 
 const EmptyState: React.FC<EmptyStateProps> = ({ title, message }) => {
   return (
-    <View style={styles.container}>
-      <Image source={Placeholder} style={styles.image}/>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+    <View style={emptyStateStyles.container}>
+      <Image source={Placeholder} style={emptyStateStyles.image}/>
+      <Text style={emptyStateStyles.title}>{title}</Text>
+      <Text style={emptyStateStyles.message}>{message}</Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#323130",
-    marginBottom: 8,
-    marginTop: 20,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 14,
-    color: "#605e5c",
-    textAlign: "center",
-  },
-  image: {
-    height: 250,
-    width: 250
-  }
-});
 
 export default EmptyState;

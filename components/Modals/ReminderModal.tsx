@@ -38,7 +38,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   onClose,
 }) => {
   const [selectedReminder, setSelectedReminder] = useState<string>(
-    currentReminder || ""
+    currentReminder || "",
   );
 
   const getReminderTime = (option: string): string => {
@@ -73,8 +73,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
     const isTomorrow =
-      date.toDateString() ===
-      new Date(now.getTime() + 86400000).toDateString();
+      date.toDateString() === new Date(now.getTime() + 86400000).toDateString();
 
     let timeStr = date.toLocaleTimeString("en-US", {
       hour: "numeric",

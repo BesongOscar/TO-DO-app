@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Image, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "src/context/AuthContext";
+import { settingsStyles } from "../styles/app/settings";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
@@ -81,8 +82,8 @@ export default function Settings() {
 
   if (authLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView style={settingsStyles.container}>
+        <View style={settingsStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#0078d4" />
         </View>
       </SafeAreaView>
@@ -90,62 +91,62 @@ export default function Settings() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Settings</Text>
+    <SafeAreaView style={settingsStyles.container}>
+      <View style={settingsStyles.header}>
+        <Text style={settingsStyles.headerTitle}>Settings</Text>
       </View>
 
-      <View style={styles.profileSection}>
+      <View style={settingsStyles.profileSection}>
         <TouchableOpacity 
-          style={styles.avatarContainer} 
+          style={settingsStyles.avatarContainer} 
           onPress={handlePickImage}
           disabled={uploading}
         >
           {userProfile?.photoURL ? (
-            <Image source={{ uri: userProfile.photoURL }} style={styles.avatar} />
+            <Image source={{ uri: userProfile.photoURL }} style={settingsStyles.avatar} />
           ) : (
-            <View style={styles.avatarPlaceholder}>
+            <View style={settingsStyles.avatarPlaceholder}>
               <Ionicons name="person" size={40} color="#fff" />
             </View>
           )}
-          <View style={styles.editAvatarBadge}>
+          <View style={settingsStyles.editAvatarBadge}>
             <Ionicons name="camera" size={16} color="#fff" />
           </View>
         </TouchableOpacity>
-        {uploading && <Text style={styles.uploadingText}>Uploading...</Text>}
+        {uploading && <Text style={settingsStyles.uploadingText}>Uploading...</Text>}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
+      <View style={settingsStyles.section}>
+        <Text style={settingsStyles.sectionTitle}>Account</Text>
         
         {isEditingName ? (
-          <View style={styles.editNameContainer}>
+          <View style={settingsStyles.editNameContainer}>
             <TextInput
-              style={styles.editNameInput}
+              style={settingsStyles.editNameInput}
               value={editedName}
               onChangeText={setEditedName}
               placeholder="Enter your name"
               autoFocus
             />
-            <TouchableOpacity onPress={handleSaveName} style={styles.saveButton}>
+            <TouchableOpacity onPress={handleSaveName} style={settingsStyles.saveButton}>
               <Ionicons name="checkmark" size={24} color="#0078d4" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsEditingName(false)} style={styles.cancelButton}>
+            <TouchableOpacity onPress={() => setIsEditingName(false)} style={settingsStyles.cancelButton}>
               <Ionicons name="close" size={24} color="#999" />
             </TouchableOpacity>
           </View>
         ) : (
           <TouchableOpacity 
-            style={styles.infoRow} 
+            style={settingsStyles.infoRow} 
             onPress={() => {
               setEditedName(userProfile?.name || "");
               setIsEditingName(true);
             }}
           >
             <Ionicons name="person" size={24} color="#0078d4" />
-            <View style={styles.infoText}>
-              <Text style={styles.infoLabel}>Name</Text>
-              <Text style={styles.infoValue}>
+            <View style={settingsStyles.infoText}>
+              <Text style={settingsStyles.infoLabel}>Name</Text>
+              <Text style={settingsStyles.infoValue}>
                 {userProfile?.name || "Add name"}
               </Text>
             </View>
@@ -153,170 +154,30 @@ export default function Settings() {
           </TouchableOpacity>
         )}
 
-        <View style={styles.infoRow}>
+        <View style={settingsStyles.infoRow}>
           <Ionicons name="mail" size={24} color="#0078d4" />
-          <View style={styles.infoText}>
-            <Text style={styles.infoLabel}>Email</Text>
-            <Text style={styles.infoValue}>
+          <View style={settingsStyles.infoText}>
+            <Text style={settingsStyles.infoLabel}>Email</Text>
+            <Text style={settingsStyles.infoValue}>
               {user?.email || "Not logged in"}
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Actions</Text>
+      <View style={settingsStyles.section}>
+        <Text style={settingsStyles.sectionTitle}>Actions</Text>
         
-        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+        <TouchableOpacity style={settingsStyles.menuItem} onPress={handleLogout}>
           <Ionicons name="log-out" size={24} color="#d32f2f" />
-          <Text style={styles.menuText}>Logout</Text>
+          <Text style={settingsStyles.menuText}>Logout</Text>
           <Ionicons name="chevron-forward" size={24} color="#999" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Todo App v1.0.0</Text>
+      <View style={settingsStyles.footer}>
+        <Text style={settingsStyles.footerText}>Todo App v1.0.0</Text>
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    padding: 20,
-    backgroundColor: "#0078d4",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-  profileSection: {
-    alignItems: "center",
-    paddingVertical: 30,
-    backgroundColor: "#0078d4",
-  },
-  avatarContainer: {
-    position: "relative",
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "white",
-  },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#ccc",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 3,
-    borderColor: "white",
-  },
-  editAvatarBadge: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#0078d4",
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "white",
-  },
-  uploadingText: {
-    color: "white",
-    marginTop: 8,
-    fontSize: 12,
-  },
-  section: {
-    marginTop: 20,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 10,
-    textTransform: "uppercase",
-  },
-  editNameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  editNameInput: {
-    flex: 1,
-    fontSize: 16,
-    paddingHorizontal: 8,
-  },
-  saveButton: {
-    padding: 8,
-  },
-  cancelButton: {
-    padding: 8,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  infoText: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  infoValue: {
-    fontSize: 16,
-    color: "#333",
-    marginTop: 2,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 16,
-    color: "#d32f2f",
-    marginLeft: 12,
-  },
-  footer: {
-    position: "absolute",
-    bottom: 30,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#999",
-  },
-});

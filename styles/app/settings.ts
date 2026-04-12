@@ -1,0 +1,150 @@
+import { StyleSheet } from "react-native";
+import { fontReg, fontSemi, fontBold } from "../common";
+
+export const settingsStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    padding: 20,
+    backgroundColor: "#0078d4",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+    fontFamily: fontBold,
+  },
+  profileSection: {
+    alignItems: "center",
+    paddingVertical: 30,
+    backgroundColor: "#0078d4",
+  },
+  avatarContainer: {
+    position: "relative",
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: "white",
+  },
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "white",
+  },
+  editAvatarBadge: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#0078d4",
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  uploadingText: {
+    color: "white",
+    marginTop: 8,
+    fontSize: 12,
+    fontFamily: fontReg,
+  },
+  section: {
+    marginTop: 20,
+    paddingHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 10,
+    textTransform: "uppercase",
+    fontFamily: fontSemi,
+  },
+  editNameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  editNameInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingHorizontal: 8,
+    fontFamily: fontReg,
+  },
+  saveButton: {
+    padding: 8,
+  },
+  cancelButton: {
+    padding: 8,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  infoText: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  infoLabel: {
+    fontSize: 12,
+    color: "#666",
+    fontFamily: fontReg,
+  },
+  infoValue: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 2,
+    fontFamily: fontReg,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  menuText: {
+    flex: 1,
+    fontSize: 16,
+    color: "#d32f2f",
+    marginLeft: 12,
+    fontFamily: fontReg,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  footerText: {
+    fontSize: 12,
+    color: "#999",
+    fontFamily: fontReg,
+  },
+});

@@ -8,6 +8,7 @@ import {
   PanResponder,
   Keyboard,
 } from "react-native";
+import { bottomSheetStyles } from "../../styles/components/Index/BottomSheet";
 
 interface BottomSheetProps {
   visible: boolean;
@@ -95,62 +96,23 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children })
   if (!visible) return null;
 
   return (
-    <View style={styles.container}>
+    <View style={bottomSheetStyles.container}>
       <TouchableWithoutFeedback onPress={closeSheet}>
-        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
+        <Animated.View style={[bottomSheetStyles.backdrop, { opacity: backdropOpacity }]} />
       </TouchableWithoutFeedback>
       <Animated.View
         style={[
-          styles.sheet,
+          bottomSheetStyles.sheet,
           { transform: [{ translateY }] },
         ]}
       >
-        <View {...panResponder.panHandlers} style={styles.handleContainer}>
-          <View style={styles.handle} />
+        <View {...panResponder.panHandlers} style={bottomSheetStyles.handleContainer}>
+          <View style={bottomSheetStyles.handle} />
         </View>
-        <View style={styles.content}>{children}</View>
+        <View style={bottomSheetStyles.content}>{children}</View>
       </Animated.View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 100,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  sheet: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: SHEET_HEIGHT,
-    backgroundColor: "#faf9f8",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  handleContainer: {
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    backgroundColor: "#d1d0cd",
-    borderRadius: 2,
-  },
-  content: {
-    flex: 1,
-  },
-});
 
 export default BottomSheet;

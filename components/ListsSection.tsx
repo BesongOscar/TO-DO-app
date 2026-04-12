@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import styles from "../styles/styles";
+import { sideBarStyles } from "../styles/components/SideBar";
 import { SidebarItem } from "./SideBarItem";
 import { ListItem, CustomList } from "../types";
 import CustomListModal from "./CustomListModal";
@@ -48,11 +48,11 @@ const ListsSection: React.FC<ListsSectionProps> = ({
   };
 
   return (
-    <View style={styles.listsSection}>
-      <View style={styles.listsSectionHeader}>
-        <Text style={styles.listsSectionTitle}>Lists</Text>
+    <View style={sideBarStyles.listsSection}>
+      <View style={sideBarStyles.listsSectionHeader}>
+        <Text style={sideBarStyles.listsSectionTitle}>Lists</Text>
         <TouchableOpacity onPress={handleAddPress}>
-          <Text style={styles.addListButton}>+</Text>
+          <Text style={sideBarStyles.addListButton}>+</Text>
         </TouchableOpacity>
       </View>
 

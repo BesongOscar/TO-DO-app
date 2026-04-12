@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { RepeatType } from "../../types";
 
 interface RepeatOption {
@@ -36,7 +30,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   onClose,
 }) => {
   const [selectedRepeat, setSelectedRepeat] = useState<RepeatType>(
-    currentRepeat || "none"
+    currentRepeat || "none",
   );
 
   const handleSelect = (option: RepeatType) => {

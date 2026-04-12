@@ -1,0 +1,138 @@
+import { StyleSheet } from "react-native";
+import { fontReg, fontSemi } from "../common";
+
+export const taskItemStyles = StyleSheet.create({
+  taskItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f8f9fa",
+    justifyContent: "space-between",
+  },
+  taskCheckbox: {
+    marginRight: 16,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#0078d4",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  taskCheckboxCompleted: {
+    backgroundColor: "#0078d4",
+  },
+  checkmark: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  taskText: {
+    fontSize: 16,
+    color: "#323130",
+    flex: 1,
+    fontFamily: fontReg,
+  },
+  taskTextCompleted: {
+    fontSize: 16,
+    color: "#8a8886",
+    textDecorationLine: "line-through",
+    flex: 1,
+    fontFamily: fontReg,
+  },
+  starButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  dueDateBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  dueDateText: {
+    fontSize: 12,
+    color: "#107c10",
+    marginLeft: 4,
+    fontFamily: fontReg,
+  },
+  dueDateTextOverdue: {
+    color: "#d13438",
+  },
+  dueDateTextCompleted: {
+    color: "#8a8886",
+  },
+  editInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#323130",
+    borderBottomWidth: 2,
+    borderBottomColor: "#0078d4",
+    paddingVertical: 2,
+    marginRight: 8,
+    fontFamily: fontReg,
+  },
+  editAction: {
+    padding: 4,
+    marginLeft: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 32,
+  },
+  menuCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    width: "100%",
+    maxWidth: 320,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  menuTaskPreview: {
+    fontSize: 13,
+    color: "#8a8886",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
+    fontStyle: "italic",
+    fontFamily: fontReg,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: "#f3f2f1",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  menuIcon: {
+    marginRight: 14,
+    width: 20,
+    textAlign: "center",
+  },
+  menuItemText: {
+    fontSize: 15,
+    color: "#323130",
+    fontFamily: fontReg,
+  },
+  menuItemDestructive: {
+    color: "#d13438",
+  },
+  menuItemCancel: {
+    color: "#605e5c",
+    fontWeight: "600",
+    flex: 1,
+    textAlign: "center",
+    fontFamily: fontSemi,
+  },
+});

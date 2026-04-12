@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 
 interface CalendarDay {
   date: Date;
@@ -23,8 +17,18 @@ interface CalendarPickerModalProps {
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
@@ -37,7 +41,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
   const initialDate = currentDate ? new Date(currentDate) : today;
   const [viewDate, setViewDate] = useState<Date>(initialDate);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate ? new Date(currentDate) : null
+    currentDate ? new Date(currentDate) : null,
   );
 
   const getDaysInMonth = (date: Date): CalendarDay[] => {
@@ -140,13 +144,19 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
 
           <View style={styles.calendarContainer}>
             <View style={styles.header}>
-              <TouchableOpacity onPress={goToPrevMonth} style={styles.navButton}>
+              <TouchableOpacity
+                onPress={goToPrevMonth}
+                style={styles.navButton}
+              >
                 <Text style={styles.navText}>‹</Text>
               </TouchableOpacity>
               <Text style={styles.monthYear}>
                 {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
               </Text>
-              <TouchableOpacity onPress={goToNextMonth} style={styles.navButton}>
+              <TouchableOpacity
+                onPress={goToNextMonth}
+                style={styles.navButton}
+              >
                 <Text style={styles.navText}>›</Text>
               </TouchableOpacity>
             </View>
