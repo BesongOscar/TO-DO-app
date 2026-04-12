@@ -317,6 +317,22 @@ const styles = StyleSheet.create({
     padding: 4,
     marginLeft: 8,
   },
+  dueDateBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  dueDateText: {
+    fontSize: 12,
+    color: "#107c10",
+    marginLeft: 4,
+  },
+  dueDateTextOverdue: {
+    color: "#d13438",
+  },
+  dueDateTextCompleted: {
+    color: "#8a8886",
+  },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
