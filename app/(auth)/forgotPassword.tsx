@@ -51,7 +51,7 @@ export default function ForgotPassword() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <ArrowBack />
+      <ArrowBack/>
       <View style={styles.imageContainer}>
         <View
           style={[

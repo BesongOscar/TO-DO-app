@@ -99,12 +99,10 @@ export default function Settings() {
   }
 
   return (
-    <View
-      style={[settingsStyles.container, { paddingBottom: insets.bottom }]}
-    >
+    <View style={[settingsStyles.container, { paddingBottom: insets.bottom }]}>
       <View style={{ backgroundColor: "#0078d4", paddingTop: insets.top }}>
         <View style={settingsStyles.header}>
-          <ArrowBack/>
+          <ArrowBack color="#fff" />
           <Text style={settingsStyles.headerTitle}>Settings</Text>
         </View>
 
@@ -192,7 +190,10 @@ export default function Settings() {
       <View style={settingsStyles.section}>
         <Text style={settingsStyles.sectionTitle}>Actions</Text>
 
-        <TouchableOpacity style={settingsStyles.menuItem} onPress={handleLogout}>
+        <TouchableOpacity
+          style={settingsStyles.menuItem}
+          onPress={handleLogout}
+        >
           <Ionicons name="log-out" size={24} color="#d32f2f" />
           <Text style={settingsStyles.menuText}>Logout</Text>
           <Ionicons name="chevron-forward" size={24} color="#999" />

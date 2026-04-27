@@ -6,21 +6,10 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Task, TaskCounts } from "../types";
 import { useAuth } from "@/context/AuthContext";
+import { firestoreGetTasks, firestoreSaveTasks } from "@/src/firebase/tasks";
 
-const LEGACY_STORAGE_KEY = "@tasks";
-const storageKeyForUser = (uid: string) => `@tasks_${uid}`;
-
-const DEFAULT_TASKS: Task[] = [
-  { id: "1", text: "Review quarterly reports",         completed: false, important: true,  myDay: true  },
-  { id: "2", text: "Call client about project update", completed: false, important: false, myDay: true  },
-  { id: "3", text: "Prepare presentation slides",      completed: false, important: true,  myDay: true  },
-  { id: "4", text: "Team meeting at 3 PM",             completed: false, important: false, myDay: false },
-  { id: "5", text: "Update project documentation",     completed: true,  important: false, myDay: false },
-  { id: "6", text: "Send weekly status report",        completed: true,  important: false, myDay: false },
-];
 
 interface TasksContextValue {
   tasks: Task[];
@@ -60,36 +49,20 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       setLoading(true);
-      const key = storageKeyForUser(user.uid);
 
       try {
-        let stored = await AsyncStorage.getItem(key);
-        if (stored === null) {
-          const legacy = await AsyncStorage.getItem(LEGACY_STORAGE_KEY);
-          if (legacy !== null) {
-            await AsyncStorage.setItem(key, legacy);
-            await AsyncStorage.removeItem(LEGACY_STORAGE_KEY);
-            stored = legacy;
-          }
-        }
-
+        const loadedTasks = await firestoreGetTasks(user.uid);
+        
         if (cancelled) return;
 
-        if (stored !== null) {
-          const parsed = JSON.parse(stored) as Task[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setTasks(parsed);
-          } else {
-            setTasks(DEFAULT_TASKS);
-            await AsyncStorage.setItem(key, JSON.stringify(DEFAULT_TASKS));
-          }
+        if (loadedTasks.length > 0) {
+          setTasks(loadedTasks);
         } else {
-          setTasks(DEFAULT_TASKS);
-          await AsyncStorage.setItem(key, JSON.stringify(DEFAULT_TASKS));
+          setTasks([]);
         }
       } catch (e) {
-        console.warn("Failed to load tasks from storage:", e);
-        if (!cancelled) setTasks(DEFAULT_TASKS);
+        console.warn("Failed to load tasks from Firestore:", e);
+        if (!cancelled) setTasks([]);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -101,13 +74,14 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [authLoading, user?.uid]);
 
-  useEffect(() => {
-    if (authLoading || !user || loading) return;
-    const key = storageKeyForUser(user.uid);
-    AsyncStorage.setItem(key, JSON.stringify(tasks)).catch((e) =>
-      console.warn("Failed to persist tasks:", e),
-    );
-  }, [tasks, loading, authLoading, user?.uid]);
+  const saveTasks = useCallback(async (newTasks: Task[]) => {
+    if (!user) return;
+    try {
+      await firestoreSaveTasks(user.uid, newTasks);
+    } catch (e) {
+      console.warn("Failed to save tasks to Firestore:", e);
+    }
+  }, [user?.uid]);
 
   const addTask = useCallback((text: string, listName = "My Day", listId?: string): void => {
     const newTask: Task = {
@@ -118,43 +92,51 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
       myDay: listName === "My Day",
       listId: listId,
     };
-    setTasks((prev) => [newTask, ...prev]);
-  }, []);
+    setTasks((prev) => {
+      const updated = [newTask, ...prev];
+      saveTasks(updated);
+      return updated;
+    });
+  }, [saveTasks]);
 
   const toggleTask = useCallback((taskId: string): void => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t)),
-    );
-  }, []);
+    setTasks((prev) => {
+      const updated = prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t));
+      saveTasks(updated);
+      return updated;
+    });
+  }, [saveTasks]);
 
   const toggleImportant = useCallback((taskId: string): void => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, important: !t.important } : t)),
-    );
-  }, []);
+    setTasks((prev) => {
+      const updated = prev.map((t) => (t.id === taskId ? { ...t, important: !t.important } : t));
+      saveTasks(updated);
+      return updated;
+    });
+  }, [saveTasks]);
 
   const deleteTask = useCallback((taskId: string): void => {
-    setTasks((prev) => prev.filter((t) => t.id !== taskId));
-  }, []);
+    setTasks((prev) => {
+      const updated = prev.filter((t) => t.id !== taskId);
+      saveTasks(updated);
+      return updated;
+    });
+  }, [saveTasks]);
 
   const updateTask = useCallback((taskId: string, updates: Partial<Task>): void => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, ...updates } : t)),
-    );
-  }, []);
+    setTasks((prev) => {
+      const updated = prev.map((t) => (t.id === taskId ? { ...t, ...updates } : t));
+      saveTasks(updated);
+      return updated;
+    });
+  }, [saveTasks]);
 
   const refreshTasks = useCallback(async (): Promise<void> => {
     if (!user) return;
     setRefreshing(true);
     try {
-      const key = storageKeyForUser(user.uid);
-      const stored = await AsyncStorage.getItem(key);
-      if (stored !== null) {
-        const parsed = JSON.parse(stored) as Task[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setTasks(parsed);
-        }
-      }
+      const loadedTasks = await firestoreGetTasks(user.uid);
+      setTasks(loadedTasks);
     } catch (e) {
       console.warn("Failed to refresh tasks:", e);
     } finally {

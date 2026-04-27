@@ -5,12 +5,13 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "src/firebase/config";
 import { CustomList } from "../types";
-
-const STORAGE_KEY = (uid: string) => `@customLists_${uid}`;
+import {
+  firestoreGetCustomLists,
+  firestoreSaveCustomLists,
+} from "@/src/firebase/customLists";
 
 interface CustomListsContextValue {
   customLists: CustomList[];
@@ -31,7 +32,6 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // Track signed-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -39,7 +39,6 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => unsubscribe();
   }, []);
 
-  // Load custom lists when user changes
   useEffect(() => {
     const loadLists = async () => {
       setLoading(true);
@@ -49,55 +48,72 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
       try {
-        const stored = await AsyncStorage.getItem(STORAGE_KEY(currentUser.uid));
-        if (stored) {
-          setCustomLists(JSON.parse(stored));
-        } else {
-          setCustomLists([]); // Start empty
-        }
+        const loadedLists = await firestoreGetCustomLists(currentUser.uid);
+        setCustomLists(loadedLists);
       } catch (e) {
-        console.warn("Failed to load custom lists:", e);
+        console.warn("Failed to load custom lists from Firestore:", e);
         setCustomLists([]);
       }
       setLoading(false);
     };
     loadLists();
-  }, [currentUser]);
+  }, [currentUser?.uid]);
 
-  // Persist when lists change
-  useEffect(() => {
-    if (loading || !currentUser) return;
-    AsyncStorage.setItem(
-      STORAGE_KEY(currentUser.uid),
-      JSON.stringify(customLists),
-    ).catch((e) => console.warn("Failed to save custom lists:", e));
-  }, [customLists, loading, currentUser]);
+  const saveLists = useCallback(
+    async (lists: CustomList[]) => {
+      if (!currentUser) return;
+      try {
+        await firestoreSaveCustomLists(currentUser.uid, lists);
+      } catch (e) {
+        console.warn("Failed to save custom lists to Firestore:", e);
+      }
+    },
+    [currentUser?.uid],
+  );
 
-  const addList = useCallback((name: string, icon: string): CustomList => {
-    const newList: CustomList = {
-      id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      name: name.trim(),
-      icon,
-      color: "#0078d4",
-      taskCount: 0,
-      createdAt: Date.now(),
-    };
-    setCustomLists((prev) => [newList, ...prev]);
-    return newList;
-  }, []);
+  const addList = useCallback(
+    (name: string, icon: string): CustomList => {
+      const newList: CustomList = {
+        id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name: name.trim(),
+        icon,
+        color: "#0078d4",
+        taskCount: 0,
+        createdAt: Date.now(),
+      };
+      setCustomLists((prev) => {
+        const updated = [newList, ...prev];
+        saveLists(updated);
+        return updated;
+      });
+      return newList;
+    },
+    [saveLists],
+  );
 
   const updateList = useCallback(
     (id: string, updates: Partial<Omit<CustomList, "id">>) => {
-      setCustomLists((prev) =>
-        prev.map((list) => (list.id === id ? { ...list, ...updates } : list)),
-      );
+      setCustomLists((prev) => {
+        const updated = prev.map((list) =>
+          list.id === id ? { ...list, ...updates } : list
+        );
+        saveLists(updated);
+        return updated;
+      });
     },
-    [],
+    [saveLists],
   );
 
-  const deleteList = useCallback((id: string) => {
-    setCustomLists((prev) => prev.filter((list) => list.id !== id));
-  }, []);
+  const deleteList = useCallback(
+    (id: string) => {
+      setCustomLists((prev) => {
+        const updated = prev.filter((list) => list.id !== id);
+        saveLists(updated);
+        return updated;
+      });
+    },
+    [saveLists],
+  );
 
   return (
     <CustomListsContext.Provider
@@ -110,7 +126,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useCustomLists = () => {
   const ctx = useContext(CustomListsContext);
-  if (!ctx) throw new Error("useCustomLists must be used inside CustomListsProvider");
+  if (!ctx) throw new Error("useCustomLists must be inside CustomListsProvider");
   return ctx;
 };
 

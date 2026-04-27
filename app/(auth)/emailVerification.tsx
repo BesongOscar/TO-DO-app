@@ -88,7 +88,7 @@ export default function EmailVerification() {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      <ArrowBack />
+      <ArrowBack/>
       <View style={styles.imageContainer}>
         <View
           style={[

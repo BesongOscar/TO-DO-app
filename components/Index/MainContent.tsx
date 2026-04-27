@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mainContentStyles as styles } from "../../styles/components/Index/MainContent";
+import { useAuth } from "../../src/context/AuthContext";
 import ListHeader from "../ListHeader";
 import SuggestionsBanner from "../SuggestionBanner";
 import AddTaskInput from "../AddTaskInput";
@@ -29,6 +31,11 @@ const filterTasks = (tasks: Task[], list: ListItem): Task[] => {
   }
 };
 
+const getTodayDateString = (): string => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+};
+
 interface MainContentProps {
   currentList: ListItem;
   tasks: Task[];
@@ -54,7 +61,36 @@ const MainContent: React.FC<MainContentProps> = ({
   refreshing = false,
   onRefresh,
 }) => {
+  const { user } = useAuth();
   const [showBanner, setShowBanner] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadBannerState = async () => {
+      if (!user?.uid) {
+        setShowBanner(true);
+        return;
+      }
+      const key = `suggestionBannerDismissed_${user.uid}`;
+      const stored = await AsyncStorage.getItem(key);
+      if (stored) {
+        const { date, dismissed } = JSON.parse(stored);
+        if (date === getTodayDateString() && dismissed) {
+          setShowBanner(false);
+        } else {
+          setShowBanner(true);
+        }
+      }
+    };
+    loadBannerState();
+  }, [user?.uid]);
+
+  const handleCloseBanner = async () => {
+    setShowBanner(false);
+    if (user?.uid) {
+      const key = `suggestionBannerDismissed_${user.uid}`;
+      await AsyncStorage.setItem(key, JSON.stringify({ date: getTodayDateString(), dismissed: true }));
+    }
+  };
 
   const filteredTasks = filterTasks(tasks, currentList);
   const pendingTasks = filteredTasks.filter((t) => !t.completed);
@@ -80,7 +116,7 @@ const MainContent: React.FC<MainContentProps> = ({
       {showBanner && (
         <SuggestionsBanner
           message={`${greeting} Here are your tasks for today.`}
-          onClose={() => setShowBanner(false)}
+          onClose={handleCloseBanner}
         />
       )}
 
