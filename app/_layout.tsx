@@ -3,7 +3,7 @@ import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { AuthProvider } from "../src/context/AuthContext";
-import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
 import {
   useFonts,
   Poppins_400Regular,
@@ -12,20 +12,18 @@ import {
 } from "@expo-google-fonts/poppins";
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
+  const [fontsLoaded] = useFonts({
     "Poppins-Regular": Poppins_400Regular,
     "Poppins-SemiBold": Poppins_600SemiBold,
     "Poppins-Bold": Poppins_700Bold,
   });
 
-  useEffect(() => {
-    if (fontError && __DEV__) {
-      console.error("[fonts]", fontError);
-    }
-  }, [fontError]);
-
   if (!fontsLoaded) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
+        <ActivityIndicator size="large" color="#0078d4" />
+      </View>
+    );
   }
 
   return (

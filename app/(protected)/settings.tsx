@@ -91,6 +91,7 @@ export default function Settings() {
       Alert.alert("Success", "Name updated!");
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to update name");
+      console.error("Failed to update name:", error);
     }
   };
 

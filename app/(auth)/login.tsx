@@ -1,9 +1,11 @@
 import {
+  StyleSheet,
   Text,
   View,
   TextInput,
   useWindowDimensions,
   Alert,
+  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,7 +17,6 @@ import { useRouter } from "expo-router";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import { useAuth } from "@/context/AuthContext";
-import { auth } from "@/firebase/config";
 import { loginStyles as styles } from "styles/(auth)/login";
 
 export const loginValidationSchema = Yup.object().shape({
@@ -27,31 +28,32 @@ export default function Login() {
   const { width } = useWindowDimensions();
   const imageSize = Math.min(width * 0.5, 140);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const { login, googleLogin } = useAuth();
 
   const handleLogin = async (email: string, password: string) => {
     try {
+      setIsLoading(true);
       await login(email, password);
-      if (auth.currentUser && !auth.currentUser.emailVerified) {
-        router.replace("/emailVerification");
-      } else {
-        router.replace("/main");
-      }
+      router.push("/main");
     } catch (error: any) {
       Alert.alert("Login Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      const success = await googleLogin();
-      if (success) {
-        router.replace("/main");
-      }
+      setIsLoading(true);
+      await googleLogin();
+      router.push("/main");
     } catch (error: any) {
       Alert.alert("Google Login Failed", error.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -141,6 +143,13 @@ export default function Login() {
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
 
+            <TouchableOpacity
+              onPress={() => router.push("/forgotPassword")}
+              style={{ alignSelf: "flex-end" }}
+            >
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
             <AuthButton
               text="Sign In"
               color="#0078d4"
@@ -151,8 +160,19 @@ export default function Login() {
           </View>
         )}
       </Formik>
-      
-      <Text style={styles.orText}>Or</Text>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+        }}
+      >
+        <View style={styles.seperator} />
+        <Text style={styles.orText}>Or</Text>
+        <View style={styles.seperator} />
+      </View>
 
       <AuthButton
         text="Sign In with Google"
@@ -162,12 +182,8 @@ export default function Login() {
         onPress={handleGoogleLogin}
       />
 
-      <TouchableOpacity onPress={() => router.push("/forgotPassword")}>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
-
       <Text style={styles.linkText}>
-        {"Don't have an account? "}
+        Don't have an account?{" "}
         <Link href="/signup" style={styles.link}>
           Signup
         </Link>
@@ -175,4 +191,3 @@ export default function Login() {
     </SafeAreaView>
   );
 }
-

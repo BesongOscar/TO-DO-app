@@ -10,8 +10,8 @@ import {
   sendEmailVerification,
   reload,
 } from "firebase/auth";
-import * as WebBrowser from "expo-web-browser";
 import { auth } from "../firebase/config";
+import { createUserProfile, getUserProfile, updateUserProfileDoc } from "@/firebase/userProfile";
 
 interface UserProfile {
   name: string;
@@ -22,7 +22,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
@@ -45,35 +45,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [, bumpUserRefresh] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      setUser(nextUser);
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      try {
+        setUser(nextUser);
+        if (nextUser) {
+          const profile = await getUserProfile(nextUser.uid);
+          if (profile) {
+            setUserProfile(profile);
+          }
+        } else {
+          setUserProfile(null);
+        }
+      } catch (error) {
+        console.error("Auth state error:", error);
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    WebBrowser.maybeCompleteAuthSession();
-  }, []);
-
-  useEffect(() => {
-    if (!user) {
-      setUserProfile(null);
-      return;
-    }
-    setUserProfile((prev) => ({
-      name: user.displayName ?? prev?.name ?? "",
-      photoURL: user.photoURL ?? prev?.photoURL ?? null,
-    }));
-  }, [user]);
-
   const login = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (email: string, password: string, name: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await createUserProfile(cred.user.uid, name);
     await sendEmailVerification(cred.user);
   };
 
@@ -110,12 +109,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateUserProfile = async (profile: Partial<UserProfile>) => {
     if (!user) return;
+    await updateUserProfileDoc(user.uid, profile);
     setUserProfile((prev) => {
-      const base: UserProfile = {
-        name: user.displayName ?? prev?.name ?? "",
-        photoURL: user.photoURL ?? prev?.photoURL ?? null,
-      };
-      return { ...base, ...prev, ...profile };
+      if (!prev) {
+        return { name: profile.name || "", photoURL: profile.photoURL || null };
+      }
+      return { ...prev, ...profile };
     });
   };
 

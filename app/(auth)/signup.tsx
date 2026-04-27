@@ -17,6 +17,7 @@ import { useRouter } from "expo-router";
 import { signupStyles as styles } from "styles/(auth)/signup";
 
 export const signupValidationSchema = Yup.object().shape({
+  name: Yup.string().required("Name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
@@ -35,9 +36,9 @@ export default function Signup() {
   const router = useRouter();
   const { signup, googleLogin } = useAuth();
 
-  const handleSignup = async (email: string, password: string) => {
+  const handleSignup = async (email: string, password: string, name: string) => {
     try {
-      await signup(email, password);
+      await signup(email, password, name);
       router.push("/emailVerification");
     } catch (error: any) {
       Alert.alert("Signup Failed", error.message || "An error occurred");
@@ -81,7 +82,7 @@ export default function Signup() {
           password: "",
           confirmPassword: "",
         }}
-        onSubmit={(values) => handleSignup(values.email, values.password)}
+        onSubmit={(values) => handleSignup(values.email, values.password, values.name)}
         validationSchema={signupValidationSchema}
       >
         {({
