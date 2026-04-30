@@ -1,6 +1,6 @@
 /**
  * Main - Primary app screen with sidebar, task list, and task details
- * 
+ *
  * Layout: Header → Sidebar + Main Content + Bottom Sheet
  * Handles task CRUD, search, and list filtering.
  */
@@ -44,7 +44,7 @@ const App: React.FC = () => {
     updateTask,
     refreshTasks,
   } = useTasks();
-  const { customLists, addList } = useCustomLists();
+  const { customLists, addList, updateList, deleteList } = useCustomLists();
 
   const router = useRouter();
   // Default list selection
@@ -59,6 +59,7 @@ const App: React.FC = () => {
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
+  const [editingList, setEditingList] = useState<ListItem | null>(null);
   const [customListModalVisible, setCustomListModalVisible] =
     useState<boolean>(false);
 
@@ -130,6 +131,11 @@ const App: React.FC = () => {
     if (selectedTaskId === taskId) {
       setSelectedTaskId(null);
     }
+  };
+
+  const handleEditList = (list: ListItem) => {
+    setEditingList(list);
+    setCustomListModalVisible(true);
   };
 
   const getCount = (list: ListItem): number => {
@@ -239,7 +245,11 @@ const App: React.FC = () => {
                 setCurrentList(list);
                 toggleSidebar();
               }}
-              onAddCustomList={() => setCustomListModalVisible(true)}
+              onAddCustomList={() => {
+                setCustomListModalVisible(true);
+                setEditingList(null);
+              }}
+              onEditList={handleEditList}
             />
           </Animated.View>
         )}
@@ -286,17 +296,57 @@ const App: React.FC = () => {
 
         <CustomListModal
           visible={customListModalVisible}
-          onClose={() => setCustomListModalVisible(false)}
-          onSave={(name, icon) => {
-            const created = addList(name, icon);
-            setCurrentList({
-              id: created.id,
-              name: created.name,
-              icon: created.icon,
-              color: created.color,
-              filterKey: "listId",
-            });
+          onClose={() => {
+            setCustomListModalVisible(false);
+            setEditingList(null);
           }}
+          onSave={(name, icon) => {
+            if (editingList) {
+              // EDIT MODE: update existing list
+              updateList(editingList.id, { name, icon });
+              setEditingList(null);
+            } else {
+              // CREATE MODE: add new list
+              const created = addList(name, icon);
+              setCurrentList({
+                id: created.id,
+                name: created.name,
+                icon: created.icon,
+                color: created.color,
+                filterKey: "listId",
+              });
+            }
+          }}
+          onDelete={
+            editingList
+              ? () => {
+                  deleteList(editingList.id);
+                  setCustomListModalVisible(false);
+                  setEditingList(null);
+                  if (currentList?.id === editingList.id) {
+                    setCurrentList({
+                      id: "1",
+                      name: "My Day",
+                      icon: "☀️",
+                      color: "#0078d4",
+                      filterKey: "myDay",
+                    });
+                  }
+                }
+              : undefined
+          }
+          initialData={
+            editingList
+              ? {
+                  id: editingList.id,
+                  name: editingList.name,
+                  icon: editingList.icon,
+                  color: editingList.color,
+                  taskCount: 0,
+                  createdAt: Date.now(),
+                }
+              : undefined
+          }
         />
       </View>
     </View>

@@ -1,6 +1,6 @@
 /**
  * Custom Lists Firestore API - Handles user-created list CRUD
- * 
+ *
  * Uses subcollection structure: /customLists/{userId}/userLists/{listId}
  */
 
@@ -16,18 +16,21 @@ import { db } from "./config";
 import { CustomList } from "../../types";
 
 export const firestoreGetCustomLists = async (
+  // Get all custom lists for a user, returns empty array if none exist
   userId: string,
 ): Promise<CustomList[]> => {
   const listsRef = collection(db, "customLists", userId, "userLists");
   const snapshot = await getDocs(listsRef);
 
   return snapshot.docs.map((d) => ({
+    // Map Firestore documents to CustomList objects, using doc.id as list ID
     id: d.id,
     ...d.data(),
   })) as CustomList[];
 };
 
 export const firestoreSaveCustomLists = async (
+  // Save entire custom list set for a user, replacing all existing lists with the provided set
   userId: string,
   lists: CustomList[],
 ): Promise<void> => {
@@ -46,6 +49,7 @@ export const firestoreSaveCustomLists = async (
 };
 
 export const firestoreMigrateCustomListsFromLocal = async (
+  // Migrate local custom lists to Firestore for a user, used when logging in for the first time with existing local data
   userId: string,
   localLists: CustomList[],
 ): Promise<void> => {

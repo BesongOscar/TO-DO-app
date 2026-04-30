@@ -21,7 +21,10 @@ interface TaskGroup {
   isOverdue?: boolean;
 }
 
-const getDateCategory = (dateStr: string): { category: string; isOverdue: boolean } => {
+const getDateCategory = (
+  dateStr: string,
+): { category: string; isOverdue: boolean } => {
+  // Categorizes a date string into "Overdue", "Today", "Tomorrow", "This Week", "Next Week", or "Later" based on the current date, also returns an isOverdue flag for styling purposes, normalizes dates to ignore time components for accurate day-based comparisons
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const taskDate = new Date(dateStr);
@@ -30,32 +33,34 @@ const getDateCategory = (dateStr: string): { category: string; isOverdue: boolea
   const diffTime = taskDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+  // CHECK FOR OVERDUE FIRST before anything else
+  if (diffDays < 0) return { category: "Overdue", isOverdue: true };
   if (diffDays === 0) return { category: "Today", isOverdue: false };
   if (diffDays === 1) return { category: "Tomorrow", isOverdue: false };
-  if (diffDays === 2) return { category: "This Week", isOverdue: false };
   if (diffDays <= 7) return { category: "This Week", isOverdue: false };
   if (diffDays <= 14) return { category: "Next Week", isOverdue: false };
-  return { category: "Later", isOverdue: diffDays < 0 };
+  return { category: "Later", isOverdue: false }; // fix the last line too
 };
 
 const groupTasksByDate = (tasks: Task[]): TaskGroup[] => {
+  // Groups tasks into categories based on their due dates for display in the PlannedTasksList, categorizes each task using getDateCategory and organizes them into groups, also separates overdue tasks for special styling, completed tasks are grouped separately at the end regardless of due date, returns an ordered array of TaskGroup objects for rendering
   const groups: { [key: string]: Task[] } = {};
   const overdueTasks: Task[] = [];
 
   const pendingTasks = tasks.filter((t) => !t.completed);
   const completedTasks = tasks.filter((t) => t.completed);
 
-  pendingTasks.forEach((task) => {
-    if (!task.dueDate) return;
-    const { category, isOverdue } = getDateCategory(task.dueDate);
+  // pendingTasks.forEach((task) => {
+  //   if (!task.dueDate) return;
+  //   const { category, isOverdue } = getDateCategory(task.dueDate);
 
-    if (isOverdue) {
-      overdueTasks.push(task);
-    } else {
-      if (!groups[category]) groups[category] = [];
-      groups[category].push(task);
-    }
-  });
+  //   if (isOverdue) {
+  //     overdueTasks.push(task);
+  //   } else {
+  //     if (!groups[category]) groups[category] = [];
+  //     groups[category].push(task);
+  //   }
+  // });
 
   const orderedCategories = [
     "Overdue",
@@ -73,7 +78,11 @@ const groupTasksByDate = (tasks: Task[]): TaskGroup[] => {
 
   orderedCategories.slice(1).forEach((category) => {
     if (groups[category]?.length > 0) {
-      result.push({ title: category, tasks: groups[category] });
+      result.push({
+        title: category,
+        tasks: groups[category],
+        isOverdue: category === "Overdue",
+      });
     }
   });
 

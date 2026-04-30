@@ -132,7 +132,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
         accessibilityRole="button"
       >
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
           <TouchableOpacity
             style={[
               styles.taskCheckbox,

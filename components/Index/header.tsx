@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { headerStyles as styles } from "../../styles/components/Index/header";
+import {useAuth} from "@/context/AuthContext";
 
 interface HeaderProps {
   onMenuPress: () => void;
@@ -14,6 +15,7 @@ const Header: React.FC<HeaderProps> = ({
   onSearchPress,
   onProfilePress,
 }) => {
+  const { userProfile} = useAuth();
   return (
     <View style={styles.topHeader}>
       {/* Left side: Menu + App Title */}
@@ -30,7 +32,16 @@ const Header: React.FC<HeaderProps> = ({
           <Ionicons name="search" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={onProfilePress} accessibilityLabel="Profile" accessibilityRole="button">
-          <Ionicons name="person-circle" size={28} color="white" />
+          {userProfile?.photoURL ? (
+              <Image
+                source={{ uri: userProfile.photoURL }}
+                style={{ width: 40, height: 40, borderRadius: 20 }}
+              />
+            ) : (
+              <View>
+                <Ionicons name="person" size={40} color="#fff" />
+              </View>
+            )}
         </TouchableOpacity>
       </View>
     </View>

@@ -1,6 +1,6 @@
 /**
  * Sidebar - Left navigation panel showing default and custom lists
- * 
+ *
  * Uses SectionList to group preset lists (My Day, Important, etc.)
  * with user-created custom lists. Handles list selection.
  */
@@ -17,6 +17,7 @@ interface SidebarProps {
   currentList: ListItem | null;
   onSelectList: (item: ListItem) => void;
   onAddCustomList?: () => void;
+  onEditList?: (item: ListItem) => void;
 }
 
 type SidebarSection = {
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   currentList,
   onSelectList,
   onAddCustomList,
+  onEditList,
 }) => {
   const sections: SidebarSection[] = [
     { key: "preset", data: sidebarLists },
@@ -63,11 +65,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             </View>
           )
         }
-        renderItem={({ item }) => (
+        renderItem={({ item, section }) => (
           <SidebarItem
             item={item}
             isSelected={currentList?.id === item.id}
             onSelectList={onSelectList}
+            onLongPress={
+              section.key === "custom" ? () => onEditList?.(item) : undefined
+            }
           />
         )}
       />
