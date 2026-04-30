@@ -10,6 +10,12 @@ import { Task, TaskCounts } from "../types";
 import { useAuth } from "@/context/AuthContext";
 import { firestoreGetTasks, firestoreSaveTasks } from "@/src/firebase/tasks";
 
+/**
+ * TasksContext - Manages global task state and Firestore persistence
+ * 
+ * Provides task CRUD operations (add, toggle, delete, update) that sync
+ * with Firestore in real-time. Handles loading states and error recovery.
+ */
 
 interface TasksContextValue {
   tasks: Task[];

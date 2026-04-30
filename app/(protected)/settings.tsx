@@ -102,6 +102,7 @@ export default function Settings() {
   return (
     <View style={[settingsStyles.container, { paddingBottom: insets.bottom }]}>
       <View style={{ backgroundColor: "#0078d4", paddingTop: insets.top }}>
+        {/*  */}
         <View style={settingsStyles.header}>
           <ArrowBack color="#fff" />
           <Text style={settingsStyles.headerTitle}>Settings</Text>

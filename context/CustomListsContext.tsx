@@ -13,6 +13,13 @@ import {
   firestoreSaveCustomLists,
 } from "@/src/firebase/customLists";
 
+/**
+ * CustomListsContext - Manages user-created task lists (e.g., "Work", "Personal")
+ * 
+ * Handles CRUD for custom lists, synced to Firestore. Unlike built-in lists
+ * (My Day, Important, Planned), these are user-defined with custom names/icons.
+ */
+
 interface CustomListsContextValue {
   customLists: CustomList[];
   loading: boolean;
@@ -32,6 +39,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  // Subscribe to auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -39,6 +47,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => unsubscribe();
   }, []);
 
+  // Load custom lists from Firestore when user changes
   useEffect(() => {
     const loadLists = async () => {
       setLoading(true);
@@ -59,6 +68,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     loadLists();
   }, [currentUser?.uid]);
 
+  // Persist lists to Firestore after changes
   const saveLists = useCallback(
     async (lists: CustomList[]) => {
       if (!currentUser) return;
@@ -71,6 +81,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     [currentUser?.uid],
   );
 
+  // Add a new custom list
   const addList = useCallback(
     (name: string, icon: string): CustomList => {
       const newList: CustomList = {
@@ -91,6 +102,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     [saveLists],
   );
 
+  // Update existing list properties
   const updateList = useCallback(
     (id: string, updates: Partial<Omit<CustomList, "id">>) => {
       setCustomLists((prev) => {
@@ -104,6 +116,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
     [saveLists],
   );
 
+  // Remove a list
   const deleteList = useCallback(
     (id: string) => {
       setCustomLists((prev) => {

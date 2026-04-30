@@ -1,3 +1,10 @@
+/**
+ * Login - Email/password and Google authentication screen
+ * 
+ * Uses Formik for form handling and Yup for validation.
+ * Supports both email/password and Google OAuth login.
+ */
+
 import {
   StyleSheet,
   Text,

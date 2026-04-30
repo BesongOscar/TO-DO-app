@@ -17,7 +17,7 @@ export const settingsStyles = StyleSheet.create({
     alignItems: "center",
   },
   header: {
-    padding: 20,
+    padding: 15,
     backgroundColor: "#0078d4",
     flexDirection: "row",
     alignItems: "center",
@@ -33,7 +33,7 @@ export const settingsStyles = StyleSheet.create({
   },
   profileSection: {
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: 20,
     backgroundColor: "#0078d4",
   },
   avatarContainer: {

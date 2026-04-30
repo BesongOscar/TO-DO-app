@@ -1,3 +1,10 @@
+/**
+ * TasksList - Scrollable list of TaskItems with pull-to-refresh
+ * 
+ * Renders pending and completed tasks in a single scrollable view.
+ * Completed tasks section is collapsible (only shows if tasks exist).
+ */
+
 import React from "react";
 import { View, Text, ScrollView, RefreshControl } from "react-native";
 import TaskItem from "./TaskItem";

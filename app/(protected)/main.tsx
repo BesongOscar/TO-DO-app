@@ -1,3 +1,10 @@
+/**
+ * Main - Primary app screen with sidebar, task list, and task details
+ * 
+ * Layout: Header → Sidebar + Main Content + Bottom Sheet
+ * Handles task CRUD, search, and list filtering.
+ */
+
 import {
   View,
   Animated,
@@ -40,6 +47,7 @@ const App: React.FC = () => {
   const { customLists, addList } = useCustomLists();
 
   const router = useRouter();
+  // Default list selection
   const [currentList, setCurrentList] = useState<ListItem>({
     id: "1",
     name: "My Day",
@@ -271,6 +279,7 @@ const App: React.FC = () => {
             <RightPanel
               selectedTask={selectedTask}
               onClose={() => setSelectedTaskId(null)}
+              onUpdateTask={updateTask}
             />
           )}
         </BottomSheet>

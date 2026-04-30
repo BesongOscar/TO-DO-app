@@ -23,9 +23,14 @@ const DETAIL_OPTIONS: DetailOptionConfig[] = [
 interface RightPanelProps {
   selectedTask: Task | null;
   onClose: () => void;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
 }
 
-const RightPanel: React.FC<RightPanelProps> = ({ selectedTask, onClose }) => {
+const RightPanel: React.FC<RightPanelProps> = ({
+  selectedTask,
+  onClose,
+  onUpdateTask,
+}) => {
   const [modalType, setModalType] = useState<string | null>(null);
 
   if (!selectedTask) return null;
@@ -73,25 +78,33 @@ const RightPanel: React.FC<RightPanelProps> = ({ selectedTask, onClose }) => {
       </View>
 
       {/* Modals */}
-      <Modal visible={modalType === "calendar"} transparent animationType="slide">
+      <Modal
+        visible={modalType === "calendar"}
+        transparent
+        animationType="slide"
+      >
         <CalendarPickerModal
           visible={modalType === "calendar"}
           currentDate={selectedTask.dueDate}
           onSelect={(date) => {
-            console.log("Selected date:", date);
+            onUpdateTask(selectedTask.id, { dueDate: date });
             closeModal();
           }}
           onClose={closeModal}
         />
       </Modal>
 
-      <Modal visible={modalType === "reminder"} transparent animationType="slide">
+      <Modal
+        visible={modalType === "reminder"}
+        transparent
+        animationType="slide"
+      >
         <ReminderModal
           visible={modalType === "reminder"}
           currentReminder={selectedTask.reminder || undefined}
           dueDate={selectedTask.dueDate}
           onSelect={(time) => {
-            console.log("Selected reminder:", time);
+            onUpdateTask(selectedTask.id, { reminder: time });
             closeModal();
           }}
           onClose={closeModal}
@@ -103,7 +116,7 @@ const RightPanel: React.FC<RightPanelProps> = ({ selectedTask, onClose }) => {
           visible={modalType === "repeat"}
           currentRepeat={selectedTask.repeat || "none"}
           onSelect={(rule) => {
-            console.log("Selected repeat:", rule);
+            onUpdateTask(selectedTask.id, { repeat: rule });
             closeModal();
           }}
           onClose={closeModal}
@@ -115,7 +128,7 @@ const RightPanel: React.FC<RightPanelProps> = ({ selectedTask, onClose }) => {
           visible={modalType === "note"}
           currentNote={selectedTask.note || undefined}
           onSave={(note) => {
-            console.log("Saved note:", note);
+            onUpdateTask(selectedTask.id, { note });
             closeModal();
           }}
           onClose={closeModal}

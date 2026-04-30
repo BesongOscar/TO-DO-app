@@ -1,3 +1,11 @@
+/**
+ * ErrorBoundary - Class component that catches JavaScript errors
+ * 
+ * React error boundary that catches errors in child component tree.
+ * Displays fallback UI with retry button instead of crashing the app.
+ * Useful for catching unexpected runtime errors in production.
+ */
+
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 

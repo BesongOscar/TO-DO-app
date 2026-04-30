@@ -1,3 +1,12 @@
+/**
+ * TaskItem - Individual task component with inline edit and context menu
+ * 
+ * Displays task text, checkbox, and star (important) toggle. Supports:
+ * - Inline editing via double-tap or menu
+ * - Long-press context menu for edit/delete
+ * - Accessibility labels for screen readers
+ */
+
 import React, { useState } from "react";
 import {
   TouchableOpacity,

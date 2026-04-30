@@ -16,6 +16,13 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { signupStyles as styles } from "styles/(auth)/signup";
 
+/**
+ * Signup - New user registration screen
+ * 
+ * Uses Formik for form handling and Yup for validation.
+ * Requires name, email, and matching password/confirmation.
+ */
+
 export const signupValidationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),

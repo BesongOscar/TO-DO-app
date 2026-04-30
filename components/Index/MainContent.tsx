@@ -134,7 +134,7 @@ const MainContent: React.FC<MainContentProps> = ({
             currentList.filterKey === "all" &&
             currentList.name === "Search Results"
               ? "Try a different search term"
-              : "Add a task below to get started"
+              : "Add a task above to get started"
           }
         />
       ) : (

@@ -108,7 +108,8 @@ export const loginStyles = StyleSheet.create({
   },
   forgotText: {
     color: "#0078d4",
-    marginTop: 20,
+    marginTop: 5,
+    marginBottom: 10,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },

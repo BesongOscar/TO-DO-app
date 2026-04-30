@@ -1,3 +1,10 @@
+/**
+ * Sidebar - Left navigation panel showing default and custom lists
+ * 
+ * Uses SectionList to group preset lists (My Day, Important, etc.)
+ * with user-created custom lists. Handles list selection.
+ */
+
 import React from "react";
 import { View, SectionList, TouchableOpacity, Text } from "react-native";
 import { sideBarStyles as styles } from "../styles/components/SideBar";

@@ -1,3 +1,9 @@
+/**
+ * Custom Lists Firestore API - Handles user-created list CRUD
+ * 
+ * Uses subcollection structure: /customLists/{userId}/userLists/{listId}
+ */
+
 import {
   collection,
   doc,

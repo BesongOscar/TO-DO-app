@@ -1,3 +1,10 @@
+/**
+ * RootLayout - App entry point with providers
+ * 
+ * Wraps app with all context providers and error boundary.
+ * Loads Poppins font family before rendering content.
+ */
+
 import { Stack } from "expo-router";
 import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";

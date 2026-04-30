@@ -1,3 +1,10 @@
+/**
+ * Tasks Firestore API - Handles task CRUD operations with Firestore
+ * 
+ * Uses subcollection structure: /tasks/{userId}/userTasks/{taskId}
+ * All operations use batched writes for performance
+ */
+
 import {
   collection,
   doc,
@@ -9,6 +16,7 @@ import {
 import { db } from "./config";
 import { Task } from "../../types";
 
+// Remove undefined fields before storing to Firestore
 const cleanTask = (task: Task): Record<string, unknown> => {
   const cleaned: Record<string, unknown> = {};
   Object.entries(task).forEach(([key, value]) => {
@@ -36,11 +44,13 @@ export const firestoreSaveTasks = async (
   const tasksRef = collection(db, "tasks", userId, "userTasks");
   const batch = writeBatch(db);
   
+  // Delete all existing tasks first
   const snapshot = await getDocs(tasksRef);
   snapshot.docs.forEach((d) => batch.delete(d.ref));
   
+  // Write new task set using task.id as document ID
   for (const task of tasks) {
-    const taskDoc = doc(tasksRef);
+    const taskDoc = doc(tasksRef, task.id);
     batch.set(taskDoc, cleanTask(task));
   }
   
@@ -55,7 +65,7 @@ export const firestoreMigrateFromLocal = async (
   const batch = writeBatch(db);
   
   for (const task of localTasks) {
-    const taskDoc = doc(tasksRef);
+    const taskDoc = doc(tasksRef, task.id);
     batch.set(taskDoc, cleanTask(task));
   }
   
