@@ -45,6 +45,8 @@ interface MainContentProps {
   onStarToggle: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
+  onReorderTasks: (reorderedTasks: Task[]) => void;
+  showReorderControls?: boolean;
   refreshing?: boolean;
   onRefresh?: () => void;
 }
@@ -58,6 +60,8 @@ const MainContent: React.FC<MainContentProps> = ({
   onStarToggle,
   onEdit,
   onDelete,
+  onReorderTasks,
+  showReorderControls = false,
   refreshing = false,
   onRefresh,
 }) => {
@@ -146,6 +150,7 @@ const MainContent: React.FC<MainContentProps> = ({
           onStarToggle={onStarToggle}
           onEdit={onEdit}
           onDelete={onDelete}
+          onReorderTasks={onReorderTasks}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />

@@ -17,8 +17,9 @@ import {
   sendEmailVerification,
   reload,
 } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { auth, storage } from "../firebase/config";
 import { createUserProfile, getUserProfile, updateUserProfileDoc } from "@/firebase/userProfile";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface UserProfile {
   name: string;
@@ -127,7 +128,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const uploadProfilePhoto = async (uri: string) => {
     if (!user) return;
-    await updateUserProfile({ photoURL: uri });
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+      await uploadBytes(storageRef, blob);
+      const downloadURL = await getDownloadURL(storageRef);
+      await updateUserProfile({ photoURL: downloadURL });
+    } catch (error) {
+      console.error("Error uploading profile photo:", error);
+      throw error;
+    }
   };
 
   return (

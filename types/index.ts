@@ -10,6 +10,7 @@ export interface Task {
   note?: string;
   repeat?: RepeatType;
   listId?: string;
+  order?: number;
 }
 
 // ─── List ─────────────────────────────────────────────────────────────────────

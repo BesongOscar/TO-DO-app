@@ -1,6 +1,8 @@
 import { initializeApp, type FirebaseOptions } from "firebase/app";
+// @ts-ignore
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function requireEnv(value: string | undefined, label: string): string {
@@ -35,4 +37,5 @@ const app = initializeApp(firebaseConfig);   // Initialize Firebase app with the
 export const db = getFirestore(app);  // Initialize Firestore database instance for use in other modules
 export const auth = initializeAuth(app, {  // Initialize Firebase Authentication with React Native persistence using AsyncStorage, so that user stays logged in across app restarts
   persistence: getReactNativePersistence(AsyncStorage),
-});
+} as any);  // Type assertion to bypass TypeScript error
+export const storage = getStorage(app); // Initialize Firebase Storage for file uploads

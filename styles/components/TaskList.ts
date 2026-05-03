@@ -39,4 +39,10 @@ export const taskListStyles = StyleSheet.create({
     fontFamily: fontSemi,
     ...androidPoppinsExtras,
   },
+  dragOverSpacer: {
+    height: 4,
+    backgroundColor: "#0078d4",
+    marginHorizontal: 16,
+    borderRadius: 2,
+  },
 });

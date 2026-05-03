@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../../common";
 
-export const rightPanelStyles = StyleSheet.create({
-  rightPanel: {
+export const bottomPanelStyles = StyleSheet.create({
+  bottomPanel: {
     flex: 1,
     backgroundColor: "transparent",
     minHeight: 0,

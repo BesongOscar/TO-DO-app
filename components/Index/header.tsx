@@ -8,12 +8,14 @@ interface HeaderProps {
   onMenuPress: () => void;
   onSearchPress: () => void;
   onProfilePress: () => void;
+  isReorderMode?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   onMenuPress,
   onSearchPress,
   onProfilePress,
+  isReorderMode = false,
 }) => {
   const { userProfile} = useAuth();
   return (
@@ -35,11 +37,11 @@ const Header: React.FC<HeaderProps> = ({
           {userProfile?.photoURL ? (
               <Image
                 source={{ uri: userProfile.photoURL }}
-                style={{ width: 40, height: 40, borderRadius: 20 }}
+                style={{ width: 30, height: 30, borderRadius: 15 }}
               />
             ) : (
-              <View>
-                <Ionicons name="person" size={40} color="#fff" />
+              <View style={{ width: 30, height: 30, alignItems: "center", justifyContent: "center" }}>
+                <Ionicons name="person" size={30} color="#fff" />
               </View>
             )}
         </TouchableOpacity>

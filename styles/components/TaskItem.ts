@@ -5,11 +5,15 @@ export const taskItemStyles = StyleSheet.create({
   taskItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 5,
-    paddingVertical: 16,
+    paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#f8f9fa",
     justifyContent: "space-between",
+  },
+   gripIcon: {
+    padding: 8,
+    marginLeft: -4,
+    justifyContent: "center",
   },
   taskCheckbox: {
     marginRight: 16,

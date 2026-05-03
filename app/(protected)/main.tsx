@@ -21,11 +21,11 @@ import { useRouter } from "expo-router";
 import Header from "../../components/Index/header";
 import Sidebar from "../../components/SideBar";
 import MainContent from "../../components/Index/MainContent";
-import RightPanel from "../../components/Index/RightPanel";
+import BottomPanel from "../../components/Index/BottomPanel";
 import BottomSheet from "../../components/Index/BottomSheet";
 import CustomListModal from "../../components/CustomListModal";
 import { sidebarLists } from "../../constants/Lists";
-import { ListItem } from "../../types";
+import { ListItem, Task } from "../../types";
 import { useTasks } from "../../context/TasksContext";
 import { useCustomLists } from "../../context/CustomListsContext";
 import { mainStyles as styles } from "../../styles/app/main";
@@ -43,6 +43,7 @@ const App: React.FC = () => {
     deleteTask,
     updateTask,
     refreshTasks,
+    reorderTasks,
   } = useTasks();
   const { customLists, addList, updateList, deleteList } = useCustomLists();
 
@@ -183,6 +184,14 @@ const App: React.FC = () => {
       )
     : tasks;
 
+  // Sort tasks: pending by order ascending, completed at bottom
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (a.completed && !b.completed) return 1;
+    if (!a.completed && b.completed) return -1;
+    if (a.completed && b.completed) return 0;
+    return (a.order ?? 0) - (b.order ?? 0);
+  });
+
   const selectedTask =
     selectedTaskId != null
       ? (tasks.find((t) => t.id === selectedTaskId) ?? null)
@@ -268,13 +277,14 @@ const App: React.FC = () => {
                     }
                   : currentList
               }
-              tasks={searchVisible ? filteredTasks : tasks}
+              tasks={sortedTasks}
               onAddTask={handleAddTask}
               onToggleTask={handleToggleTask}
               onSelectTask={handleSelectTask}
               onStarToggle={handleStarToggle}
               onEdit={handleEditTask}
               onDelete={handleDeleteTask}
+              onReorderTasks={reorderTasks}
               refreshing={refreshing}
               onRefresh={refreshTasks}
             />
@@ -286,7 +296,7 @@ const App: React.FC = () => {
           onClose={() => setSelectedTaskId(null)}
         >
           {selectedTask != null && (
-            <RightPanel
+            <BottomPanel
               selectedTask={selectedTask}
               onClose={() => setSelectedTaskId(null)}
               onUpdateTask={updateTask}

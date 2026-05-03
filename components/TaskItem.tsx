@@ -1,13 +1,14 @@
 /**
  * TaskItem - Individual task component with inline edit and context menu
- * 
+ *
  * Displays task text, checkbox, and star (important) toggle. Supports:
  * - Inline editing via double-tap or menu
  * - Long-press context menu for edit/delete
+ * - Drag-and-drop via grip icon (☰)
  * - Accessibility labels for screen readers
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -17,9 +18,35 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { taskItemStyles as styles } from "../styles/components/TaskItem";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Task } from "../types";
+
+const isOverdue = (dueDateStr: string): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dueDate = new Date(dueDateStr);
+  dueDate.setHours(0, 0, 0, 0);
+  return dueDate < today;
+};
+
+const formatDueDate = (dueDateStr: string): string => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dueDate = new Date(dueDateStr);
+  dueDate.setHours(0, 0, 0, 0);
+
+  if (dueDate.getTime() === today.getTime()) {
+    return "Today";
+  } else if (dueDate.getTime() === tomorrow.getTime()) {
+    return "Tomorrow";
+  } else {
+    return dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+};
 
 interface TaskItemProps {
   task: Task;
@@ -28,7 +55,14 @@ interface TaskItemProps {
   onStarToggle: () => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
+  isActive?: boolean;
   showDueDate?: boolean;
+  index?: number;
+  isDragging?: boolean;
+  onDragStart?: (index: number) => void;
+  onDragEnd?: () => void;
+  onDragMove?: (fromIndex: number, toIndex: number) => void;
+  onLayout?: (event: any) => void;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -38,13 +72,25 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onStarToggle,
   onEdit,
   onDelete,
-  showDueDate = false,
+  isActive = false,
+  showDueDate = true,
+  index,
+  isDragging = false,
+  onDragStart,
+  onDragEnd,
+  onDragMove,
+  onLayout,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editText, setEditText] = useState<string>(task.text);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
-  // Edit handlers
+  useEffect(() => {
+    setIsEditing(false);
+    setMenuVisible(false);
+    setEditText(task.text);
+  }, [task.id]);
+
   const handleSaveEdit = (): void => {
     const trimmed = editText.trim();
     if (trimmed && trimmed !== task.text) {
@@ -60,7 +106,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
     setIsEditing(false);
   };
 
-  // Context menu (long-press)
   const handleLongPress = (): void => {
     setMenuVisible(true);
   };
@@ -75,23 +120,40 @@ const TaskItem: React.FC<TaskItemProps> = ({
     onDelete(task.id);
   };
 
-  // Render: editing mode
+  // Drag gesture - detect direction and calculate target index
+  const dragGesture = Gesture.Pan()
+    .minDistance(10)
+    .onBegin(() => {
+      if (index !== undefined) {
+        onDragStart?.(index);
+      }
+    })
+    .onUpdate((event) => {
+      if (index !== undefined && onDragMove) {
+        // translationY negative = dragging up, positive = dragging down
+        // Calculate how many items to move (assuming ~60px per item)
+        const itemHeight = 60;
+        const itemsToMove = Math.round(event.translationY / itemHeight);
+        const toIndex = index + itemsToMove;
+        onDragMove(index, toIndex);
+      }
+    })
+    .onFinalize(() => {
+      onDragEnd?.();
+    });
+
   if (isEditing) {
     return (
       <View style={styles.taskItem}>
         <TouchableOpacity
-          style={[
-            styles.taskCheckbox,
-            task.completed && styles.taskCheckboxCompleted,
-          ]}
+          style={[styles.taskCheckbox, task.completed && styles.taskCheckboxCompleted]}
           onPress={onToggle}
           activeOpacity={0.7}
         >
           {task.completed && <Text style={styles.checkmark}>✔</Text>}
         </TouchableOpacity>
-
         <TextInput
-          style={localStyles.editInput}
+          style={styles.editInput}
           value={editText}
           onChangeText={setEditText}
           autoFocus
@@ -100,146 +162,112 @@ const TaskItem: React.FC<TaskItemProps> = ({
           returnKeyType="done"
           multiline={false}
         />
-
-        <TouchableOpacity
-          onPress={handleSaveEdit}
-          style={localStyles.editAction}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity onPress={handleSaveEdit} style={styles.editAction} activeOpacity={0.7}>
           <Ionicons name="checkmark" size={20} color="#0078d4" />
         </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handleCancelEdit}
-          style={localStyles.editAction}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity onPress={handleCancelEdit} style={styles.editAction} activeOpacity={0.7}>
           <Ionicons name="close" size={20} color="#8a8886" />
         </TouchableOpacity>
       </View>
     );
   }
 
-  // Render: normal mode
+  const dragOpacity = isDragging ? 0.5 : 1;
+
   return (
     <>
-      <TouchableOpacity
-        style={styles.taskItem}
-        onPress={onSelect}
-        onLongPress={handleLongPress}
-        delayLongPress={400}
-        activeOpacity={0.7}
-        accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
-        accessibilityRole="button"
+      <View
+        style={[styles.taskItem, { opacity: isActive ? 0.5 : dragOpacity }]}
+        onLayout={onLayout}
       >
-        <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
-          <TouchableOpacity
-            style={[
-              styles.taskCheckbox,
-              task.completed && styles.taskCheckboxCompleted,
-            ]}
-            onPress={onToggle}
-            activeOpacity={0.7}
-            accessibilityLabel={
-              task.completed
-                ? "Mark task as incomplete"
-                : "Mark task as complete"
-            }
-            accessibilityRole="checkbox"
-          >
-            {task.completed && <Text style={styles.checkmark}>✔</Text>}
-          </TouchableOpacity>
+        {!task.completed && (
+          <GestureDetector gesture={dragGesture}>
+            <View style={styles.gripIcon}>
+              <Ionicons name="reorder-two" size={20} color="#8a8886" />
+            </View>
+          </GestureDetector>
+        )}
 
-          <Text
-            style={task.completed ? styles.taskTextCompleted : styles.taskText}
-            numberOfLines={2}
-          >
-            {task.text}
-          </Text>
-
-          <TouchableOpacity
-            onPress={onStarToggle}
-            style={styles.starButton}
-            activeOpacity={0.7}
-            accessibilityLabel={
-              task.important ? "Remove importance" : "Mark as important"
-            }
-            accessibilityRole="button"
-          >
-            <Ionicons
-              name={task.important ? "star" : "star-outline"}
-              size={20}
-              color={task.important ? "#FFD700" : "#ccc"}
-            />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-
-      {/* Long-press context menu */}
-      <Modal
-        visible={menuVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <Pressable
-          style={localStyles.modalOverlay}
-          onPress={() => setMenuVisible(false)}
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={onSelect}
+          onLongPress={handleLongPress}
+          delayLongPress={200}
+          activeOpacity={0.7}
+          accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
+          accessibilityRole="button"
         >
-          <View style={localStyles.menuCard}>
-            <Text style={localStyles.menuTaskPreview} numberOfLines={1}>
-              {task.text}
-            </Text>
-
-            <View style={localStyles.menuDivider} />
-
+          <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
             <TouchableOpacity
-              style={localStyles.menuItem}
-              onPress={handleMenuEdit}
+              style={[styles.taskCheckbox, task.completed && styles.taskCheckboxCompleted]}
+              onPress={onToggle}
               activeOpacity={0.7}
+              accessibilityLabel={task.completed ? "Mark task as incomplete" : "Mark task as complete"}
+              accessibilityRole="checkbox"
             >
-              <Ionicons
-                name="pencil-outline"
-                size={18}
-                color="#323130"
-                style={localStyles.menuIcon}
-              />
-              <Text style={localStyles.menuItemText}>Edit task</Text>
+              {task.completed && <Text style={styles.checkmark}>✔</Text>}
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={localStyles.menuItem}
-              onPress={handleMenuDelete}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="trash-outline"
-                size={18}
-                color="#d13438"
-                style={localStyles.menuIcon}
-              />
-              <Text
-                style={[
-                  localStyles.menuItemText,
-                  localStyles.menuItemDestructive,
-                ]}
-              >
-                Delete task
+            <View style={{ flex: 1 }}>
+              <Text style={task.completed ? styles.taskTextCompleted : styles.taskText} numberOfLines={2}>
+                {task.text}
               </Text>
+
+              {showDueDate && task.dueDate && (
+                <View style={styles.dueDateBadge}>
+                  <Ionicons
+                    name="calendar-outline"
+                    size={12}
+                    color={
+                      task.completed
+                        ? "#8a8886"
+                        : isOverdue(task.dueDate)
+                        ? "#d13438"
+                        : "#107c10"
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.dueDateText,
+                      isOverdue(task.dueDate) && styles.dueDateTextOverdue,
+                      task.completed && styles.dueDateTextCompleted,
+                    ]}
+                  >
+                    {formatDueDate(task.dueDate)}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <TouchableOpacity
+              onPress={onStarToggle}
+              style={styles.starButton}
+              activeOpacity={0.7}
+              accessibilityLabel={task.important ? "Remove importance" : "Mark as important"}
+              accessibilityRole="button"
+            >
+              <Ionicons name={task.important ? "star" : "star-outline"} size={20} color={task.important ? "#FFD700" : "#ccc"} />
             </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </View>
 
-            <View style={localStyles.menuDivider} />
-
-            <TouchableOpacity
-              style={localStyles.menuItem}
-              onPress={() => setMenuVisible(false)}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={[localStyles.menuItemText, localStyles.menuItemCancel]}
-              >
-                Cancel
-              </Text>
+      <Modal visible={menuVisible} transparent animationType="fade" onRequestClose={() => setMenuVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setMenuVisible(false)}>
+          <View style={styles.menuCard}>
+            <Text style={styles.menuTaskPreview} numberOfLines={1}>{task.text}</Text>
+            <View style={styles.menuDivider} />
+            <TouchableOpacity style={styles.menuItem} onPress={handleMenuEdit} activeOpacity={0.7}>
+              <Ionicons name="pencil-outline" size={18} color="#323130" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Edit task</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={handleMenuDelete} activeOpacity={0.7}>
+              <Ionicons name="trash-outline" size={18} color="#d13438" style={styles.menuIcon} />
+              <Text style={[styles.menuItemText, styles.menuItemDestructive]}>Delete task</Text>
+            </TouchableOpacity>
+            <View style={styles.menuDivider} />
+            <TouchableOpacity style={styles.menuItem} onPress={() => setMenuVisible(false)} activeOpacity={0.7}>
+              <Text style={[styles.menuItemText, styles.menuItemCancel]}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
@@ -248,75 +276,5 @@ const TaskItem: React.FC<TaskItemProps> = ({
   );
 };
 
-const localStyles = StyleSheet.create({
-  editInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#323130",
-    borderBottomWidth: 2,
-    borderBottomColor: "#0078d4",
-    paddingVertical: 2,
-    marginRight: 8,
-  },
-  editAction: {
-    padding: 4,
-    marginLeft: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  menuCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    width: "100%",
-    maxWidth: 320,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  menuTaskPreview: {
-    fontSize: 13,
-    color: "#8a8886",
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-    fontStyle: "italic",
-  },
-  menuDivider: {
-    height: 1,
-    backgroundColor: "#f3f2f1",
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  menuIcon: {
-    marginRight: 14,
-    width: 20,
-    textAlign: "center",
-  },
-  menuItemText: {
-    fontSize: 15,
-    color: "#323130",
-  },
-  menuItemDestructive: {
-    color: "#d13438",
-  },
-  menuItemCancel: {
-    color: "#605e5c",
-    fontWeight: "600",
-    flex: 1,
-    textAlign: "center",
-  },
-});
 
 export default TaskItem;

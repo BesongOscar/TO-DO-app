@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView } from "react-native";
-import { rightPanelStyles as styles } from "../../styles/components/Index/RightPanel";
+import { bottomPanelStyles as styles } from "../../styles/components/Index/BottomPanel";
 import DetailOption from "../DetailOption";
 import { Task } from "../../types";
 import CalendarPickerModal from "../Modals/CalendarPickerModal";
@@ -20,13 +20,13 @@ const DETAIL_OPTIONS: DetailOptionConfig[] = [
   { icon: "📝", text: "Add note" },
 ];
 
-interface RightPanelProps {
+interface BottomPanelProps {
   selectedTask: Task | null;
   onClose: () => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
 }
 
-const RightPanel: React.FC<RightPanelProps> = ({
+const BottomPanel: React.FC<BottomPanelProps> = ({
   selectedTask,
   onClose,
   onUpdateTask,
@@ -45,7 +45,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
   const closeModal = () => setModalType(null);
 
   return (
-    <View style={styles.rightPanel}>
+    <View style={styles.bottomPanel}>
       {/* Header */}
       <View style={styles.taskDetailHeader}>
         <Text style={styles.taskDetailTitle} numberOfLines={2}>
@@ -138,4 +138,4 @@ const RightPanel: React.FC<RightPanelProps> = ({
   );
 };
 
-export default RightPanel;
+export default BottomPanel;

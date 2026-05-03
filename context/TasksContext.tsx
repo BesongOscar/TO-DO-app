@@ -33,6 +33,7 @@ interface TasksContextValue {
   deleteTask: (taskId: string) => void;
   updateTask: (taskId: string, updates: Partial<Task>) => void;
   refreshTasks: () => Promise<void>;
+  reorderTasks: (reorderedPendingTasks: Task[]) => void;
 }
 
 const TasksContext = createContext<TasksContextValue | null>(null);
@@ -68,7 +69,22 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         if (cancelled) return;
 
         if (loadedTasks.length > 0) {
-          setTasks(loadedTasks);
+          // Initialize order for pending tasks that don't have it
+          const pendingTasks = loadedTasks.filter((t) => !t.completed);
+          const completedTasks = loadedTasks.filter((t) => t.completed);
+
+          let orderCounter = 0;
+          const pendingWithOrder = pendingTasks.map((task) => {
+            if (task.order === undefined) {
+              return { ...task, order: orderCounter++ };
+            }
+            return task;
+          });
+
+          // Sort pending tasks by order
+          pendingWithOrder.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+          setTasks([...pendingWithOrder, ...completedTasks]);
         } else {
           setTasks([]);
         }
@@ -109,9 +125,14 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         important: false,
         myDay: listName === "My Day",
         listId: listId,
+        order: 0,
       };
       setTasks((prev) => {
-        const updated = [newTask, ...prev];
+        // Increment order of all existing pending tasks by 1
+        const updated = [
+          newTask,
+          ...prev.map((t) => (t.completed ? t : { ...t, order: (t.order ?? 0) + 1 })),
+        ];
         saveTasks(updated);
         return updated;
       });
@@ -123,9 +144,29 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     // Toggle the completed status of a task by ID, updates local state immediately for responsiveness, then saves the change to Firestore
     (taskId: string): void => {
       setTasks((prev) => {
-        const updated = prev.map((t) =>
-          t.id === taskId ? { ...t, completed: !t.completed } : t,
-        );
+        const task = prev.find((t) => t.id === taskId);
+        if (!task) return prev;
+
+        const willBeCompleted = !task.completed;
+        let updated;
+
+        if (willBeCompleted) {
+          // Task is being completed - remove order
+          updated = prev.map((t) =>
+            t.id === taskId ? { ...t, completed: true, order: undefined } : t,
+          );
+        } else {
+          // Task is being uncompleted - assign order at end
+          const maxOrder = prev
+            .filter((t) => !t.completed && t.order !== undefined)
+            .reduce((max, t) => Math.max(max, t.order ?? 0), -1);
+          updated = prev.map((t) =>
+            t.id === taskId
+              ? { ...t, completed: false, order: maxOrder + 1 }
+              : t,
+          );
+        }
+
         saveTasks(updated);
         return updated;
       });
@@ -187,13 +228,47 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     setRefreshing(true);
     try {
       const loadedTasks = await firestoreGetTasks(user.uid);
-      setTasks(loadedTasks);
+
+      // Initialize order for pending tasks that don't have it
+      const pendingTasks = loadedTasks.filter((t) => !t.completed);
+      const completedTasks = loadedTasks.filter((t) => t.completed);
+
+      let orderCounter = 0;
+      const pendingWithOrder = pendingTasks.map((task) => {
+        if (task.order === undefined) {
+          return { ...task, order: orderCounter++ };
+        }
+        return task;
+      });
+
+      // Sort pending tasks by order
+      pendingWithOrder.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+      setTasks([...pendingWithOrder, ...completedTasks]);
     } catch (e) {
       console.warn("Failed to refresh tasks:", e);
     } finally {
       setRefreshing(false);
     }
   }, [user?.uid]);
+
+  const reorderTasks = useCallback(
+    // Reorder pending tasks after drag-and-drop, assigns order based on new positions
+    (reorderedPendingTasks: Task[]): void => {
+      const updatedPending = reorderedPendingTasks.map((task, index) => ({
+        ...task,
+        order: index,
+      }));
+
+      setTasks((prev) => {
+        const completedTasks = prev.filter((t) => t.completed);
+        const newTasks = [...updatedPending, ...completedTasks];
+        saveTasks(newTasks);
+        return newTasks;
+      });
+    },
+    [saveTasks],
+  );
 
   const counts = useMemo<TaskCounts>( // Compute task counts for different categories (My Day, Important, Completed, Planned, All) based on the current task list, used for displaying badges and summaries in the UI, memoized to avoid unnecessary recalculations on every render
     () => ({
@@ -219,6 +294,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     deleteTask,
     updateTask,
     refreshTasks,
+    reorderTasks,
   };
 
   return (
