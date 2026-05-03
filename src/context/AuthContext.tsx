@@ -1,6 +1,6 @@
 /**
  * AuthContext - Firebase authentication and user profile management
- * 
+ *
  * Handles email/password auth, verification emails, and profile CRUD.
  * Provides useAuth hook for accessing auth state throughout the app.
  */
@@ -16,9 +16,15 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
   reload,
+  GoogleAuthProvider,
+  signInWithCredential,
 } from "firebase/auth";
 import { auth, storage } from "../firebase/config";
-import { createUserProfile, getUserProfile, updateUserProfileDoc } from "@/firebase/userProfile";
+import {
+  createUserProfile,
+  getUserProfile,
+  updateUserProfileDoc,
+} from "@/firebase/userProfile";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface UserProfile {
@@ -35,7 +41,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
   reloadUser: () => Promise<void>;
-  googleLogin: () => Promise<boolean>;
+  googleLogin: (idToken: string) => Promise<boolean>;
   userProfile: UserProfile | null;
   updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
   uploadProfilePhoto: (uri: string) => Promise<void>;
@@ -107,12 +113,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     bumpUserRefresh((t) => t + 1);
   };
 
-  const googleLogin = async (): Promise<boolean> => {
-    Alert.alert(
-      "Google Sign-In",
-      "Google Sign-In requires additional Firebase setup. Please use email/password for now, or configure Google OAuth in Firebase Console.",
-    );
-    return false;
+  // Google Sign-In: verifies ID token and creates profile if new user
+  const googleLogin = async (idToken: string): Promise<boolean> => {
+    try {
+      const credential = GoogleAuthProvider.credential(idToken);
+      const userCredential = await signInWithCredential(auth, credential);
+      const user = userCredential.user;
+
+      const existingProfile = await getUserProfile(user.uid);
+      if (!existingProfile) {
+        await createUserProfile(user.uid, user.displayName || "User");
+      }
+      return true;
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      Alert.alert(
+        "Google Sign-In Failed",
+        error.message || "An error occurred",
+      );
+      return false;
+    }
   };
 
   const updateUserProfile = async (profile: Partial<UserProfile>) => {
@@ -126,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  // Upload profile photo to Firebase Storage and update user profile
   const uploadProfilePhoto = async (uri: string) => {
     if (!user) return;
     try {
