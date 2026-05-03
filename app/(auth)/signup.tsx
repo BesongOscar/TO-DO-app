@@ -1,3 +1,6 @@
+import { maybeCompleteAuthSession } from "expo-web-browser";
+maybeCompleteAuthSession();
+
 import {
   Text,
   View,
@@ -14,11 +17,13 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
+import * as Google from "expo-auth-session/providers/google";
 import { signupStyles as styles } from "styles/(auth)/signup";
+import { GoogleIcon } from "@/components/(auth)/GoogleIcon";
 
 /**
  * Signup - New user registration screen
- * 
+ *
  * Uses Formik for form handling and Yup for validation.
  * Requires name, email, and matching password/confirmation.
  */
@@ -43,7 +48,17 @@ export default function Signup() {
   const router = useRouter();
   const { signup, googleLogin } = useAuth();
 
-  const handleSignup = async (email: string, password: string, name: string) => {
+  const [request, _response, promptAsync] = Google.useAuthRequest({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+  });
+
+  const handleSignup = async (
+    email: string,
+    password: string,
+    name: string,
+  ) => {
     try {
       await signup(email, password, name);
       router.push("/emailVerification");
@@ -54,9 +69,19 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
-      const success = await googleLogin();
-      if (success) {
-        router.push("/emailVerification");
+      const result = await promptAsync();
+
+      if (result.type === "success") {
+        const { id_token } = result.params;
+        if (!id_token) throw new Error("No ID token returned");
+        const success = await googleLogin(id_token);
+        if (success) {
+          router.push("/main");
+        }
+      } else if (result.type === "cancel") {
+        console.log("Google Sign-Up cancelled");
+      } else {
+        throw new Error("Google Sign-Up failed");
       }
     } catch (error: any) {
       Alert.alert("Google Signup Failed", error.message || "An error occurred");
@@ -89,7 +114,9 @@ export default function Signup() {
           password: "",
           confirmPassword: "",
         }}
-        onSubmit={(values) => handleSignup(values.email, values.password, values.name)}
+        onSubmit={(values) =>
+          handleSignup(values.email, values.password, values.name)
+        }
         validationSchema={signupValidationSchema}
       >
         {({
@@ -227,6 +254,7 @@ export default function Signup() {
         textColor="#333"
         borderColor="#ccc"
         onPress={handleGoogleSignup}
+        icon={<GoogleIcon size={20}/>}
       />
 
       <Text style={styles.linkText}>
