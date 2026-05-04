@@ -1,3 +1,10 @@
+/**
+ * CompletedSection - Renders the "Completed" task section
+ * 
+ * Only renders if there are completed tasks. Displays a header
+ * with count and a list of completed TaskItems.
+ */
+
 import React from "react";
 import { View, Text } from "react-native";
 import TaskItem from "./TaskItem";
@@ -8,7 +15,6 @@ interface CompletedSectionProps {
   completedTasks: Task[];
   onToggleTask: (taskId: string) => void;
   onSelectTask: (taskId: string) => void;
-  onStarToggle: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
 }
@@ -17,7 +23,6 @@ const CompletedSection: React.FC<CompletedSectionProps> = ({
   completedTasks,
   onToggleTask,
   onSelectTask,
-  onStarToggle,
   onEdit,
   onDelete,
 }) => {
@@ -39,7 +44,6 @@ const CompletedSection: React.FC<CompletedSectionProps> = ({
           task={task}
           onToggle={() => onToggleTask(task.id)}
           onSelect={() => onSelectTask(task.id)}
-          onStarToggle={() => onStarToggle(task.id)}
           onEdit={onEdit}
           onDelete={onDelete}
         />

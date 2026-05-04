@@ -6,7 +6,7 @@ React Native TODO app with Firebase - featuring task management, custom lists, d
 - **Task Management** - Create, edit, delete, and toggle tasks with due dates, reminders, repeat rules, and notes
 - **Custom Lists** - Create, edit, and delete custom task lists with custom icons
 - **Drag & Drop** - Reorder tasks within lists via drag-and-drop
-- **User Profiles** - Firebase Auth with email/password, profile photos via Firebase Storage
+- **User Profiles** - Firebase Auth with email/password + Google OAuth, profile photos via Firebase Storage
 - **Smart Task Panel** - BottomPanel with calendar picker, reminder, repeat, and note modals
 - **Search** - Filter tasks by keyword across all lists
 - **Pull-to-Refresh** - Sync tasks from Firestore with pull gesture
