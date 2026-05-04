@@ -147,7 +147,6 @@ const MainContent: React.FC<MainContentProps> = ({
           completedTasks={completedTasks}
           onToggleTask={onToggleTask}
           onSelectTask={onSelectTask}
-          onStarToggle={onStarToggle}
           onEdit={onEdit}
           onDelete={onDelete}
           onReorderTasks={onReorderTasks}

@@ -10,10 +10,16 @@ export const taskItemStyles = StyleSheet.create({
     borderBottomColor: "#f8f9fa",
     justifyContent: "space-between",
   },
-   gripIcon: {
-    padding: 8,
-    marginLeft: -4,
+  taskItemDragging: {
+    opacity: 0.6,
+    backgroundColor: "#f0f7ff",
+    borderRadius: 8,
+  },
+  gripIcon: {
+    paddingHorizontal: 1,
+    paddingVertical: 4,
     justifyContent: "center",
+    alignItems: "center",
   },
   taskCheckbox: {
     marginRight: 16,

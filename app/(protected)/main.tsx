@@ -300,6 +300,7 @@ const App: React.FC = () => {
               selectedTask={selectedTask}
               onClose={() => setSelectedTaskId(null)}
               onUpdateTask={updateTask}
+              onStarToggle={() => toggleImportant(selectedTask.id)}
             />
           )}
         </BottomSheet>
