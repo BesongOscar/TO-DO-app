@@ -1,21 +1,10 @@
-/**
- * Remove any scheduled notifications whose tasks have expired repeats.
- * Called on app launch. Reads scheduled notifications and checks each
- * against the end date pattern stored in the identifier.
- *
- * Note: A full implementation would need to check the actual task data.
- * This simplified version handles the most common case.
- */
 import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import {
   setupNotificationChannel,
   requestNotificationPermissions,
-  hasRepeatExpired,
-  cancelTaskReminder,
 } from "./notificationService";
-import { Task } from "../../types";
 
 export function useNotifications() {
   const router = useRouter();
@@ -25,6 +14,16 @@ export function useNotifications() {
   const receivedListenerRef = useRef<Notifications.Subscription | null>(null);
 
   useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+
     let isMounted = true;
 
     const init = async () => {
@@ -32,7 +31,7 @@ export function useNotifications() {
       const granted = await requestNotificationPermissions();
       if (isMounted) setNotificationPermission(granted);
 
-      // Clean up expired repeating notifications on launch
+      // Clean up expired monthly individual notifications
       await cleanupExpiredNotifications();
     };
 
@@ -66,15 +65,27 @@ export function useNotifications() {
     return () => {
       isMounted = false;
       responseListenerRef.current?.remove();
+      responseListenerRef.current = null;
       receivedListenerRef.current?.remove();
+      receivedListenerRef.current = null;
     };
   }, []);
 
   return { notificationPermission };
 }
 async function cleanupExpiredNotifications(): Promise<void> {
-  // This is a best-effort cleanup. The notificationService already
-  // checks hasRepeatExpired before scheduling new notifications.
-  // For full cleanup, you'd need to iterate all scheduled notifications
-  // and check their identifiers against task data.
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  for (const notification of scheduled) {
+    const id = notification.identifier;
+    if (id.includes('-last-') || id.includes('-month-')) {
+      const trigger = notification.trigger;
+      if (trigger && 'date' in trigger) {
+        const d = (trigger as { date: number | Date }).date;
+        const ts = typeof d === 'number' ? d : d.getTime();
+        if (ts < Date.now()) {
+          await Notifications.cancelScheduledNotificationAsync(id).catch(() => {});
+        }
+      }
+    }
+  }
 }

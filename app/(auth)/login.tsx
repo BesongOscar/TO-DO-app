@@ -49,7 +49,6 @@ export default function Login() {
     try {
       setIsLoading(true);
       await login(email, password);
-      router.push("/main");
     } catch (error: any) {
       Alert.alert("Login Failed", error.message || "An error occurred");
     } finally {
@@ -61,8 +60,7 @@ export default function Login() {
     try {
       setIsLoading(true);
       const { idToken } = await signInWithGoogle();
-      const success = await googleLogin(idToken);
-      if (success) router.replace("/main");
+      await googleLogin(idToken);
     } catch (error) {
       const message = getGoogleSignInErrorMessage(error);
       // SIGN_IN_CANCELLED is not an error worth alerting

@@ -9,7 +9,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { headerStyles as styles } from "../../styles/components/Index/header";
-import {useAuth} from "@/src/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   onMenuPress: () => void;

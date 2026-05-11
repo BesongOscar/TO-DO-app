@@ -167,20 +167,42 @@ const BottomPanel: React.FC<BottomPanelProps> = ({
         contentContainerStyle={styles.taskDetailContentInner}
         keyboardShouldPersistTaps="handled"
       >
-        {getDetailOptions(selectedTask.important).map((option) => (
-          <DetailOption
-            key={option.text}
-            icon={option.icon}
-            text={option.text}
-            isActive={
-              option.text ===
-              (selectedTask.important
-                ? "Remove from Favorites"
-                : "Add to Favorites")
-            }
-            onPress={() => handleOptionPress(option.text)}
-          />
-        ))}
+        {getDetailOptions(selectedTask.important).map((option) => {
+          let activeValue = "";
+          switch (option.text) {
+            case "Add due date":
+              if (selectedTask.dueDate)
+                activeValue = formatDueDate(selectedTask.dueDate, selectedTask.dueTime);
+              break;
+            case "Remind me":
+              if (selectedTask.reminder)
+                activeValue = formatReminder(selectedTask.reminder);
+              break;
+            case "Repeat":
+              if (selectedTask.repeat && selectedTask.repeat !== "none")
+                activeValue = formatRepeat(selectedTask.repeat);
+              break;
+            case "Add note":
+              if (selectedTask.note?.trim())
+                activeValue = formatNote(selectedTask.note);
+              break;
+          }
+          return (
+            <DetailOption
+              key={option.text}
+              icon={option.icon}
+              text={option.text}
+              activeValue={activeValue}
+              isActive={
+                option.text ===
+                (selectedTask.important
+                  ? "Remove from Favorites"
+                  : "Add to Favorites")
+              }
+              onPress={() => handleOptionPress(option.text)}
+            />
+          );
+        })}
       </ScrollView>
 
       {/* Footer */}

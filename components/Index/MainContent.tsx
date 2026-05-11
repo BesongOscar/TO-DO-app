@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mainContentStyles as styles } from "../../styles/components/Index/MainContent";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import ListHeader from "../ListHeader";
 import SuggestionsBanner from "../SuggestionBanner";
 import AddTaskInput from "../AddTaskInput";
@@ -142,13 +142,17 @@ const MainContent: React.FC<MainContentProps> = ({
             currentList.filterKey === "all" &&
             currentList.name === "Search Results"
               ? "No results found"
-              : `No tasks in "${currentList.name}"`
+              : currentList.filterKey === "planned"
+                ? "No planned tasks"
+                : `No tasks in "${currentList.name}"`
           }
           message={
             currentList.filterKey === "all" &&
             currentList.name === "Search Results"
               ? "Try a different search term"
-              : "Add a task above to get started"
+              : currentList.filterKey === "planned"
+                ? "Set a due date on a task to see it here"
+                : "Add a task above to get started"
           }
         />
       ) : currentList.filterKey === "planned" ? (

@@ -4,10 +4,11 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "src/firebase/config";
+import { Alert } from "react-native";
 import { CustomList } from "../types";
+import { useAuth } from "@/context/AuthContext";
 import {
   firestoreGetCustomLists,
   firestoreSaveCustomLists,
@@ -35,29 +36,26 @@ const CustomListsContext = createContext<CustomListsContextValue | undefined>(
 export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useAuth();
   const [customLists, setCustomLists] = useState<CustomList[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const customListsRef = useRef<CustomList[]>([]);
 
-  // Subscribe to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
+    customListsRef.current = customLists;
+  }, [customLists]);
 
   // Load custom lists from Firestore when user changes
   useEffect(() => {
     const loadLists = async () => {
       setLoading(true);
-      if (!currentUser) {
+      if (!user) {
         setCustomLists([]);
         setLoading(false);
         return;
       }
       try {
-        const loadedLists = await firestoreGetCustomLists(currentUser.uid);
+        const loadedLists = await firestoreGetCustomLists(user.uid);
         setCustomLists(loadedLists);
       } catch (e) {
         console.warn("Failed to load custom lists from Firestore:", e);
@@ -66,20 +64,7 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     };
     loadLists();
-  }, [currentUser?.uid]);
-
-  // Persist lists to Firestore after changes
-  const saveLists = useCallback(
-    async (lists: CustomList[]) => {
-      if (!currentUser) return;
-      try {
-        await firestoreSaveCustomLists(currentUser.uid, lists);
-      } catch (e) {
-        console.warn("Failed to save custom lists to Firestore:", e);
-      }
-    },
-    [currentUser?.uid],
-  );
+  }, [user?.uid]);
 
   // Add a new custom list
   const addList = useCallback(
@@ -92,40 +77,67 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
         taskCount: 0,
         createdAt: Date.now(),
       };
-      setCustomLists((prev) => {
-        const updated = [newList, ...prev];
-        saveLists(updated);
-        return updated;
-      });
+      const previous = customListsRef.current;
+      const updated = [newList, ...previous];
+      setCustomLists(updated);
+      if (user) {
+        firestoreSaveCustomLists(user.uid, updated).catch((e) => {
+          console.warn("Failed to save custom lists to Firestore:", e);
+          setCustomLists(previous);
+          Alert.alert(
+            "Save Failed",
+            "Your changes couldn't be saved. Please check your connection and try again.",
+            [{ text: "OK" }],
+          );
+        });
+      }
       return newList;
     },
-    [saveLists],
+    [user],
   );
 
   // Update existing list properties
   const updateList = useCallback(
     (id: string, updates: Partial<Omit<CustomList, "id">>) => {
-      setCustomLists((prev) => {
-        const updated = prev.map((list) =>
-          list.id === id ? { ...list, ...updates } : list
-        );
-        saveLists(updated);
-        return updated;
-      });
+      const previous = customListsRef.current;
+      const updated = previous.map((list) =>
+        list.id === id ? { ...list, ...updates } : list,
+      );
+      setCustomLists(updated);
+      if (user) {
+        firestoreSaveCustomLists(user.uid, updated).catch((e) => {
+          console.warn("Failed to save custom lists to Firestore:", e);
+          setCustomLists(previous);
+          Alert.alert(
+            "Save Failed",
+            "Your changes couldn't be saved. Please check your connection and try again.",
+            [{ text: "OK" }],
+          );
+        });
+      }
     },
-    [saveLists],
+    [user],
   );
 
   // Remove a list
   const deleteList = useCallback(
     (id: string) => {
-      setCustomLists((prev) => {
-        const updated = prev.filter((list) => list.id !== id);
-        saveLists(updated);
-        return updated;
-      });
+      const previous = customListsRef.current;
+      const updated = previous.filter((list) => list.id !== id);
+      setCustomLists(updated);
+      if (user) {
+        firestoreSaveCustomLists(user.uid, updated).catch((e) => {
+          console.warn("Failed to save custom lists to Firestore:", e);
+          setCustomLists(previous);
+          Alert.alert(
+            "Save Failed",
+            "Your changes couldn't be saved. Please check your connection and try again.",
+            [{ text: "OK" }],
+          );
+        });
+      }
     },
-    [saveLists],
+    [user],
   );
 
   return (

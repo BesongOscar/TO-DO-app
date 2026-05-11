@@ -18,12 +18,16 @@ export interface Task {
   order?: number;
 }
 
-// ─── List ─────────────────────────────────────────────────────────────────────
-export interface ListItem {
+// ─── Shared list fields ───────────────────────────────────────────────────────
+export interface ListFields {
   id: string;
   name: string;
   icon: string;
   color: string;
+}
+
+// ─── List ─────────────────────────────────────────────────────────────────────
+export interface ListItem extends ListFields {
   filterKey: FilterKey;
   count?: number;
 }
@@ -48,11 +52,7 @@ export interface TaskCounts {
 }
 
 // ─── Custom List ──────────────────────────────────────────────────────────────
-export interface CustomList {
-  id: string;
-  name: string;
-  color: string;
-  icon: string;
+export interface CustomList extends ListFields {
   taskCount: number;
   createdAt?: number;
 }

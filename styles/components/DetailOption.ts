@@ -28,13 +28,13 @@ export const detailOptionStyles = StyleSheet.create({
   },
   detailText: {
     fontSize: 14,
-    marginLeft: 20,
+    marginLeft: 15,
     color: "#323130",
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   detailTextActive: {
-    marginLeft: 20,
+    marginLeft:  35,
     color: "#0078d4",
     fontFamily: fontSemi,
     ...androidPoppinsExtras,
@@ -42,8 +42,9 @@ export const detailOptionStyles = StyleSheet.create({
 
   detailSubText: {
     fontSize: 12,
-    color: "#605e5c",
+    color: "#8d8d8c",
     marginTop: 2,
+    marginLeft: 20,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },

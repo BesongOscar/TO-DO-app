@@ -9,7 +9,7 @@ export const headerStyles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 0,
     paddingVertical: 5,
-    height: 60,
+    height: 65,
   },
   headerLeft: {
     flexDirection: "row",
@@ -18,6 +18,7 @@ export const headerStyles = StyleSheet.create({
   menuButton: {
     padding: 8,
     marginRight: 12,
+    marginLeft: 8,
   },
   menuIcon: {
     color: "white",
@@ -25,7 +26,7 @@ export const headerStyles = StyleSheet.create({
   },
   appTitle: {
     color: "white",
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "600",
     fontFamily: fontSemi,
     ...androidPoppinsExtras,

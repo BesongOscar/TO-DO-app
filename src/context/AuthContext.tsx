@@ -56,8 +56,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  /** Forces re-render after `reload()`; Firebase mutates the User in place. */
-  const [, bumpUserRefresh] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
@@ -112,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const u = auth.currentUser;
     if (!u) return;
     await reload(u);
-    bumpUserRefresh((t) => t + 1);
+    setUser(auth.currentUser);
   };
 
   // Google Sign-In: verifies ID token and creates profile if new user

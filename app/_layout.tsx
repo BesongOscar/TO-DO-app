@@ -10,7 +10,7 @@ import { Stack } from "expo-router";
 import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";
 import ErrorBoundary from "../components/ErrorBoundary";
-import { AuthProvider } from "@/src/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {

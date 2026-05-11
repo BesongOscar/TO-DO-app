@@ -1,10 +1,3 @@
-/**
- * ListHeader - Title bar for each task list view
- * 
- * Shows the list name and today's date. Optional "more" button
- * for custom list options (edit/delete).
- */
-
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { listHeaderStyles as styles } from "../styles/components/ListHeader";

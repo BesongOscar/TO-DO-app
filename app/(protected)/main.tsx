@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import Header from "../../components/Index/header";
@@ -74,6 +74,34 @@ const App: React.FC = () => {
       router.setParams({ taskId: "" });
     }
   }, [urlTaskId, tasks]);
+
+  const filteredTasks = useMemo(
+    () =>
+      searchQuery
+        ? tasks.filter((t) =>
+            t.text.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+        : tasks,
+    [tasks, searchQuery],
+  );
+
+  const sortedTasks = useMemo(
+    () =>
+      [...filteredTasks].sort((a, b) => {
+        if (a.completed && !b.completed) return 1;
+        if (!a.completed && b.completed) return -1;
+        if (a.completed && b.completed) return 0;
+
+        if (currentList.filterKey === "planned") {
+          const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+          const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+          return dateA - dateB;
+        }
+
+        return (a.order ?? 0) - (b.order ?? 0);
+      }),
+    [filteredTasks, currentList.filterKey],
+  );
 
   if (loading) {
     return (
@@ -171,39 +199,9 @@ const App: React.FC = () => {
     count: getCount(l),
   }));
   const liveCustomLists: ListItem[] = customLists.map((l) => {
-    const listItem: ListItem = {
-      id: l.id,
-      name: l.name,
-      icon: l.icon,
-      color: l.color,
-      filterKey: "listId",
-    };
-    return {
-      ...listItem,
-      count: getCount(listItem),
-    };
-  });
-
-  const filteredTasks = searchQuery
-    ? tasks.filter((t) =>
-        t.text.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : tasks;
-
-  // Sort tasks: pending by order ascending (or by dueDate for Planned view), completed at bottom
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
-    if (a.completed && !b.completed) return 1;
-    if (!a.completed && b.completed) return -1;
-    if (a.completed && b.completed) return 0;
-
-    // For Planned view, sort by due date (nearest first)
-    if (currentList.filterKey === "planned") {
-      const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
-      const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
-      return dateA - dateB;
-    }
-
-    return (a.order ?? 0) - (b.order ?? 0);
+    const { taskCount, createdAt, ...fields } = l;
+    const listItem: ListItem = { ...fields, filterKey: "listId" };
+    return { ...listItem, count: getCount(listItem) };
   });
 
   const selectedTask =

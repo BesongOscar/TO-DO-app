@@ -29,12 +29,12 @@ const DetailOption: React.FC<DetailOptionProps> = ({
       {/* Icon */}
       <Text style={[isActive ? styles.detailIconActive : styles.detailIcon]}>{icon}</Text>
       {/* Label + Optional current-value subtitle */}
-      <View>
+      <View style={{}}>
         <Text style={[isActive? styles.detailTextActive : styles.detailText]}>
           {text}
         </Text>
         {activeValue ? (
-          <Text style={styles.detailSubText}>{activeValue}</Text>
+          <Text style={[styles.detailSubText]}>{activeValue}</Text>
         ) : null}
       </View>
       {/* chevron indicator when a value is set */}

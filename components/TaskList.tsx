@@ -12,7 +12,7 @@
  * - onReorderTasks is called with the updated order
  */
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -47,6 +47,107 @@ interface TasksListProps {
   onRefresh?: () => void;
 }
 
+interface DraggableTaskItemProps {
+  task: Task;
+  index: number;
+  pendingTasks: Task[];
+  draggingIndex: number | null;
+  hoverIndex: number | null;
+  onReorderTasks: (tasks: Task[]) => void;
+  onToggleTask: (id: string) => void;
+  onSelectTask: (id: string) => void;
+  onEdit: (id: string, text: string) => void;
+  onDelete: (id: string) => void;
+  setDraggingIndex: (i: number | null) => void;
+  setHoverIndex: (i: number | null) => void;
+}
+
+const DraggableTaskItem = React.memo<DraggableTaskItemProps>(({
+  task, index, pendingTasks, draggingIndex, hoverIndex,
+  onReorderTasks, onToggleTask, onSelectTask, onEdit, onDelete,
+  setDraggingIndex, setHoverIndex,
+}) => {
+  const indexRef = useRef(index);
+  indexRef.current = index;
+
+  const pendingTasksRef = useRef(pendingTasks);
+  pendingTasksRef.current = pendingTasks;
+
+  const onReorderTasksRef = useRef(onReorderTasks);
+  onReorderTasksRef.current = onReorderTasks;
+
+  const dragStartY = useRef(0);
+  const dragHoverIndex = useRef<number | null>(null);
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+
+        onPanResponderGrant: (evt) => {
+          dragStartY.current = evt.nativeEvent.pageY;
+          const idx = indexRef.current;
+          dragHoverIndex.current = idx;
+          setDraggingIndex(idx);
+          setHoverIndex(idx);
+        },
+
+        onPanResponderMove: (evt) => {
+          const dy = evt.nativeEvent.pageY - dragStartY.current;
+          const rawTarget = indexRef.current + Math.round(dy / ITEM_HEIGHT);
+          const clampedTarget = Math.max(
+            0,
+            Math.min(pendingTasksRef.current.length - 1, rawTarget),
+          );
+          dragHoverIndex.current = clampedTarget;
+          setHoverIndex(clampedTarget);
+        },
+
+        onPanResponderRelease: () => {
+          const di = indexRef.current;
+          const hi = dragHoverIndex.current;
+          if (hi !== null && di !== hi) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            const reordered = [...pendingTasksRef.current];
+            const [moved] = reordered.splice(di, 1);
+            reordered.splice(hi, 0, moved);
+            onReorderTasksRef.current(reordered);
+          }
+          dragHoverIndex.current = null;
+          setDraggingIndex(null);
+          setHoverIndex(null);
+        },
+
+        onPanResponderTerminate: () => {
+          dragHoverIndex.current = null;
+          setDraggingIndex(null);
+          setHoverIndex(null);
+        },
+      }),
+    [], // created once per component instance
+  );
+
+  const isActive = draggingIndex === index;
+  const isHoverTarget = hoverIndex === index && draggingIndex !== index;
+
+  return (
+    <View
+      style={isHoverTarget ? { borderTopWidth: 2, borderTopColor: "#0078d4" } : undefined}
+    >
+      <TaskItem
+        task={task}
+        onToggle={() => onToggleTask(task.id)}
+        onSelect={() => onSelectTask(task.id)}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        isActive={isActive}
+        gripPanHandlers={panResponder.panHandlers}
+      />
+    </View>
+  );
+});
+
 const TasksList: React.FC<TasksListProps> = ({
   pendingTasks,
   completedTasks,
@@ -60,58 +161,6 @@ const TasksList: React.FC<TasksListProps> = ({
 }) => {
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const dragStartY = useRef(0);
-  const currentOrder = useRef<Task[]>(pendingTasks);
-
-  // Keep ref in sync with prop
-  currentOrder.current = pendingTasks;
-
-  /**
-   * Creates a PanResponder for the grip icon of task at `index`.
-   * Tracks vertical drag offset and maps it to a target insertion index.
-   */
-  const createPanResponder = (index: number) =>
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-
-      onPanResponderGrant: (evt) => {
-        dragStartY.current = evt.nativeEvent.pageY;
-        setDraggingIndex(index);
-        setHoverIndex(index);
-      },
-
-      onPanResponderMove: (evt) => {
-        const dy = evt.nativeEvent.pageY - dragStartY.current;
-        const rawTarget = index + Math.round(dy / ITEM_HEIGHT);
-        const clampedTarget = Math.max(
-          0,
-          Math.min(currentOrder.current.length - 1, rawTarget)
-        );
-        setHoverIndex(clampedTarget);
-      },
-
-      onPanResponderRelease: () => {
-        if (
-          draggingIndex !== null &&
-          hoverIndex !== null &&
-          draggingIndex !== hoverIndex
-        ) {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          const reordered = [...currentOrder.current];
-          const [moved] = reordered.splice(draggingIndex, 1);
-          reordered.splice(hoverIndex, 0, moved);
-          onReorderTasks(reordered);
-        }
-        setDraggingIndex(null);
-        setHoverIndex(null);
-      },
-
-      onPanResponderTerminate: () => {
-        setDraggingIndex(null);
-        setHoverIndex(null);
-      },
-    });
 
   return (
     <ScrollView
@@ -131,28 +180,23 @@ const TasksList: React.FC<TasksListProps> = ({
       }
     >
       {/* Pending tasks — draggable */}
-      {pendingTasks.map((task, index) => {
-        const panResponder = createPanResponder(index);
-        const isActive = draggingIndex === index;
-        const isHoverTarget = hoverIndex === index && draggingIndex !== index;
-
-        return (
-          <View
-            key={task.id}
-            style={isHoverTarget ? { borderTopWidth: 2, borderTopColor: "#0078d4" } : undefined}
-          >
-            <TaskItem
-              task={task}
-              onToggle={() => onToggleTask(task.id)}
-              onSelect={() => onSelectTask(task.id)}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              isActive={isActive}
-              gripPanHandlers={panResponder.panHandlers}
-            />
-          </View>
-        );
-      })}
+      {pendingTasks.map((task, index) => (
+        <DraggableTaskItem
+          key={task.id}
+          task={task}
+          index={index}
+          pendingTasks={pendingTasks}
+          draggingIndex={draggingIndex}
+          hoverIndex={hoverIndex}
+          onReorderTasks={onReorderTasks}
+          onToggleTask={onToggleTask}
+          onSelectTask={onSelectTask}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          setDraggingIndex={setDraggingIndex}
+          setHoverIndex={setHoverIndex}
+        />
+      ))}
 
       {/* Completed tasks — static */}
       {completedTasks.length > 0 && (

@@ -70,14 +70,17 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
       options.push({ label: "At due time", value: "atDueTime", description: `${dueDate} at ${dueTime}` });
     }
 
-    const target = getTargetDateTime();
-
+    if (dueDate) {
+      const target = getTargetDateTime();
+      options.push(
+        { label: "15 minutes before", value: "15min", description: formatRelativeTime(new Date(target.getTime() - 15 * 60000)) },
+        { label: "30 minutes before", value: "30min", description: formatRelativeTime(new Date(target.getTime() - 30 * 60000)) },
+        { label: "1 hour before", value: "1hour", description: formatRelativeTime(new Date(target.getTime() - 60 * 60000)) },
+        { label: "2 hours before", value: "2hours", description: formatRelativeTime(new Date(target.getTime() - 120 * 60000)) },
+        { label: "1 day before", value: "1day", description: formatRelativeTime(new Date(target.getTime() - 24 * 60 * 60000)) },
+      );
+    }
     options.push(
-      { label: "15 minutes before", value: "15min", description: formatRelativeTime(new Date(target.getTime() - 15 * 60000)) },
-      { label: "30 minutes before", value: "30min", description: formatRelativeTime(new Date(target.getTime() - 30 * 60000)) },
-      { label: "1 hour before", value: "1hour", description: formatRelativeTime(new Date(target.getTime() - 60 * 60000)) },
-      { label: "2 hours before", value: "2hours", description: formatRelativeTime(new Date(target.getTime() - 120 * 60000)) },
-      { label: "1 day before", value: "1day", description: formatRelativeTime(new Date(target.getTime() - 24 * 60 * 60000)) },
       { label: "Custom time", value: "custom" },
       { label: "No Reminder", value: "" },
     );
@@ -189,6 +192,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
         customHour,
         customMinute,
       );
+      if (customDate <= now) customDate.setDate(customDate.getDate() + 1);
       onSelect(customDate.toISOString());
     } else {
       const reminderTime = getReminderTime(selectedOption);
