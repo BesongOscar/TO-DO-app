@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const taskListStyles = StyleSheet.create({
+export const createTaskListStyles = (theme: Theme) => StyleSheet.create({
   tasksContainer: {
     paddingHorizontal: 15,
     paddingBottom: 40,
@@ -17,7 +18,7 @@ export const taskListStyles = StyleSheet.create({
   sectionHeaderText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#444",
+    color: theme.textSecondary,
     fontFamily: fontSemi,
     ...androidPoppinsExtras,
   },
@@ -30,11 +31,11 @@ export const taskListStyles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 24,
     paddingVertical: 12,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.background,
   },
   completedTitle: {
     fontSize: 14,
-    color: "#605e5c",
+    color: theme.textSecondary,
     fontWeight: "600",
     fontFamily: fontSemi,
     ...androidPoppinsExtras,

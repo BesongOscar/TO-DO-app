@@ -19,7 +19,8 @@ import {
 } from "react-native";
 import TimePicker from "../TimePicker";
 import { requestNotificationPermissions } from "../../src/notifications/notificationService";
-import { reminderModalStyles as styles } from "../../styles/modals/reminderModal";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createReminderModalStyles } from "../../styles/components/Modals/ReminderModal";
 
 interface ReminderOption {
   label: string;
@@ -44,6 +45,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   onSelect,
   onClose,
 }) => {
+  const styles = useThemeStyles(createReminderModalStyles);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [customHour, setCustomHour] = useState(9);

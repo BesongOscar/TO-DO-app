@@ -11,6 +11,7 @@ import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -21,6 +22,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import { configureGoogleSignIn } from "../src/auth/googleAuth";
 import { useNotifications } from "../src/notifications/useNotifications";
+
 
 // Configure Google Sign-In once at app startup
 configureGoogleSignIn();
@@ -49,19 +51,21 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ErrorBoundary>
-        <AuthProvider>
-          <CustomListsProvider>
-            <TasksProvider>
-              <NotificationsInitializer />
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(protected)" />
-              </Stack>
-            </TasksProvider>
-          </CustomListsProvider>
-        </AuthProvider>
-      </ErrorBoundary>
+      <ThemeProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <CustomListsProvider>
+              <TasksProvider>
+                <NotificationsInitializer />
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen name="(protected)" />
+                </Stack>
+              </TasksProvider>
+            </CustomListsProvider>
+          </AuthProvider>
+        </ErrorBoundary>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }

@@ -75,7 +75,7 @@ function buildNotificationContent(
     data: { taskId: task.id, type: "task_reminder" },
     sound: "default",
     ...(Platform.OS === "ios" && {
-      interruptionLevel: "timeSensitive" as any,
+      interruptionLevel: "timeSensitive" as const,
     }),
   };
 }

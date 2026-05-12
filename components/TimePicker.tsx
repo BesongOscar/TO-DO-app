@@ -7,10 +7,13 @@
  */
 
 import React from "react";
-import { Platform, View, Text, StyleSheet } from "react-native";
+import { Platform, View } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useTheme } from "../context/ThemeContext";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createTimePickerStyles } from "../styles/components/TimePicker";
 
 interface TimePickerProps {
   value: Date;
@@ -18,6 +21,8 @@ interface TimePickerProps {
 }
 
 const TimePicker: React.FC<TimePickerProps> = ({ value, onChange }) => {
+  const { theme } = useTheme();
+  const styles = useThemeStyles(createTimePickerStyles);
   const handleChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
     if (selectedDate) {
       onChange(selectedDate.getHours(), selectedDate.getMinutes());
@@ -45,20 +50,9 @@ const TimePicker: React.FC<TimePickerProps> = ({ value, onChange }) => {
       mode="time"
       display="default"
       onChange={handleChange}
-      accentColor="#0078d4"
+      accentColor={theme.primary}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  iosContainer: {
-    alignItems: "center",
-    marginVertical: 8,
-  },
-  iosPicker: {
-    width: 200,
-    height: 180,
-  },
-});
 
 export default TimePicker;

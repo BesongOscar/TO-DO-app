@@ -11,8 +11,10 @@ import {
   Text,
   TouchableOpacity,
   Modal,
+  StyleSheet,
 } from "react-native";
-import { CalendarPickerModalStyles as styles } from "../../styles/modals/calendarPickerModal";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createCalendarPickerModalStyles } from "../../styles/components/Modals/CalendarPickerModal";
 import TimePicker from "../TimePicker";
 
 interface CalendarDay {
@@ -55,6 +57,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
   onSelect,
   onClose,
 }) => {
+  const styles = useThemeStyles(createCalendarPickerModalStyles);
   const today = new Date();
 
   // `new Date(currentDate)` — now uses parseDateString so

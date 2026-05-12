@@ -7,10 +7,11 @@
  * Handles task filtering, drag-and-drop reorder, and empty states.
  */
 
-import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { mainContentStyles as styles } from "../../styles/components/Index/MainContent";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createMainContentStyles } from "../../styles/components/Index/MainContent";
 import { useAuth } from "@/context/AuthContext";
 import ListHeader from "../ListHeader";
 import SuggestionsBanner from "../SuggestionBanner";
@@ -67,12 +68,14 @@ const MainContent: React.FC<MainContentProps> = ({
   onAddTask,
   onToggleTask,
   onSelectTask,
+  onStarToggle,
   onEdit,
   onDelete,
   onReorderTasks,
   refreshing = false,
   onRefresh,
 }) => {
+  const styles = useThemeStyles(createMainContentStyles);
   const { user } = useAuth();
   const [showBanner, setShowBanner] = useState<boolean>(true);
 
@@ -104,9 +107,9 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   };
 
-  const filteredTasks = filterTasks(tasks, currentList);
-  const pendingTasks = filteredTasks.filter((t) => !t.completed);
-  const completedTasks = filteredTasks.filter((t) => t.completed);
+  const filteredTasks = useMemo(() => filterTasks(tasks, currentList), [tasks, currentList]);
+  const pendingTasks = useMemo(() => filteredTasks.filter((t) => !t.completed), [filteredTasks]);
+  const completedTasks = useMemo(() => filteredTasks.filter((t) => t.completed), [filteredTasks]);
 
   const hour = new Date().getHours();
   const greeting =
@@ -158,6 +161,7 @@ const MainContent: React.FC<MainContentProps> = ({
           tasks={filteredTasks}
           onToggleTask={onToggleTask}
           onSelectTask={onSelectTask}
+          onStarToggle={onStarToggle}
           onEdit={onEdit}
           onDelete={onDelete}
           refreshing={refreshing}

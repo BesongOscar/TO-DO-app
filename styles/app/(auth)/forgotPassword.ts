@@ -1,0 +1,100 @@
+import { StyleSheet } from "react-native";
+import type { Theme } from "../../theme";
+import {
+  fontReg,
+  fontSemi,
+  fontBold,
+  androidPoppinsExtras,
+} from "../../common";
+
+export const createForgotPasswordStyles = (theme: Theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    alignItems: "center",
+    backgroundColor: theme.background,
+  },
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+    position: "relative",
+  },
+  iconCircle: {
+    backgroundColor: theme.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
+  },
+  image: {
+    height: 200,
+    width: 200,
+  },
+  formContainer: {
+    width: "100%",
+    marginBottom: 10,
+  },
+  textInputContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.surface,
+    borderRadius: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: theme.border,
+  },
+  input: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 15,
+    color: theme.text,
+    paddingVertical: 0,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  errorText: {
+    color: theme.error,
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 16,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  title: {
+    fontSize: 27,
+    fontWeight: "bold",
+    color: theme.text,
+    marginBottom: 8,
+    fontFamily: fontBold,
+    ...androidPoppinsExtras,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: theme.textSecondary,
+    marginBottom: 20,
+    textAlign: "center",
+    paddingHorizontal: 30,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  buttonContainer: {
+    width: "100%",
+    backgroundColor: theme.primary,
+    borderRadius: 50,
+    paddingVertical: 15,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
+  },
+});

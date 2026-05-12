@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 import { fontReg, androidPoppinsExtras } from "../../common";
+import type { Theme } from "../../theme";
 
-export const authButtonStyles = StyleSheet.create({
- button: {
+export const createAuthButtonStyles = (_theme: Theme) => StyleSheet.create({
+  button: {
     padding: 20,
     borderRadius: 50,
     width: "100%",

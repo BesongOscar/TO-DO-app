@@ -7,7 +7,8 @@
 
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { detailOptionStyles as styles } from "../styles/components/DetailOption";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createDetailOptionStyles } from "../styles/components/DetailOption";
 
 interface DetailOptionProps {
   icon: string;
@@ -24,6 +25,7 @@ const DetailOption: React.FC<DetailOptionProps> = ({
   isActive = false,
   onPress,
 }) => {
+  const styles = useThemeStyles(createDetailOptionStyles);
   return (
     <TouchableOpacity style={styles.detailOption} onPress={onPress}>
       {/* Icon */}

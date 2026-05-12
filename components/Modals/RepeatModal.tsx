@@ -15,7 +15,8 @@ import {
   ScrollView,
 } from "react-native";
 import { RepeatType } from "../../types";
-import { RepeatModalStyles as styles } from "../../styles/modals/repeatModal";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createRepeatModalStyles } from "../../styles/components/Modals/RepeatModal";
 
 interface RepeatOption {
   label: string;
@@ -63,6 +64,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   onSelect,
   onClose,
 }) => {
+  const styles = useThemeStyles(createRepeatModalStyles);
   const [selectedRepeat, setSelectedRepeat] = useState<RepeatType>(
     currentRepeat || "none",
   );

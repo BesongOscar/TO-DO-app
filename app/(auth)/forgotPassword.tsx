@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { forgotPasswordStyles as styles } from "styles/(auth)/forgotPassword";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createForgotPasswordStyles } from "@/styles/app/(auth)/forgotPassword";
 import { Ionicons } from "@expo/vector-icons";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -27,6 +29,8 @@ export default function ForgotPassword() {
   const router = useRouter();
   const { resetPassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const styles = useThemeStyles(createForgotPasswordStyles);
+  const { theme } = useTheme();
 
   const handleResetPassword = async (email: string) => {
     try {
@@ -42,8 +46,8 @@ export default function ForgotPassword() {
           },
         ],
       );
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to send reset email");
+    } catch (error: unknown) {
+      Alert.alert("Error", error instanceof Error ? error.message : "Failed to send reset email");
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +89,11 @@ export default function ForgotPassword() {
         }) => (
           <View style={styles.formContainer}>
             <View style={styles.textInputContainer}>
-              <Ionicons name="mail" size={20} color={"#999"} />
+              <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
                 placeholder="Email"
                 style={styles.input}
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -101,7 +105,7 @@ export default function ForgotPassword() {
               <Text style={styles.errorText}>{errors.email}</Text>
             )}
             {isLoading ? (
-              <ActivityIndicator size="large" color="#0078d4" />
+              <ActivityIndicator size="large" color={theme.primary} />
             ) : (
               <TouchableOpacity
                 style={styles.buttonContainer}

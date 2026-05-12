@@ -8,8 +8,9 @@
 import React from "react";
 import { View, Text } from "react-native";
 import TaskItem from "./TaskItem";
-import { taskListStyles as styles } from "../styles/components/TaskList";
+import { useThemeStyles } from "../hooks/useThemeStyles";
 import { Task } from "../types";
+import { createCompletedSectionStyles } from "../styles/components/CompletedSection";
 
 interface CompletedSectionProps {
   completedTasks: Task[];
@@ -26,6 +27,7 @@ const CompletedSection: React.FC<CompletedSectionProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const styles = useThemeStyles(createCompletedSectionStyles);
   if (completedTasks.length === 0) return null;
 
   return (

@@ -1,12 +1,58 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const customListModalStyles = StyleSheet.create({
+export const createModalCommonStyles = (theme: Theme) => StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: theme.overlay,
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: theme.surface,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.surfaceSecondary,
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: theme.text,
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
+  },
+  modalCancelText: {
+    fontSize: 17,
+    color: theme.textSecondary,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  modalSaveText: {
+    fontSize: 17,
+    color: theme.primary,
+    fontWeight: "600",
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
+  },
+  modalBody: {
+    padding: 16,
+  },
+});
+
+export const createCustomListModalStyles = (theme: Theme) => StyleSheet.create({
   listPreview: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.background,
     borderRadius: 12,
     marginBottom: 20,
   },
@@ -17,14 +63,14 @@ export const customListModalStyles = StyleSheet.create({
   listPreviewName: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#323130",
+    color: theme.text,
     fontFamily: fontSemi,
     ...androidPoppinsExtras,
   },
   inputLabel: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#605e5c",
+    color: theme.textSecondary,
     marginBottom: 8,
     textTransform: "uppercase",
     fontFamily: fontSemi,
@@ -32,11 +78,11 @@ export const customListModalStyles = StyleSheet.create({
   },
   listNameInput: {
     borderWidth: 1,
-    borderColor: "#e1dfdd",
+    borderColor: theme.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: "#323130",
+    color: theme.text,
     marginBottom: 20,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
@@ -62,7 +108,7 @@ export const customListModalStyles = StyleSheet.create({
     fontSize: 24,
   },
   deleteListButton: {
-    backgroundColor: "#d13438",
+    backgroundColor: theme.error,
     padding: 16,
     borderRadius: 8,
     alignItems: "center",
@@ -70,7 +116,7 @@ export const customListModalStyles = StyleSheet.create({
     marginBottom: 20,
   },
   deleteListText: {
-    color: "#ffffff",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "600",
     fontFamily: fontSemi,

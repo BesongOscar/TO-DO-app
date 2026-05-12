@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const emptyStateStyles = StyleSheet.create({
+export const createEmptyStateStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
@@ -19,7 +20,7 @@ export const emptyStateStyles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#323130",
+    color: theme.text,
     marginBottom: 8,
     marginTop: 20,
     textAlign: "center",
@@ -28,7 +29,7 @@ export const emptyStateStyles = StyleSheet.create({
   },
   message: {
     fontSize: 14,
-    color: "#605e5c",
+    color: theme.textSecondary,
     textAlign: "center",
     fontFamily: fontReg,
     ...androidPoppinsExtras,

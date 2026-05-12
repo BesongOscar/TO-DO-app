@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
-import { fontReg, fontSemi, androidPoppinsExtras } from "../../common";
+import { fontSemi, androidPoppinsExtras } from "../../common";
+import type { Theme } from "../../theme";
 
-export const headerStyles = StyleSheet.create({
+export const createHeaderStyles = (theme: Theme) => StyleSheet.create({
   topHeader: {
-    backgroundColor: "#0078d4",
+    backgroundColor: theme.headerBackground,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

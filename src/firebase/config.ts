@@ -35,7 +35,7 @@ const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);   // Initialize Firebase app with the provided configuration, throws error if any required config value is missing
 export const db = getFirestore(app);  // Initialize Firestore database instance for use in other modules
-export const auth = initializeAuth(app, {  // Initialize Firebase Authentication with React Native persistence using AsyncStorage, so that user stays logged in across app restarts
-  persistence: getReactNativePersistence(AsyncStorage),
-} as any);  // Type assertion to bypass TypeScript error
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage) as import("firebase/auth").Persistence,
+});
 export const storage = getStorage(app); // Initialize Firebase Storage for file uploads

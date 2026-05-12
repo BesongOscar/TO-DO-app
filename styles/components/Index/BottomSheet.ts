@@ -1,16 +1,21 @@
 import { StyleSheet, Dimensions } from "react-native";
+import type { Theme } from "../../theme";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const SHEET_HEIGHT = Math.min(400, SCREEN_HEIGHT * 0.6);
+export const SHEET_HEIGHT = Math.min(400, SCREEN_HEIGHT * 0.6);
 
-export const bottomSheetStyles = StyleSheet.create({
+export const createBottomSheetStyles = (theme: Theme) => StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 100,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: theme.overlay,
   },
   sheet: {
     position: "absolute",
@@ -18,7 +23,7 @@ export const bottomSheetStyles = StyleSheet.create({
     left: 0,
     right: 0,
     height: SHEET_HEIGHT,
-    backgroundColor: "#faf9f8",
+    backgroundColor: theme.surfaceSecondary,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     shadowColor: "#000",
@@ -34,7 +39,7 @@ export const bottomSheetStyles = StyleSheet.create({
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: "#d1d0cd",
+    backgroundColor: theme.border,
     borderRadius: 2,
   },
   content: {

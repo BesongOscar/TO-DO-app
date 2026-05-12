@@ -6,9 +6,11 @@
  */
 
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { headerStyles as styles } from "../../styles/components/Index/header";
+import { fontReg, fontSemi, androidPoppinsExtras } from "@/styles/common";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createHeaderStyles } from "../../styles/components/Index/header";
 import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
@@ -24,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({
   onProfilePress,
   isReorderMode = false,
 }) => {
+  const styles = useThemeStyles(createHeaderStyles);
   const { userProfile} = useAuth();
   return (
     <View style={styles.topHeader}>

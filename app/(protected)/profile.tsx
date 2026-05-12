@@ -1,11 +1,3 @@
-/**
- * Profile - User profile and settings screen
- * 
- * Displays user avatar, name editing, and account actions
- * (logout, photo upload via expo-image-picker).
- * Replaces the old settings.tsx route.
- */
-
 import {
   View,
   Text,
@@ -18,14 +10,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router as expoRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
-import { settingsStyles } from "../../styles/app/settings";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useEffect } from "react";
+import { createProfileStyles } from "../../styles/app/(protected)/profile";
 
 export default function Profile() {
   const insets = useSafeAreaInsets();
   const { user, userProfile, logout, updateUserProfile, uploadProfilePhoto } =
     useAuth();
+  const { theme, themeMode, setThemeMode } = useTheme();
+  const styles = useThemeStyles(createProfileStyles);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(userProfile?.name || "");
   const [uploading, setUploading] = useState(false);
@@ -46,8 +42,8 @@ export default function Profile() {
           try {
             await logout();
             expoRouter.dismissTo("/login");
-          } catch (error: any) {
-            Alert.alert("Error", error.message || "Failed to logout");
+          } catch (error: unknown) {
+            Alert.alert("Error", error instanceof Error ? error.message : "Failed to logout");
           }
         },
       },
@@ -78,8 +74,8 @@ export default function Profile() {
         setUploading(true);
         await uploadProfilePhoto(result.assets[0].uri);
         Alert.alert("Success", "Profile photo updated!");
-      } catch (error: any) {
-        Alert.alert("Error", error.message || "Failed to upload photo");
+      } catch (error: unknown) {
+        Alert.alert("Error", error instanceof Error ? error.message : "Failed to upload photo");
       } finally {
         setUploading(false);
       }
@@ -96,8 +92,8 @@ export default function Profile() {
       await updateUserProfile({ name: editedName.trim() });
       setIsEditingName(false);
       Alert.alert("Success", "Name updated!");
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update name");
+    } catch (error: unknown) {
+      Alert.alert("Error", error instanceof Error ? error.message : "Failed to update name");
       console.error("Failed to update name:", error);
     }
   };
@@ -106,109 +102,147 @@ export default function Profile() {
     return null;
   }
 
+  const themeOptions: { mode: 'light' | 'dark' | 'system'; icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
+    { mode: 'light', icon: 'sunny', label: 'Light' },
+    { mode: 'dark', icon: 'moon', label: 'Dark' },
+    { mode: 'system', icon: 'settings-outline', label: 'System' },
+  ] as const;
+
   return (
-    <View style={[settingsStyles.container, { paddingBottom: insets.bottom }]}>
-      <View style={{ backgroundColor: "#0078d4", paddingTop: insets.top }}>
-        <View style={settingsStyles.header}>
-          <Text style={settingsStyles.headerTitle}>Profile</Text>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={{ paddingTop: insets.top }}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Profile</Text>
         </View>
 
-        <View style={settingsStyles.profileSection}>
+        <View style={styles.profileSection}>
           <TouchableOpacity
-            style={settingsStyles.avatarContainer}
+            style={styles.avatarContainer}
             onPress={handlePickImage}
             disabled={uploading}
           >
             {userProfile?.photoURL ? (
               <Image
                 source={{ uri: userProfile.photoURL }}
-                style={settingsStyles.avatar}
+                style={styles.avatar}
               />
             ) : (
-              <View style={settingsStyles.avatarPlaceholder}>
+              <View style={styles.avatarPlaceholder}>
                 <Ionicons name="person" size={40} color="#fff" />
               </View>
             )}
-            <View style={settingsStyles.editAvatarBadge}>
+            <View style={styles.editAvatarBadge}>
               <Ionicons name="camera" size={16} color="#fff" />
             </View>
           </TouchableOpacity>
           {uploading && (
-            <Text style={settingsStyles.uploadingText}>Uploading...</Text>
+            <Text style={styles.uploadingText}>Uploading...</Text>
           )}
         </View>
       </View>
 
-      <View style={settingsStyles.section}>
-        <Text style={settingsStyles.sectionTitle}>Account</Text>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Theme</Text>
+        <View style={styles.themeRow}>
+          {themeOptions.map(({ mode, icon, label }) => (
+            <TouchableOpacity
+              key={mode}
+              style={[
+                styles.themeOption,
+                themeMode === mode && styles.themeOptionActive,
+              ]}
+              onPress={() => setThemeMode(mode)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={icon}
+                size={20}
+                color={themeMode === mode ? theme.primary : theme.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  themeMode === mode && styles.themeOptionTextActive,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Account</Text>
 
         {isEditingName ? (
-          <View style={settingsStyles.editNameContainer}>
+          <View style={styles.editNameContainer}>
             <TextInput
-              style={settingsStyles.editNameInput}
+              style={styles.editNameInput}
               value={editedName}
               onChangeText={setEditedName}
               placeholder="Enter your name"
+              placeholderTextColor={theme.placeholderTextColor}
               autoFocus
             />
             <TouchableOpacity
               onPress={handleSaveName}
-              style={settingsStyles.saveButton}
+              style={styles.saveButton}
             >
-              <Ionicons name="checkmark" size={24} color="#0078d4" />
+              <Ionicons name="checkmark" size={24} color={theme.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setIsEditingName(false)}
-              style={settingsStyles.cancelButton}
+              style={styles.cancelButton}
             >
-              <Ionicons name="close" size={24} color="#999" />
+              <Ionicons name="close" size={24} color={theme.textMuted} />
             </TouchableOpacity>
           </View>
         ) : (
           <TouchableOpacity
-            style={settingsStyles.infoRow}
+            style={styles.infoRow}
             onPress={() => {
               setEditedName(userProfile?.name || "");
               setIsEditingName(true);
             }}
           >
-            <Ionicons name="person" size={24} color="#0078d4" />
-            <View style={settingsStyles.infoText}>
-              <Text style={settingsStyles.infoLabel}>Name</Text>
-              <Text style={settingsStyles.infoValue}>
+            <Ionicons name="person" size={24} color={theme.primary} />
+            <View style={styles.infoText}>
+              <Text style={styles.infoLabel}>Name</Text>
+              <Text style={styles.infoValue}>
                 {userProfile?.name || "Add name"}
               </Text>
             </View>
-            <Ionicons name="pencil" size={20} color="#999" />
+            <Ionicons name="pencil" size={20} color={theme.textMuted} />
           </TouchableOpacity>
         )}
 
-        <View style={settingsStyles.infoRow}>
-          <Ionicons name="mail" size={24} color="#0078d4" />
-          <View style={settingsStyles.infoText}>
-            <Text style={settingsStyles.infoLabel}>Email</Text>
-            <Text style={settingsStyles.infoValue}>
+        <View style={styles.infoRow}>
+          <Ionicons name="mail" size={24} color={theme.primary} />
+          <View style={styles.infoText}>
+            <Text style={styles.infoLabel}>Email</Text>
+            <Text style={styles.infoValue}>
               {user.email || "Not logged in"}
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={settingsStyles.section}>
-        <Text style={settingsStyles.sectionTitle}>Actions</Text>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Actions</Text>
 
         <TouchableOpacity
-          style={settingsStyles.menuItem}
+          style={styles.menuItem}
           onPress={handleLogout}
         >
-          <Ionicons name="log-out" size={24} color="#d32f2f" />
-          <Text style={settingsStyles.menuText}>Logout</Text>
-          <Ionicons name="chevron-forward" size={24} color="#999" />
+          <Ionicons name="log-out" size={24} color={theme.error} />
+          <Text style={styles.menuText}>Logout</Text>
+          <Ionicons name="chevron-forward" size={24} color={theme.textMuted} />
         </TouchableOpacity>
       </View>
 
-      <View style={settingsStyles.footer}>
-        <Text style={settingsStyles.footerText}>Todo App v1.0.0</Text>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Todo App v1.0.0</Text>
       </View>
     </View>
   );

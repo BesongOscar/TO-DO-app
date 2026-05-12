@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Animated,
   TouchableWithoutFeedback,
-  Dimensions,
   PanResponder,
   Keyboard,
+  StyleSheet,
 } from "react-native";
-import { bottomSheetStyles } from "../../styles/components/Index/BottomSheet";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createBottomSheetStyles, SHEET_HEIGHT } from "../../styles/components/Index/BottomSheet";
 
 interface BottomSheetProps {
   visible: boolean;
@@ -15,10 +16,9 @@ interface BottomSheetProps {
   children: React.ReactNode;
 }
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const SHEET_HEIGHT = Math.min(400, SCREEN_HEIGHT * 0.6);
-
 const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children }) => {
+  const styles = useThemeStyles(createBottomSheetStyles);
+  const [mounted, setMounted] = useState(false);
   const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
@@ -47,6 +47,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children })
 
   useEffect(() => {
     if (visible) {
+      setMounted(true);
       Keyboard.dismiss();
       Animated.parallel([
         Animated.spring(translateY, {
@@ -61,7 +62,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children })
           useNativeDriver: true,
         }),
       ]).start();
-    } else {
+    } else if (mounted) {
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: SHEET_HEIGHT,
@@ -73,9 +74,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children })
           duration: 200,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]).start(() => setMounted(false));
     }
-  }, [visible, translateY, backdropOpacity]);
+  }, [visible, translateY, backdropOpacity, mounted]);
 
   const closeSheet = () => {
     Animated.parallel([
@@ -89,26 +90,29 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, onClose, children })
         duration: 200,
         useNativeDriver: true,
       }),
-    ]).start(() => onClose());
+    ]).start(() => {
+      setMounted(false);
+      onClose();
+    });
   };
 
-  if (!visible) return null;
+  if (!mounted) return null;
 
   return (
-    <View style={bottomSheetStyles.container}>
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={closeSheet}>
-        <Animated.View style={[bottomSheetStyles.backdrop, { opacity: backdropOpacity }]} />
+        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
       </TouchableWithoutFeedback>
       <Animated.View
         style={[
-          bottomSheetStyles.sheet,
+          styles.sheet,
           { transform: [{ translateY }] },
         ]}
       >
-        <View {...panResponder.panHandlers} style={bottomSheetStyles.handleContainer}>
-          <View style={bottomSheetStyles.handle} />
+        <View {...panResponder.panHandlers} style={styles.handleContainer}>
+          <View style={styles.handle} />
         </View>
-        <View style={bottomSheetStyles.content}>{children}</View>
+        <View style={styles.content}>{children}</View>
       </Animated.View>
     </View>
   );

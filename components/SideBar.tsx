@@ -7,7 +7,8 @@
 
 import React from "react";
 import { View, SectionList, TouchableOpacity, Text } from "react-native";
-import { sideBarStyles as styles } from "../styles/components/SideBar";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createSideBarStyles } from "../styles/components/SideBar";
 import { SidebarItem } from "./SideBarItem";
 import { ListItem } from "../types";
 
@@ -33,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onAddCustomList,
   onEditList,
 }) => {
+  const styles = useThemeStyles(createSideBarStyles);
   const sections: SidebarSection[] = [
     { key: "preset", data: sidebarLists },
     { key: "custom", data: customLists },

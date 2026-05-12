@@ -1,14 +1,14 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const sideBarStyles = StyleSheet.create({
-sidebar: {
+export const createSideBarStyles = (theme: Theme) => StyleSheet.create({
+  sidebar: {
     flex: 1,
-    backgroundColor: "#f3f2f1",
+    backgroundColor: theme.surfaceSecondary,
     borderRightWidth: 1,
-    borderRightColor: "#e1e5e9",
+    borderRightColor: theme.border,
     borderRadius: 8,
-
   },
   sidebarList: {
     flex: 1,
@@ -44,19 +44,19 @@ sidebar: {
   },
   sidebarIconText: {
     fontSize: 16,
-    color: "#323130",
+    color: theme.text,
   },
   sidebarItemText: {
     fontSize: 14,
-    color: "#323130",
+    color: theme.text,
     flex: 1,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   sidebarCount: {
     fontSize: 12,
-    color: "#605e5c",
-    backgroundColor: "#e1e5e9",
+    color: theme.textSecondary,
+    backgroundColor: theme.border,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -68,7 +68,7 @@ sidebar: {
   listsSection: {
     marginTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "#e1e5e9",
+    borderTopColor: theme.border,
     paddingTop: 8,
   },
   listsSectionHeader: {
@@ -81,7 +81,7 @@ sidebar: {
   listsSectionTitle: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#605e5c",
+    color: theme.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     fontFamily: fontSemi,
@@ -89,7 +89,7 @@ sidebar: {
   },
   addListButton: {
     fontSize: 22,
-    color: "#0078d4",
+    color: theme.primary,
     fontWeight: "300",
     lineHeight: 24,
   },

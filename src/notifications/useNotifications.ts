@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import {
@@ -27,7 +28,9 @@ export function useNotifications() {
     let isMounted = true;
 
     const init = async () => {
-      await setupNotificationChannel();
+      if (Platform.OS === "android") {
+        await setupNotificationChannel();
+      }
       const granted = await requestNotificationPermissions();
       if (isMounted) setNotificationPermission(granted);
 

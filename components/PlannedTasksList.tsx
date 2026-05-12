@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, ScrollView, RefreshControl } from "react-native";
 import TaskItem from "./TaskItem";
-import { plannedTasksListStyles } from "../styles/components/PlannedTasksList";
+import { useTheme } from "../context/ThemeContext";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createPlannedTasksListStyles } from "../styles/components/PlannedTasksList";
 import { Task } from "../types";
 
 interface PlannedTasksListProps {
   tasks: Task[];
   onToggleTask: (taskId: string) => void;
   onSelectTask: (taskId: string) => void;
+  onStarToggle?: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
   refreshing?: boolean;
@@ -137,33 +140,35 @@ const PlannedTasksList: React.FC<PlannedTasksListProps> = ({
   refreshing = false,
   onRefresh,
 }) => {
-  const groups = groupTasksByDate(tasks);
+  const styles = useThemeStyles(createPlannedTasksListStyles);
+  const { theme } = useTheme();
+  const groups = useMemo(() => groupTasksByDate(tasks), [tasks]);
 
   return (
     <ScrollView
       style={{ flex: 1 }}
-      contentContainerStyle={plannedTasksListStyles.container}
+      contentContainerStyle={styles.container}
       refreshControl={
         onRefresh ? (
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#0078d4"
+            tintColor={theme.primary}
           />
         ) : undefined
       }
     >
       {groups.map((group) => (
-        <View key={group.title} style={plannedTasksListStyles.group}>
-          <View style={plannedTasksListStyles.sectionHeader}>
+        <View key={group.title} style={styles.group}>
+          <View style={styles.sectionHeader}>
             <Text
               style={[
-                plannedTasksListStyles.sectionTitle,
-                group.isOverdue && plannedTasksListStyles.sectionTitleOverdue,
+                styles.sectionTitle,
+                group.isOverdue && styles.sectionTitleOverdue,
               ]}
             >
               {group.title}
-              <Text style={plannedTasksListStyles.sectionCount}>
+              <Text style={styles.sectionCount}>
                 {" "}
                 ({group.tasks.length})
               </Text>
@@ -171,7 +176,7 @@ const PlannedTasksList: React.FC<PlannedTasksListProps> = ({
           </View>
 
           {group.tasks.map((task) => (
-            <View key={task.id} style={plannedTasksListStyles.taskWrapper}>
+            <View key={task.id} style={styles.taskWrapper}>
               <TaskItem
                 task={task}
                 onToggle={() => onToggleTask(task.id)}

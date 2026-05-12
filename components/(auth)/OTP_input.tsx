@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { TextInput, View } from "react-native";
-import { OTP_inputStyles as styles } from "styles/(auth)/OTP_input";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createOTPInputStyles } from "../../styles/components/(auth)/OTP_input";
 
 type OTPInputProps = {
   value: string;
@@ -13,6 +14,7 @@ export default function OTPInput({
   onChange,
   length = 4,
 }: OTPInputProps) {
+  const styles = useThemeStyles(createOTPInputStyles);
   const digits = value.split(""); // break current OTP into an array
   const inputs = useRef<(TextInput | null)[]>([]); // store refs for all inputs
 

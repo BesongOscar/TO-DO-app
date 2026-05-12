@@ -9,6 +9,7 @@
       "@/context/*": ["./src/context/*"],
       "@/firebase/*": ["./src/firebase/*"],
       "@/src/*": ["./src/*"],
+      "@/styles/*": ["./styles/*"],
       "assets/*": ["./assets/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types"],

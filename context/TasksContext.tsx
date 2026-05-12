@@ -16,11 +16,7 @@ import {
   firestoreDeleteTask,
   firestoreUpdateTask,
 } from "@/src/firebase/tasks";
-import {
-  scheduleTaskReminder,
-  cancelTaskReminder,
-} from "../src/notifications/notificationService";
-import * as Notifications from "expo-notifications";
+import { useTaskNotifications } from "../src/hooks/useTaskNotifications";
 
 /**
  * TasksContext - Manages global task state and Firestore persistence
@@ -58,11 +54,19 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tasksRef = useRef<Task[]>([]);
+  const userRef = useRef(user);
 
-  //keep ref in sync:
+  //keep refs in sync:
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
+  const { onTasksLoaded, onTaskToggled, onTaskUpdated, onTaskDeleted } =
+    useTaskNotifications();
 
   useEffect(() => {
     if (authLoading) {
@@ -106,35 +110,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
           setTasks([]);
         }
 
-        // Re-schedule notifications for all tasks (catches expired repeats, etc.)
-        loadedTasks.forEach((task) => {
-          if (task.reminder) {
-            scheduleTaskReminder(task).catch((e) =>
-              console.warn("Failed to reschedule notification:", e),
-            );
-          }
-        });
-
-        // Check if monthly repeat series (last-day / day 29-31) are running low
-        // and refill before the 12-month window exhausts
-        try {
-          const scheduledAll = await Notifications.getAllScheduledNotificationsAsync();
-          for (const task of loadedTasks) {
-            if (!task.reminder || task.repeat !== "monthly") continue;
-            if (!task.repeatOnLastDay && (!task.repeatOnDay || task.repeatOnDay < 29)) continue;
-            const seriesCount = scheduledAll.filter((s) =>
-              s.identifier.startsWith(`${task.id}-last-`) ||
-              s.identifier.startsWith(`${task.id}-month-`),
-            ).length;
-            if (seriesCount < 12) {
-              scheduleTaskReminder(task).catch((e) =>
-                console.warn("Failed to refill monthly repeats:", e),
-              );
-            }
-          }
-        } catch (e) {
-          console.warn("Failed to check monthly repeat refills:", e);
-        }
+        onTasksLoaded(loadedTasks);
       } catch (e) {
         console.warn("Failed to load tasks from Firestore:", e);
         if (!cancelled) setTasks([]);
@@ -152,7 +128,8 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   // Debounced save to Firestore - avoids rapid successive writes
   const debouncedSaveTasks = useCallback(
     (newTasks: Task[]) => {
-      if (!user) return;
+      const currentUser = userRef.current;
+      if (!currentUser) return;
 
       // Clear any pending save
       if (saveTimeoutRef.current) {
@@ -161,8 +138,10 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Debounce: wait 500ms before saving to batch rapid changes
       saveTimeoutRef.current = setTimeout(async () => {
+        const uid = userRef.current?.uid;
+        if (!uid) return;
         try {
-          await firestoreSaveTasks(user.uid, newTasks);
+          await firestoreSaveTasks(uid, newTasks);
         } catch (e) {
           console.warn("Failed to save tasks to Firestore:", e);
           Alert.alert(
@@ -173,7 +152,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }, 500);
     },
-    [user?.uid],
+    [], // stable - reads user from ref at execution time
   );
 
   // Cleanup timeout on unmount
@@ -187,7 +166,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
 
   
   const addTask = useCallback(
-        (text: string, listName = "My Day", listId?: string): void => {
+        (text: string, listName?: string, listId?: string): void => {
       const newTask: Task = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         text: text.trim(),
@@ -200,12 +179,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         dueDate: undefined,
         dueTime: undefined,
         repeat: undefined,
-        repeatDays: [],
-        repeatOnDay: 0,
       };
-      if (newTask.reminder) {
-        scheduleTaskReminder(newTask);
-      }
       setTasks((prev) => {
         // Increment order of all existing pending tasks by 1
         const updated = [
@@ -267,15 +241,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
 
-      if (prevTask.reminder) {
-        if (willBeCompleted) {
-          cancelTaskReminder(taskId);
-        } else {
-          scheduleTaskReminder(prevTask);
-        }
-      }
+      onTaskToggled(prevTask, willBeCompleted);
     },
-    [user],
+    [user, onTaskToggled],
   );
 
   // Toggle the important status of a task by ID, updates local state immediately for responsiveness, then saves the change to Firestore
@@ -303,7 +271,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [user],
+    [user, onTaskUpdated],
   );
 
     // Delete a task by ID, removes it from local state immediately for responsiveness, then deletes it from Firestore
@@ -311,7 +279,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     (taskId: string): void => {
       const prevTask = tasksRef.current.find((t) => t.id === taskId);
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
-      cancelTaskReminder(taskId);
+      onTaskDeleted(taskId);
       if (user && prevTask) {
         firestoreDeleteTask(user.uid, taskId).catch((e) => {
           console.warn("Failed to delete task from Firestore:", e);
@@ -327,7 +295,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [user],
+    [user, onTaskDeleted],
   );
 
   // Update a task by ID with given partial updates, merges updates into existing task, updates local state immediately for responsiveness, then saves changes to Firestore, also handles scheduling or canceling notifications based on reminder changes
@@ -341,29 +309,8 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         );
         return updated;
       });
-      // Notification handling
       if (prevTask) {
-        const completing = updates.completed === true;
-        const newReminder =
-          "reminder" in updates ? updates.reminder : prevTask.reminder;
-        const newRepeat =
-          "repeat" in updates ? updates.repeat : prevTask.repeat;
-        const hadReminder = !!prevTask.reminder;
-
-        // Cancel if: completing, or reminder removed
-        if (completing || (!newReminder && hadReminder)) {
-          cancelTaskReminder(taskId);
-        }
-        // Reschedule if reminder changed or still set
-        else if (newReminder) {
-          const fullTask: Task = {
-            ...prevTask,
-            ...updates,
-            reminder: newReminder,
-            repeat: newRepeat,
-          };
-          scheduleTaskReminder(fullTask);
-        }
+        onTaskUpdated(prevTask, updates);
       }
       if (user && prevTask) {
         firestoreUpdateTask(user.uid, taskId, updates).catch((e) => {
@@ -381,7 +328,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [user],
+    [user, onTaskUpdated],
   );
 
   // Manually refresh tasks from Firestore, used for pull-to-refresh or error recovery, shows refreshing state while loading, replaces local state with remote data to ensure consistency

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import { sideBarStyles as styles } from "../styles/components/SideBar";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createSideBarItemStyles } from "../styles/components/SideBarItem";
 import { ListItem } from "../types";
 
 interface SidebarItemProps {
@@ -16,22 +17,23 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
   isSelected,
   onLongPress,
 }) => {
+  const styles = useThemeStyles(createSideBarItemStyles);
   if (!item) return null;
 
   return (
     <TouchableOpacity
-      style={[styles.sidebarItem, isSelected && styles.sidebarItemSelected]}
+      style={[styles.container, isSelected && styles.selected]}
       onPress={() => onSelectList(item)}
       onLongPress={onLongPress}
       activeOpacity={0.7}
     >
-      <View style={styles.sidebarItemLeft}>
-        <Text style={styles.sidebarIconText}>{item.icon}</Text>
-        <Text style={styles.sidebarItemText}>{item.name}</Text>
+      <View style={styles.leftContent}>
+        <Text style={styles.iconText}>{item.icon}</Text>
+        <Text style={styles.itemText}>{item.name}</Text>
       </View>
 
       {item.count !== undefined && (
-        <Text style={styles.sidebarCount}>{item.count}</Text>
+        <Text style={styles.count}>{item.count}</Text>
       )}
     </TouchableOpacity>
   );

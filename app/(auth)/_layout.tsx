@@ -1,9 +1,11 @@
 import { Redirect, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function AuthLayout() {
   const { user, loading } = useAuth();
+  const { theme, isDark } = useTheme();
 
   if (loading) return null;
 
@@ -13,7 +15,7 @@ export default function AuthLayout() {
 
   return (
     <>
-      <StatusBar style="dark" backgroundColor="#f8f9fa" />
+      <StatusBar style={isDark ? "light" : "dark"} backgroundColor={theme.background} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="signup" />
         <Stack.Screen name="login" />

@@ -6,10 +6,9 @@
  */
 
 import React from "react";
-import { View, Text, StyleSheet,Image } from "react-native";
-// Fix: replace inline styles import with:
-import { emptyStateStyles as styles } from "../styles/components/EmptyState";
-// then remove the local StyleSheet.create block
+import { View, Text, Image } from "react-native";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createEmptyStateStyles } from "../styles/components/EmptyState";
 
 interface EmptyStateProps {
   title: string;
@@ -18,6 +17,7 @@ interface EmptyStateProps {
 const Placeholder = require("assets/empty.png")
 
 const EmptyState: React.FC<EmptyStateProps> = ({ title, message }) => {
+  const styles = useThemeStyles(createEmptyStateStyles);
   return (
     <View style={styles.container}>
       <Image source={Placeholder} style={styles.image}/>

@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontBold, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const listHeaderStyles = StyleSheet.create({
+export const createListHeaderStyles = (theme: Theme) => StyleSheet.create({
   listHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -9,7 +10,7 @@ export const listHeaderStyles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f2f1",
+    borderBottomColor: theme.surfaceSecondary,
   },
   listTitleSection: {
     flex: 1,
@@ -17,23 +18,15 @@ export const listHeaderStyles = StyleSheet.create({
   listTitle: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#323130",
+    color: theme.text,
     marginBottom: 4,
     fontFamily: fontBold,
     ...androidPoppinsExtras,
   },
   listDate: {
     fontSize: 14,
-    color: "#605e5c",
+    color: theme.textSecondary,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
-  },
-  moreOptionsButton: {
-    padding: 8,
-  },
-  moreOptionsIcon: {
-    fontSize: 20,
-    color: "#605e5c",
-    letterSpacing: 1,
   },
 });

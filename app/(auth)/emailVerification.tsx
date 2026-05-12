@@ -7,7 +7,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { emailVerfificationStyles as styles } from "styles/(auth)/emailVerification";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createEmailVerificationStyles } from "@/styles/app/(auth)/emailVerification";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
 import { Redirect, useRouter, router as expoRouter } from "expo-router";
@@ -25,6 +27,8 @@ export default function EmailVerification() {
     useAuth();
   const [isChecking, setIsChecking] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const styles = useThemeStyles(createEmailVerificationStyles);
+  const { theme } = useTheme();
 
   const handleContinue = useCallback(async () => {
     setIsChecking(true);
@@ -112,7 +116,7 @@ export default function EmailVerification() {
       </Text>
 
       {isChecking ? (
-        <ActivityIndicator size="large" color="#0078d4" style={styles.button} />
+        <ActivityIndicator size="large" color={theme.primary} style={styles.button} />
       ) : (
         <TouchableOpacity style={styles.verifyButton} onPress={handleContinue}>
           <Text style={styles.verifyButtonText}>I verified my email</Text>
@@ -125,7 +129,7 @@ export default function EmailVerification() {
         disabled={isResending}
       >
         {isResending ? (
-          <ActivityIndicator size="small" color="#0078d4" />
+          <ActivityIndicator size="small" color={theme.primary} />
         ) : (
           <Text style={styles.secondaryButtonText}>Resend email</Text>
         )}

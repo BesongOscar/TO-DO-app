@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../../common";
+import type { Theme } from "../../theme";
 
-export const bottomPanelStyles = StyleSheet.create({
+export const createBottomPanelStyles = (theme: Theme) => StyleSheet.create({
   bottomPanel: {
     flex: 1,
     backgroundColor: "transparent",
@@ -14,12 +15,12 @@ export const bottomPanelStyles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e1e5e9",
+    borderBottomColor: theme.border,
   },
   taskDetailTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#323130",
+    color: theme.text,
     flex: 1,
     marginRight: 8,
     fontFamily: fontSemi,
@@ -37,16 +38,16 @@ export const bottomPanelStyles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: "#e1e5e9",
+    borderTopColor: theme.border,
   },
   closeDetailPanel: {
     fontSize: 20,
-    color: "#605e5c",
+    color: theme.textSecondary,
     padding: 4,
   },
   createdDate: {
     fontSize: 12,
-    color: "#8a8886",
+    color: theme.textMuted,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },

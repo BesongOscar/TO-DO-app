@@ -23,8 +23,10 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
-import { loginStyles as styles } from "styles/(auth)/login";
+import { createLoginStyles } from "@/styles/app/(auth)/login";
 import { GoogleIcon } from "@/components/(auth)/GoogleIcon";
 import {
   signInWithGoogle,
@@ -44,13 +46,15 @@ export default function Login() {
 
   const router = useRouter();
   const { login, googleLogin } = useAuth();
+  const styles = useThemeStyles(createLoginStyles);
+  const { theme } = useTheme();
 
   const handleLogin = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       await login(email, password);
-    } catch (error: any) {
-      Alert.alert("Login Failed", error.message || "An error occurred");
+    } catch (error: unknown) {
+      Alert.alert("Login Failed", error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +64,8 @@ export default function Login() {
     try {
       setIsLoading(true);
       const { idToken } = await signInWithGoogle();
-      await googleLogin(idToken);
+      const success = await googleLogin(idToken);
+      if (success) router.replace("/(protected)/myDay");
     } catch (error) {
       const message = getGoogleSignInErrorMessage(error);
       // SIGN_IN_CANCELLED is not an error worth alerting
@@ -110,11 +115,11 @@ export default function Login() {
           <View style={styles.formContainer}>
             {/* Email Input */}
             <View style={styles.textInputContainer}>
-              <Ionicons name="mail" size={20} color={"#999"} />
+              <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
                 placeholder="Email"
                 style={styles.input}
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -136,11 +141,11 @@ export default function Login() {
               <View
                 style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               >
-                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <Ionicons name="lock-closed" size={20} color={theme.textMuted} />
                 <TextInput
                   placeholder="Password"
                   style={styles.input}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.placeholderTextColor}
                   value={values.password}
                   onChangeText={handleChange("password")}
                   onBlur={handleBlur("password")}
@@ -150,7 +155,7 @@ export default function Login() {
               <Ionicons
                 name={showPassword ? "eye-off" : "eye"}
                 size={20}
-                color={"#999"}
+                color={theme.textMuted}
                 onPress={() => setShowPassword(!showPassword)}
               />
             </View>
@@ -167,9 +172,9 @@ export default function Login() {
 
             <AuthButton
               text="Sign In"
-              color="#0078d4"
+              color={theme.primary}
               textColor="white"
-              borderColor="#0078d4"
+              borderColor={theme.primary}
               onPress={handleSubmit}
             />
           </View>
@@ -191,9 +196,9 @@ export default function Login() {
 
       <AuthButton
         text="Sign In with Google"
-        color="#fff"
-        textColor="#333"
-        borderColor="#ccc"
+        color={theme.surface}
+        textColor={theme.text}
+        borderColor={theme.border}
         onPress={handleGoogleLogin}
         disabled={isLoading}
         icon={<GoogleIcon size={20} />}

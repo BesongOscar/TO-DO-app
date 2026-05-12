@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
 import { fontReg, fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const taskItemStyles = StyleSheet.create({
+export const createTaskItemStyles = (theme: Theme) => StyleSheet.create({
   taskItem: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#f8f9fa",
+    borderBottomColor: theme.background,
     justifyContent: "space-between",
   },
   taskItemDragging: {
@@ -27,12 +28,12 @@ export const taskItemStyles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#0078d4",
+    borderColor: theme.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   taskCheckboxCompleted: {
-    backgroundColor: "#0078d4",
+    backgroundColor: theme.primary,
   },
   checkmark: {
     color: "white",
@@ -41,14 +42,14 @@ export const taskItemStyles = StyleSheet.create({
   },
   taskText: {
     fontSize: 16,
-    color: "#323130",
+    color: theme.text,
     flex: 1,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   taskTextCompleted: {
     fontSize: 16,
-    color: "#8a8886",
+    color: theme.textMuted,
     textDecorationLine: "line-through",
     flex: 1,
     fontFamily: fontReg,
@@ -65,23 +66,23 @@ export const taskItemStyles = StyleSheet.create({
   },
   dueDateText: {
     fontSize: 12,
-    color: "#107c10",
+    color: theme.success,
     marginLeft: 4,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   dueDateTextOverdue: {
-    color: "#d13438",
+    color: theme.error,
   },
   dueDateTextCompleted: {
-    color: "#8a8886",
+    color: theme.textMuted,
   },
   editInput: {
     flex: 1,
     fontSize: 16,
-    color: "#323130",
+    color: theme.text,
     borderBottomWidth: 2,
-    borderBottomColor: "#0078d4",
+    borderBottomColor: theme.primary,
     paddingVertical: 2,
     marginRight: 8,
     fontFamily: fontReg,
@@ -93,13 +94,13 @@ export const taskItemStyles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: theme.overlay,
     justifyContent: "center",
     alignItems: "center",
     padding: 32,
   },
   menuCard: {
-    backgroundColor: "#ffffff",
+    backgroundColor: theme.surface,
     borderRadius: 12,
     width: "100%",
     maxWidth: 320,
@@ -112,7 +113,7 @@ export const taskItemStyles = StyleSheet.create({
   },
   menuTaskPreview: {
     fontSize: 13,
-    color: "#8a8886",
+    color: theme.textMuted,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 12,
@@ -122,7 +123,7 @@ export const taskItemStyles = StyleSheet.create({
   },
   menuDivider: {
     height: 1,
-    backgroundColor: "#f3f2f1",
+    backgroundColor: theme.surfaceSecondary,
   },
   menuItem: {
     flexDirection: "row",
@@ -137,15 +138,15 @@ export const taskItemStyles = StyleSheet.create({
   },
   menuItemText: {
     fontSize: 15,
-    color: "#323130",
+    color: theme.text,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   menuItemDestructive: {
-    color: "#d13438",
+    color: theme.error,
   },
   menuItemCancel: {
-    color: "#605e5c",
+    color: theme.textSecondary,
     fontWeight: "600",
     flex: 1,
     textAlign: "center",

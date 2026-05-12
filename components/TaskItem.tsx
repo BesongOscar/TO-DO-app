@@ -17,8 +17,10 @@ import {
   Modal,
   Pressable,
 } from "react-native";
-import { taskItemStyles as styles } from "../styles/components/TaskItem";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useTheme } from "../context/ThemeContext";
+import { createTaskItemStyles } from "../styles/components/TaskItem";
 import { Task } from "../types";
 
 // Helper to determine if a task is overdue (due date before today)
@@ -82,6 +84,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
   showDueDate = true,
   gripPanHandlers,
 }) => {
+  const styles = useThemeStyles(createTaskItemStyles);
+  const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editText, setEditText] = useState<string>(task.text);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
@@ -155,14 +159,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
           style={styles.editAction}
           activeOpacity={0.7}
         >
-          <Ionicons name="checkmark" size={20} color="#0078d4" />
+          <Ionicons name="checkmark" size={20} color={theme.primary} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleCancelEdit}
           style={styles.editAction}
           activeOpacity={0.7}
         >
-          <Ionicons name="close" size={20} color="#8a8886" />
+          <Ionicons name="close" size={20} color={theme.textMuted} />
         </TouchableOpacity>
       </View>
     );
@@ -181,7 +185,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               accessibilityLabel="Drag to reorder"
               accessibilityRole="button"
             >
-              <Ionicons name="reorder-two" size={20} color="#c8c6c4" />
+              <Ionicons name="reorder-two" size={20} color={theme.textMuted} />
             </TouchableOpacity>
           </View>
         )}
@@ -213,10 +217,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   size={12}
                   color={
                     task.completed
-                      ? "#8a8886"
+                      ? theme.textMuted
                       : isOverdue(task.dueDate)
-                        ? "#d13438"
-                        : "#107c10"
+                        ? theme.error
+                        : theme.success
                   }
                 />
                 <Text
@@ -274,7 +278,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               <Ionicons
                 name="pencil-outline"
                 size={18}
-                color="#323130"
+                color={theme.text}
                 style={styles.menuIcon}
               />
               <Text style={styles.menuItemText}>Edit task</Text>
@@ -287,7 +291,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               <Ionicons
                 name="trash-outline"
                 size={18}
-                color="#d13438"
+                color={theme.error}
                 style={styles.menuIcon}
               />
               <Text style={[styles.menuItemText, styles.menuItemDestructive]}>

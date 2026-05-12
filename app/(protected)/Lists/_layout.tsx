@@ -1,21 +1,26 @@
-/**
- * ListsLayout - Stack navigation for Lists tab
- * 
- * index: All lists overview
- * [listId]: Individual list detail (via dynamic route)
- */
-
 import { Stack } from "expo-router";
+import { useTheme } from "../../../context/ThemeContext";
 
 export default function ListsLayout() {
+  const { theme } = useTheme();
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
+    <Stack screenOptions={{ headerShown: true }}>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerStyle: { backgroundColor: theme.headerBackground },
+          headerTintColor: "#fff",
+          headerTitle: "Lists",
+          headerTitleStyle: {
+            fontFamily: "Poppins-SemiBold",
+            fontSize: 24,
+          },
+        }}
+      />
       <Stack.Screen
         name="[listId]"
         options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: "#0078d4" },
+          headerStyle: { backgroundColor: theme.headerBackground },
           headerTintColor: "#fff",
           headerTitle: "",
         }}

@@ -6,8 +6,11 @@
  */
 
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { bottomPanelStyles as styles } from "../../styles/components/Index/BottomPanel";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { fontReg, fontSemi, androidPoppinsExtras } from "@/styles/common";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+
+import { createBottomPanelStyles } from "../../styles/components/Index/BottomPanel";
 import DetailOption from "../DetailOption";
 import { RepeatType, Task } from "../../types";
 import CalendarPickerModal from "../Modals/CalendarPickerModal";
@@ -125,6 +128,7 @@ const BottomPanel: React.FC<BottomPanelProps> = ({
   onUpdateTask,
   onStarToggle,
 }) => {
+  const styles = useThemeStyles(createBottomPanelStyles);
   const [modalType, setModalType] = useState<string | null>(null);
 
   if (!selectedTask) return null;

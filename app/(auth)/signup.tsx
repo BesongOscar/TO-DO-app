@@ -12,9 +12,11 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
-import { signupStyles as styles } from "styles/(auth)/signup";
+import { createSignupStyles } from "@/styles/app/(auth)/signup";
 import { GoogleIcon } from "@/components/(auth)/GoogleIcon";
 import {
   signInWithGoogle,
@@ -48,6 +50,8 @@ export default function Signup() {
 
   const router = useRouter();
   const { signup, googleLogin } = useAuth();
+  const styles = useThemeStyles(createSignupStyles);
+  const { theme } = useTheme();
 
   const handleSignup = async (
     email: string,
@@ -57,8 +61,8 @@ export default function Signup() {
     try {
       await signup(email, password, name);
       router.push("/emailVerification");
-    } catch (error: any) {
-      Alert.alert("Signup Failed", error.message || "An error occurred");
+    } catch (error: unknown) {
+      Alert.alert("Signup Failed", error instanceof Error ? error.message : "An error occurred");
     }
   };
 
@@ -120,11 +124,11 @@ export default function Signup() {
         }) => (
           <View style={styles.formContainer}>
             <View style={styles.textInputContainer}>
-              <Ionicons name="person" size={20} color={"#999"} />
+              <Ionicons name="person" size={20} color={theme.textMuted} />
               <TextInput
                 placeholder="Name"
                 style={styles.input}
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.placeholderTextColor}
                 value={values.name}
                 onChangeText={handleChange("name")}
                 onBlur={handleBlur("name")}
@@ -135,11 +139,11 @@ export default function Signup() {
             )}
             {/* Email Input */}
             <View style={styles.textInputContainer}>
-              <Ionicons name="mail" size={20} color={"#999"} />
+              <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
                 placeholder="Email"
                 style={styles.input}
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -161,11 +165,11 @@ export default function Signup() {
               <View
                 style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               >
-                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <Ionicons name="lock-closed" size={20} color={theme.textMuted} />
                 <TextInput
                   placeholder="Password"
                   style={styles.input}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.placeholderTextColor}
                   value={values.password}
                   onChangeText={handleChange("password")}
                   onBlur={handleBlur("password")}
@@ -175,7 +179,7 @@ export default function Signup() {
               <Ionicons
                 name={showPassword ? "eye-off" : "eye"}
                 size={20}
-                color={"#999"}
+                color={theme.textMuted}
                 onPress={() => setShowPassword(!showPassword)}
               />
             </View>
@@ -193,12 +197,12 @@ export default function Signup() {
               <View
                 style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               >
-                <Ionicons name="lock-closed" size={20} color={"#999"} />
+                <Ionicons name="lock-closed" size={20} color={theme.textMuted} />
                 <TextInput
                   placeholder="Confirm Password"
                   style={styles.input}
                   value={values.confirmPassword}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.placeholderTextColor}
                   onChangeText={handleChange("confirmPassword")}
                   onBlur={handleBlur("confirmPassword")}
                   secureTextEntry={!showConfirmPassword}
@@ -207,7 +211,7 @@ export default function Signup() {
               <Ionicons
                 name={showConfirmPassword ? "eye-off" : "eye"}
                 size={20}
-                color={"#999"}
+                color={theme.textMuted}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               />
             </View>
@@ -217,9 +221,9 @@ export default function Signup() {
 
             <AuthButton
               text="Sign Up"
-              color="#0078d4"
+              color={theme.primary}
               textColor="white"
-              borderColor="#0078d4"
+              borderColor={theme.primary}
               onPress={handleSubmit}
             />
           </View>
@@ -241,9 +245,9 @@ export default function Signup() {
 
       <AuthButton
         text="Sign Up with Google"
-        color="#fff"
-        textColor="#333"
-        borderColor="#ccc"
+        color={theme.surface}
+        textColor={theme.text}
+        borderColor={theme.border}
         onPress={handleGoogleSignup}
         icon={<GoogleIcon size={20} />}
       />

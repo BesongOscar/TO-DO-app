@@ -1,14 +1,15 @@
 import { StyleSheet } from "react-native";
-import { fontReg, androidPoppinsExtras, fontSemi } from "../common";
+import { fontReg, fontSemi, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const detailOptionStyles = StyleSheet.create({
+export const createDetailOptionStyles = (theme: Theme) => StyleSheet.create({
   detailOption: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f2f1",
+    borderBottomColor: theme.surfaceSecondary,
     borderRadius: 6,
   },
   detailOptionActive: {
@@ -29,20 +30,19 @@ export const detailOptionStyles = StyleSheet.create({
   detailText: {
     fontSize: 14,
     marginLeft: 15,
-    color: "#323130",
+    color: theme.text,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
   detailTextActive: {
     marginLeft:  35,
-    color: "#0078d4",
+    color: theme.primary,
     fontFamily: fontSemi,
     ...androidPoppinsExtras,
   },
-
   detailSubText: {
     fontSize: 12,
-    color: "#8d8d8c",
+    color: theme.textMuted,
     marginTop: 2,
     marginLeft: 20,
     fontFamily: fontReg,
@@ -50,7 +50,7 @@ export const detailOptionStyles = StyleSheet.create({
   },
   detailActiveIndicator: {
     fontSize: 16,
-    color: "#0078d4",
+    color: theme.primary,
     marginLeft: 8,
     fontWeight: "600",
     marginTop: -3,

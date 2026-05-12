@@ -1,0 +1,110 @@
+import { StyleSheet } from "react-native";
+import type { Theme } from "../../theme";
+import {
+  fontReg,
+  fontSemi,
+  fontBold,
+  androidPoppinsExtras,
+} from "../../common";
+
+export const createSignupStyles = (theme: Theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.background,
+  },
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+    position: "relative",
+  },
+  iconCircle: {
+    backgroundColor: theme.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
+  },
+  image: {
+    height: 200,
+    width: 200,
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: theme.text,
+    marginBottom: 8,
+    fontFamily: fontBold,
+    ...androidPoppinsExtras,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: theme.textSecondary,
+    marginBottom: 20,
+    textAlign: "center",
+    paddingHorizontal: 30,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  formContainer: {
+    width: "100%",
+    marginBottom: 10,
+  },
+  textInputContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.surface,
+    borderRadius: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: theme.border,
+  },
+  input: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 15,
+    color: theme.text,
+    paddingVertical: 0,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  orText: {
+    fontSize: 14,
+    color: theme.textMuted,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  linkText: {
+    flexDirection: "row",
+    marginTop: 10,
+    color: theme.textSecondary,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  link: {
+    color: theme.primary,
+    fontWeight: "600",
+    marginLeft: 4,
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
+  },
+  errorText: {
+    color: theme.error,
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 16,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
+  },
+  seperator: {
+    backgroundColor: theme.textMuted,
+    height: 1,
+    width: "45%"
+  }
+});

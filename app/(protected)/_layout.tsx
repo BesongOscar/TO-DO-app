@@ -1,25 +1,24 @@
-/**
- * ProtectedLayout - Tab navigation for authenticated users
- * 
- * Contains the main app tabs: My Day, Lists, Planned, Profile.
- * Handles shared state for selectedTask across all tabs
- * via the BottomSheet/BottomPanel pattern.
- */
-
-import { useState } from "react";
 import { Redirect, Tabs } from "expo-router";
+import { View, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/context/AuthContext";
 import { AuthLoadingScreen } from "@/components/AuthLoadingScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTasks } from "../../context/TasksContext";
+import { useTheme } from "../../context/ThemeContext";
 import BottomSheet from "../../components/Index/BottomSheet";
 import BottomPanel from "@/components/Index/BottomPanel";
 
 export default function ProtectedLayout() {
   const { user, loading } = useAuth();
-  const { tasks, updateTask, toggleImportant } = useTasks();
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const {
+    tasks,
+    updateTask,
+    toggleImportant,
+    selectedTaskId,
+    setSelectedTaskId,
+  } = useTasks();
+  const { theme, isDark } = useTheme();
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
 
   if (loading) {
@@ -36,15 +35,15 @@ export default function ProtectedLayout() {
 
   return (
     <>
-      <StatusBar style="light" backgroundColor="#0078d4" />
+      <StatusBar style={isDark ? "light" : "dark"} backgroundColor={theme.headerBackground} />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#0078d4",
-          tabBarInactiveTintColor: "#605e5c",
+          tabBarActiveTintColor: theme.primary,
+          tabBarInactiveTintColor: theme.textSecondary,
           tabBarStyle: {
-            backgroundColor: "#f3f2f1",
+            backgroundColor: theme.tabBarBackground,
             borderTopWidth: 1,
-            borderTopColor: "#e1e5e9",
+            borderTopColor: theme.border,
           },
         }}
       >
@@ -53,11 +52,10 @@ export default function ProtectedLayout() {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: "#0078d4",
+              backgroundColor: theme.headerBackground,
               elevation: 0,
               shadowOpacity: 0,
             },
-            headerTitle: "Hi " + ((user.displayName?.split(" ")[0]) || "there") + " 👋",
             headerTitleStyle: {
               fontSize: 24,
               fontFamily: "Poppins-SemiBold",
@@ -100,7 +98,17 @@ export default function ProtectedLayout() {
         <Tabs.Screen
           name="Planned"
           options={{
-            headerShown: false,
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: theme.headerBackground,
+              elevation: 0,
+              shadowOpacity: 0,
+            },
+            headerTitleStyle: {
+              fontSize: 24,
+              fontFamily: "Poppins-SemiBold",
+              color: "#fff",
+            },
             tabBarLabel: "Planned",
             tabBarLabelStyle: {
               fontSize: 12,

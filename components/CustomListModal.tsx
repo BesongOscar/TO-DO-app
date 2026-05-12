@@ -8,8 +8,12 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { modalCommonStyles } from "../styles/modals/common";
-import { customListModalStyles } from "../styles/components/CustomListModal";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useTheme } from "../context/ThemeContext";
+import {
+  createModalCommonStyles,
+  createCustomListModalStyles,
+} from "../styles/components/CustomListModal";
 import EMOJI_OPTIONS from "../constants/customList"
 import { CustomList } from "../types";
 
@@ -30,6 +34,9 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
   onDelete,
   initialData,
 }) => {
+  const modalCommonStyles = useThemeStyles(createModalCommonStyles);
+  const customListModalStyles = useThemeStyles(createCustomListModalStyles);
+  const { theme } = useTheme();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(EMOJI_OPTIONS[0]);
 
@@ -105,7 +112,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
               value={name}
               onChangeText={setName}
               placeholder="Enter list name"
-              placeholderTextColor="#8a8886"
+              placeholderTextColor={theme.placeholderTextColor}
               maxLength={50}
             />
 

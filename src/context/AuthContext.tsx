@@ -125,11 +125,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await createUserProfile(user.uid, user.displayName || "User");
       }
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Google Sign-In Error:", error);
       Alert.alert(
         "Google Sign-In Failed",
-        error.message || "An error occurred",
+        error instanceof Error ? error.message : "An error occurred",
       );
       return false;
     }

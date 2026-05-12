@@ -1,21 +1,19 @@
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useTheme } from "../context/ThemeContext";
+import { createAuthLoadingScreenStyles } from "../styles/components/AuthLoadingScreen";
 
-export const AuthLoadingScreen: React.FC = () => (
-  <>
-    <StatusBar style="dark" backgroundColor="#ffffff" />
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#0078d4" />
-    </View>
-  </>
-);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-  },
-});
+export const AuthLoadingScreen: React.FC = () => {
+  const styles = useThemeStyles(createAuthLoadingScreenStyles);
+  const { theme } = useTheme();
+  return (
+    <>
+      <StatusBar style="dark" backgroundColor={theme.surface} />
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    </>
+  );
+};

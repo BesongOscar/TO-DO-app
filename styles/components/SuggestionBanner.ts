@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { fontReg, androidPoppinsExtras } from "../common";
+import type { Theme } from "../theme";
 
-export const suggestionBannerStyles = StyleSheet.create({
+export const createSuggestionBannerStyles = (theme: Theme) => StyleSheet.create({
   suggestionsBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -10,7 +11,7 @@ export const suggestionBannerStyles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f2f1",
+    borderBottomColor: theme.surfaceSecondary,
   },
   suggestionsLeft: {
     flexDirection: "row",
@@ -23,7 +24,7 @@ export const suggestionBannerStyles = StyleSheet.create({
   },
   suggestionsText: {
     fontSize: 14,
-    color: "#323130",
+    color: theme.text,
     flex: 1,
     fontFamily: fontReg,
     ...androidPoppinsExtras,
@@ -33,6 +34,6 @@ export const suggestionBannerStyles = StyleSheet.create({
   },
   suggestionsCloseText: {
     fontSize: 20,
-    color: "#605e5c",
+    color: theme.textSecondary,
   },
 });

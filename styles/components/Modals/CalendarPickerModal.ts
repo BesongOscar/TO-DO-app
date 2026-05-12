@@ -1,0 +1,161 @@
+import { StyleSheet } from "react-native";
+import type { Theme } from "../../theme";
+
+export const createCalendarPickerModalStyles = (theme: Theme) => StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: theme.overlay,
+    justifyContent: "flex-end",
+  },
+  sheet: {
+    backgroundColor: theme.surface,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingBottom: 34,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    backgroundColor: theme.border,
+    borderRadius: 2,
+    alignSelf: "center",
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: theme.text,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  calendarContainer: {
+    paddingHorizontal: 16,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  navButton: { padding: 8 },
+  navText: { fontSize: 28, color: theme.primary, fontWeight: "300" },
+  monthYear: { fontSize: 17, fontWeight: "600", color: theme.text },
+  daysHeader: {
+    flexDirection: "row",
+    marginBottom: 8,
+  },
+  dayHeader: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  dayHeaderText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: theme.textSecondary,
+  },
+  daysGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  dayCell: {
+    width: "14.28%",
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dayCellOtherMonth: { opacity: 0.3 },
+  dayCellToday: { backgroundColor: "#f0f7ff", borderRadius: 20 },
+  dayCellSelected: { backgroundColor: theme.primary, borderRadius: 20 },
+  dayText: { fontSize: 16, color: theme.text },
+  dayTextOtherMonth: { color: theme.textMuted },
+  dayTextToday: { color: theme.primary, fontWeight: "600" },
+  dayTextSelected: { color: "#fff", fontWeight: "600" },
+  timeSection: {
+    paddingHorizontal: 20,
+    marginTop: 12,
+  },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  timeLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: theme.text,
+  },
+  timeDisplay: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  timeText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: theme.primary,
+  },
+  removeTimeText: {
+    fontSize: 14,
+    color: theme.error,
+  },
+  setTimeButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    backgroundColor: "#f0f7ff",
+    borderRadius: 8,
+  },
+  setTimeText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: theme.primary,
+  },
+  timePickerContainer: {
+    marginTop: 8,
+    alignItems: "center",
+  },
+  preview: {
+    alignItems: "center",
+    paddingVertical: 16,
+    backgroundColor: theme.background,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  previewLabel: { fontSize: 12, color: theme.textSecondary, marginBottom: 4 },
+  previewDate: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: theme.primary,
+  },
+  buttons: {
+    flexDirection: "row",
+    marginTop: 20,
+    marginHorizontal: 20,
+    gap: 12,
+  },
+  clearButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: theme.surfaceSecondary,
+  },
+  clearText: { fontSize: 16, fontWeight: "600", color: theme.error },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    backgroundColor: theme.surfaceSecondary,
+    alignItems: "center",
+  },
+  cancelText: { fontSize: 16, fontWeight: "600", color: theme.textSecondary },
+  saveButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    backgroundColor: theme.primary,
+    alignItems: "center",
+  },
+  saveText: { fontSize: 16, fontWeight: "600", color: "#fff" },
+});

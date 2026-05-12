@@ -1,6 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import { suggestionBannerStyles as styles } from "../styles/components/SuggestionBanner";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { createSuggestionBannerStyles } from "../styles/components/SuggestionBanner";
 
 interface SuggestionsBannerProps {
   message: string;
@@ -8,6 +9,7 @@ interface SuggestionsBannerProps {
 }
 
 const SuggestionsBanner: React.FC<SuggestionsBannerProps> = ({ message, onClose }) => {
+  const styles = useThemeStyles(createSuggestionBannerStyles);
   return (
     <View style={styles.suggestionsBanner}>
       <View style={styles.suggestionsLeft}>

@@ -1,17 +1,21 @@
 import { TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { arrowBackStyles as styles } from "styles/components/arrowBack";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useTheme } from "../context/ThemeContext";
+import { createArrowBackStyles } from "../styles/components/arrowBack";
 
 type ArrowBackProps = {
   color?: string;
 };
-export default function ArrowBack({ color = "#000" }: ArrowBackProps) {
+export default function ArrowBack({ color }: ArrowBackProps) {
+  const styles = useThemeStyles(createArrowBackStyles);
+  const { theme } = useTheme();
   const router = useRouter();
   return (
     <View style={styles.ButtonContainer}>
       <TouchableOpacity onPress={router.back}>
-        <Ionicons name="arrow-back" color={color} size={25} />
+        <Ionicons name="arrow-back" color={color || theme.text} size={25} />
       </TouchableOpacity>
     </View>
   );

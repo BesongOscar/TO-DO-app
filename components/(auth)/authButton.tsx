@@ -6,7 +6,8 @@
  */
 
 import { TouchableOpacity, Text, View } from "react-native";
-import { authButtonStyles as styles } from "../../styles/components/(auth)/authButton";
+import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { createAuthButtonStyles } from "../../styles/components/(auth)/authButton";
 
 type AuthButtonProps = {
   text: string;
@@ -27,6 +28,7 @@ export const AuthButton = ({
   icon,
   disabled = false,
 }: AuthButtonProps) => {
+  const styles = useThemeStyles(createAuthButtonStyles);
   return (
     <TouchableOpacity
       style={[

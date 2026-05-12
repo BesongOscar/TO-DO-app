@@ -1,27 +1,27 @@
 /**
  * ListsIndexScreen - All lists overview
- * 
+ *
  * Shows default lists (My Day, Important, etc.) and custom lists
  * in a FlatList. Navigates to list detail on tap.
  * Replaces the sidebar from the old main monolithic layout.
  */
 
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useNavigation } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { sidebarLists } from "../../../constants/Lists";
 import { useCustomLists } from "../../../context/CustomListsContext";
 import { useTasks } from "../../../context/TasksContext";
 import { CustomList, TaskCounts } from "../../../types";
 import CustomListModal from "../../../components/CustomListModal";
+import { useThemeStyles } from "../../../hooks/useThemeStyles";
 
 interface ListEntry {
   key: string;
@@ -36,9 +36,25 @@ interface ListEntry {
 export default function ListsIndexScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const navigation = useNavigation();
   const { counts } = useTasks();
   const { customLists, addList } = useCustomLists();
   const [modalVisible, setModalVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Ionicons
+            name="add"
+            size={28}
+            color="#fff"
+            style={{ marginRight: 16 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const defaultLists: ListEntry[] = sidebarLists.map((list) => ({
     key: `default-${list.id}`,
@@ -61,6 +77,8 @@ export default function ListsIndexScreen() {
   }));
 
   const allLists = [...defaultLists, ...customListEntries];
+
+  const styles = useThemeStyles(createListsIndexStyles);
 
   const handleSelectList = (entry: ListEntry) => {
     router.push(`/(protected)/Lists/${entry.id}`);
@@ -88,18 +106,11 @@ export default function ListsIndexScreen() {
       <View style={styles.countContainer}>
         <Text style={styles.count}>{item.count}</Text>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#8A8A8A" />
     </TouchableOpacity>
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Lists</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Ionicons name="add-circle-outline" size={28} color="#0078d4" />
-        </TouchableOpacity>
-      </View>
+    <View style={[styles.container]}>
       <FlatList
         data={allLists}
         renderItem={renderItem}
@@ -115,62 +126,4 @@ export default function ListsIndexScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#0078d4",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: "Poppins-SemiBold",
-    color: "#fff",
-  },
-  list: {
-    paddingVertical: 8,
-  },
-  listItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#e1e5e9",
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  icon: {
-    fontSize: 20,
-  },
-  listInfo: {
-    flex: 1,
-  },
-  listName: {
-    fontSize: 16,
-    fontFamily: "Poppins-Medium",
-    color: "#201f1e",
-  },
-  countContainer: {
-    marginRight: 8,
-    minWidth: 24,
-    alignItems: "center",
-  },
-  count: {
-    fontSize: 14,
-    fontFamily: "Poppins-Medium",
-    color: "#8A8A8A",
-  },
-});
+import { createListsIndexStyles } from "../../../styles/app/(protected)/Lists/index";

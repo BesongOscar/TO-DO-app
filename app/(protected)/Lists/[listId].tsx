@@ -1,15 +1,11 @@
-/**
- * ListDetailScreen - Individual list task view
- * 
- * Dynamic route that renders tasks for a specific list.
- * Matches list by ID from sidebarLists or customLists.
- * Shows fallback if list is not found.
- */
-
-import React, { useState, useMemo } from "react";
-import { View, Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import React, { useMemo, useLayoutEffect, useState, useCallback } from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "../../../context/ThemeContext";
+import { useThemeStyles } from "../../../hooks/useThemeStyles";
+import { createListDetailStyles } from "../../../styles/app/(protected)/Lists/listIdStyles";
 import { sidebarLists } from "../../../constants/Lists";
 import { useCustomLists } from "../../../context/CustomListsContext";
 import { useTasks } from "../../../context/TasksContext";
@@ -19,6 +15,7 @@ import { ListItem } from "../../../types";
 export default function ListDetailScreen() {
   const { listId } = useLocalSearchParams<{ listId: string }>();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
   const {
     tasks,
     addTask,
@@ -29,9 +26,13 @@ export default function ListDetailScreen() {
     reorderTasks,
     refreshing,
     refreshTasks,
+    setSelectedTaskId,
   } = useTasks();
   const { customLists } = useCustomLists();
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const { theme } = useTheme();
+  const styles = useThemeStyles(createListDetailStyles);
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const currentList = useMemo<ListItem | null>(() => {
     const sidebar = sidebarLists.find((l) => l.id === listId);
@@ -50,15 +51,54 @@ export default function ListDetailScreen() {
     return null;
   }, [listId, customLists]);
 
+  useLayoutEffect(() => {
+    if (searchMode) {
+      navigation.setOptions({ headerShown: false });
+    } else {
+      navigation.setOptions({
+        headerShown: true,
+        headerTitle: currentList?.name ?? "",
+        headerRight: () => (
+          <View style={styles.headerRightRow}>
+            <TouchableOpacity onPress={() => setSearchMode(true)}>
+              <Ionicons
+                name="search"
+                size={24}
+                color="#fff"
+                style={styles.headerIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                // Placeholder for more options
+              }}
+            >
+              <Ionicons
+                name="ellipsis-vertical"
+                size={24}
+                color="#fff"
+                style={styles.headerIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+      });
+    }
+  }, [searchMode, navigation, currentList]);
+
+  const displayedTasks = useMemo(() => {
+    if (!searchMode || !searchQuery.trim()) return tasks;
+    const q = searchQuery.toLowerCase().trim();
+    return tasks.filter((t) => t.text.toLowerCase().includes(q));
+  }, [tasks, searchMode, searchQuery]);
+
   if (!currentList) {
     return (
       <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingTop: insets.top,
-        }}
+        style={[
+          styles.notFoundContainer,
+          { paddingTop: insets.top },
+        ]}
       >
         <Text>List not found</Text>
       </View>
@@ -71,15 +111,42 @@ export default function ListDetailScreen() {
     } else if (currentList.name === "My Day") {
       addTask(text, "My Day");
     } else {
-      addTask(text);
+      addTask(text, currentList.name);
     }
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
+      {searchMode ? (
+        <View
+          style={[
+            styles.searchBar,
+            { paddingTop: insets.top },
+          ]}
+        >
+          <Ionicons name="search" size={20} color="#fff" />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoFocus
+            placeholder="Search tasks..."
+            placeholderTextColor="rgba(255,255,255,0.6)"
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setSearchMode(false);
+              setSearchQuery("");
+            }}
+          >
+            <Text style={styles.cancelButton}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
       <MainContent
         currentList={currentList}
-        tasks={tasks}
+        tasks={displayedTasks}
         onAddTask={handleAddTask}
         onToggleTask={toggleTask}
         onSelectTask={(id: string) => setSelectedTaskId(id)}

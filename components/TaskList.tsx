@@ -18,14 +18,15 @@ import {
   Text,
   ScrollView,
   RefreshControl,
-  FlatList,
   PanResponder,
   LayoutAnimation,
   UIManager,
   Platform,
 } from "react-native";
 import TaskItem from "./TaskItem";
-import { taskListStyles as styles } from "../styles/components/TaskList";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useTheme } from "../context/ThemeContext";
+import { createTaskListStyles } from "../styles/components/TaskList";
 import { Task } from "../types";
 
 // Enable LayoutAnimation on Android
@@ -40,6 +41,7 @@ interface TasksListProps {
   completedTasks: Task[];
   onToggleTask: (taskId: string) => void;
   onSelectTask: (taskId: string) => void;
+  onStarToggle?: (taskId: string) => void;
   onEdit: (taskId: string, newText: string) => void;
   onDelete: (taskId: string) => void;
   onReorderTasks: (reorderedTasks: Task[]) => void;
@@ -56,6 +58,7 @@ interface DraggableTaskItemProps {
   onReorderTasks: (tasks: Task[]) => void;
   onToggleTask: (id: string) => void;
   onSelectTask: (id: string) => void;
+  onStarToggle?: (id: string) => void;
   onEdit: (id: string, text: string) => void;
   onDelete: (id: string) => void;
   setDraggingIndex: (i: number | null) => void;
@@ -64,9 +67,10 @@ interface DraggableTaskItemProps {
 
 const DraggableTaskItem = React.memo<DraggableTaskItemProps>(({
   task, index, pendingTasks, draggingIndex, hoverIndex,
-  onReorderTasks, onToggleTask, onSelectTask, onEdit, onDelete,
+  onReorderTasks, onToggleTask, onSelectTask, onStarToggle, onEdit, onDelete,
   setDraggingIndex, setHoverIndex,
 }) => {
+  const { theme } = useTheme();
   const indexRef = useRef(index);
   indexRef.current = index;
 
@@ -133,7 +137,7 @@ const DraggableTaskItem = React.memo<DraggableTaskItemProps>(({
 
   return (
     <View
-      style={isHoverTarget ? { borderTopWidth: 2, borderTopColor: "#0078d4" } : undefined}
+      style={isHoverTarget ? { borderTopWidth: 2, borderTopColor: theme.primary } : undefined}
     >
       <TaskItem
         task={task}
@@ -146,6 +150,26 @@ const DraggableTaskItem = React.memo<DraggableTaskItemProps>(({
       />
     </View>
   );
+}, (prev, next) => {
+  if (prev.task.id !== next.task.id) return false;
+  if (prev.task.text !== next.task.text) return false;
+  if (prev.task.completed !== next.task.completed) return false;
+  if (prev.task.important !== next.task.important) return false;
+  if (prev.task.myDay !== next.task.myDay) return false;
+  if (prev.task.dueDate !== next.task.dueDate) return false;
+  if (prev.task.listId !== next.task.listId) return false;
+
+  const prevIsActive = prev.draggingIndex === prev.index;
+  const nextIsActive = next.draggingIndex === next.index;
+  const prevIsHover = prev.hoverIndex === prev.index && prev.draggingIndex !== prev.index;
+  const nextIsHover = next.hoverIndex === next.index && next.draggingIndex !== next.index;
+
+  if (prevIsActive !== nextIsActive) return false;
+  if (prevIsHover !== nextIsHover) return false;
+
+  if (prev.index !== next.index) return false;
+
+  return true;
 });
 
 const TasksList: React.FC<TasksListProps> = ({
@@ -153,12 +177,15 @@ const TasksList: React.FC<TasksListProps> = ({
   completedTasks,
   onToggleTask,
   onSelectTask,
+  onStarToggle,
   onEdit,
   onDelete,
   onReorderTasks,
   refreshing = false,
   onRefresh,
 }) => {
+  const styles = useThemeStyles(createTaskListStyles);
+  const { theme } = useTheme();
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
@@ -174,7 +201,7 @@ const TasksList: React.FC<TasksListProps> = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#0078d4"
+            tintColor={theme.primary}
           />
         ) : undefined
       }
@@ -207,21 +234,17 @@ const TasksList: React.FC<TasksListProps> = ({
         </View>
       )}
 
-      <FlatList
-        data={completedTasks}
-        renderItem={({ item }) => (
-          <TaskItem
-            task={item}
-            onToggle={() => onToggleTask(item.id)}
-            onSelect={() => onSelectTask(item.id)}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            isActive={false}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        scrollEnabled={false}
-      />
+      {completedTasks.map((item) => (
+        <TaskItem
+          key={item.id}
+          task={item}
+          onToggle={() => onToggleTask(item.id)}
+          onSelect={() => onSelectTask(item.id)}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          isActive={false}
+        />
+      ))}
     </ScrollView>
   );
 };
