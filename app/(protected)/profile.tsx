@@ -5,6 +5,7 @@ import {
   Alert,
   Image,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,11 +16,14 @@ import { useThemeStyles } from "../../hooks/useThemeStyles";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useEffect } from "react";
 import { createProfileStyles } from "../../styles/app/(protected)/profile";
+import { useTranslation } from "react-i18next";
+import { changeLanguage, SUPPORTED_LANGUAGES, LanguageCode } from "@/src/i18n";
 
 export default function Profile() {
   const insets = useSafeAreaInsets();
   const { user, userProfile, logout, updateUserProfile, uploadProfilePhoto } =
     useAuth();
+  const { t, i18n } = useTranslation();
   const { theme, themeMode, setThemeMode } = useTheme();
   const styles = useThemeStyles(createProfileStyles);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -33,10 +37,10 @@ export default function Profile() {
   }, [userProfile?.name, isEditingName]);
 
   const handleLogout = () => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("profile.logout"), t("profile.logout_confirm"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Logout",
+        text: t("profile.logout"),
         style: "destructive",
         onPress: async () => {
           try {
@@ -44,8 +48,8 @@ export default function Profile() {
             expoRouter.dismissTo("/login");
           } catch (error: unknown) {
             Alert.alert(
-              "Error",
-              error instanceof Error ? error.message : "Failed to logout",
+              t("errors.something_wrong"),
+              error instanceof Error ? error.message : t("errors.try_again"),
             );
           }
         },
@@ -76,10 +80,10 @@ export default function Profile() {
       try {
         setUploading(true);
         await uploadProfilePhoto(result.assets[0].uri);
-        Alert.alert("Success", "Profile photo updated!");
+        Alert.alert(t("profile.photo_updated"));
       } catch (error: unknown) {
         Alert.alert(
-          "Error",
+          t("errors.something_wrong"),
           error instanceof Error ? error.message : "Failed to upload photo",
         );
       } finally {
@@ -90,21 +94,26 @@ export default function Profile() {
 
   const handleSaveName = async () => {
     if (!editedName.trim()) {
-      Alert.alert("Error", "Name cannot be empty");
+      Alert.alert(t("errors.something_wrong"), t("profile.name_empty"));
       return;
     }
 
     try {
       await updateUserProfile({ name: editedName.trim() });
       setIsEditingName(false);
-      Alert.alert("Success", "Name updated!");
+      Alert.alert(t("profile.name_updated"));
     } catch (error: unknown) {
       Alert.alert(
-        "Error",
+        t("errors.something_wrong"),
         error instanceof Error ? error.message : "Failed to update name",
       );
       console.error("Failed to update name:", error);
     }
+  };
+
+  const handleLanguageChange = async (code: LanguageCode) => {
+    await changeLanguage(code);
+    // i18next triggers a re-render automatically via react-i18next
   };
 
   if (!user) {
@@ -116,16 +125,16 @@ export default function Profile() {
     icon: keyof typeof Ionicons.glyphMap;
     label: string;
   }[] = [
-    { mode: "light", icon: "sunny", label: "Light" },
-    { mode: "dark", icon: "moon", label: "Dark" },
-    { mode: "system", icon: "settings-outline", label: "System" },
+    { mode: "light", icon: "sunny", label: t("profile.theme_light") },
+    { mode: "dark", icon: "moon", label: t("profile.theme_dark") },
+    { mode: "system", icon: "settings-outline", label: t("profile.theme_system") },
   ] as const;
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <View style={{ paddingTop: insets.top }}>
+      <View>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
+          <Text style={styles.headerTitle}>{t("profile.title")}</Text>
         </View>
 
         <View style={styles.profileSection}>
@@ -148,13 +157,16 @@ export default function Profile() {
               <Ionicons name="camera" size={16} color="#fff" />
             </View>
           </TouchableOpacity>
-          {uploading && <Text style={styles.uploadingText}>Uploading...</Text>}
+          {uploading && <Text style={styles.uploadingText}>{t("profile.uploading")}</Text>}
         </View>
       </View>
 
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} >
+      
+
       {/* Account */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
+        <Text style={styles.sectionTitle}>{t("profile.account")}</Text>
 
         {isEditingName ? (
           <View style={styles.editNameContainer}>
@@ -162,7 +174,7 @@ export default function Profile() {
               style={styles.editNameInput}
               value={editedName}
               onChangeText={setEditedName}
-              placeholder="Enter your name"
+              placeholder={t("profile.add_name")}
               placeholderTextColor={theme.placeholderTextColor}
               autoFocus
             />
@@ -189,9 +201,9 @@ export default function Profile() {
           >
             <Ionicons name="person" size={24} color={theme.primary} />
             <View style={styles.infoText}>
-              <Text style={styles.infoLabel}>Name</Text>
+              <Text style={styles.infoLabel}>{t("profile.name")}</Text>
               <Text style={styles.infoValue}>
-                {userProfile?.name || "Add name"}
+                {userProfile?.name || t("profile.add_name")}
               </Text>
             </View>
             <Ionicons name="pencil" size={20} color={theme.textMuted} />
@@ -201,7 +213,7 @@ export default function Profile() {
         <View style={styles.infoRow}>
           <Ionicons name="mail" size={24} color={theme.primary} />
           <View style={styles.infoText}>
-            <Text style={styles.infoLabel}>Email</Text>
+            <Text style={styles.infoLabel}>{t("profile.email")}</Text>
             <Text style={styles.infoValue}>
               {user.email || "Not logged in"}
             </Text>
@@ -211,7 +223,7 @@ export default function Profile() {
 
       {/* Theme */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Theme</Text>
+        <Text style={styles.sectionTitle}>{t("profile.appearance")}</Text>
         <View style={styles.themeRow}>
           {themeOptions.map(({ mode, icon, label }) => (
             <TouchableOpacity
@@ -241,19 +253,39 @@ export default function Profile() {
         </View>
       </View>
 
+        {/* Language */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t("profile.language")}</Text>
+        {SUPPORTED_LANGUAGES.map((lang) => (
+          <TouchableOpacity
+            key={lang.code}
+            style={styles.menuItem}
+            onPress={() => handleLanguageChange(lang.code)}
+          >
+            <Text style={{ flex: 1, fontSize: 16, color: theme.text }}>
+              {lang.label}
+            </Text>
+            {i18n.language === lang.code && (
+              <Ionicons name="checkmark" size={20} color={theme.primary} />
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {/* Actions */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Actions</Text>
+        <Text style={styles.sectionTitle}>{t("profile.actions")}</Text>
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <Ionicons name="log-out" size={24} color={theme.error} />
-          <Text style={styles.menuText}>Logout</Text>
+          <Text style={styles.menuText}>{t("profile.logout")}</Text>
           <Ionicons name="chevron-forward" size={24} color={theme.textMuted} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Todo App v1.0.0</Text>
+        <Text style={styles.footerText}>{t("profile.version")}</Text>
       </View>
+      </ScrollView>
     </View>
   );
 }

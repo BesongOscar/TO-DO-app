@@ -22,9 +22,10 @@ import {
 import { configureGoogleSignIn } from "../src/auth/googleAuth";
 import { useNotifications } from "../src/notifications/useNotifications";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import AnimatedSplash from "../components/AnimatedSplash";
 import { useState } from "react";
+import { initI18n } from "@/src/i18n";
 
 // Configure Google Sign-In once at app startup
 configureGoogleSignIn();
@@ -37,17 +38,23 @@ export default function RootLayout() {
     "Poppins-SemiBold": Poppins_600SemiBold,
     "Poppins-Bold": Poppins_700Bold,
   });
+  const [i18nReady, setI18nReady] = useState(false); // ← add this
   const [splashDone, setSplashDone] = useState(false);
 
+  // Initialize i18n once on mount
+  useEffect(() => {
+    initI18n().then(() => setI18nReady(true));
+  }, []);
+
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      // Fonts ready — dismiss the native splash
+    if (fontsLoaded && i18nReady) {
+      // Fonts and i18n ready — dismiss the native splash
       // Your animated splash (AnimatedSplash) takes over from here
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, i18nReady]);
 
-  if (!fontsLoaded) return null; // native splash stays visible
+  if (!fontsLoaded || !i18nReady) return null; // native splash stays visible
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       {!splashDone && <AnimatedSplash onFinish={() => setSplashDone(true)} />}

@@ -9,7 +9,8 @@ export const createProfileStyles = (theme: Theme) =>
       backgroundColor: theme.background,
     },
     header: {
-      padding: 15,
+      paddingTop: 50,
+      paddingHorizontal: 16,
       backgroundColor: theme.headerBackground,
       flexDirection: "row",
       alignItems: "center",
@@ -173,10 +174,7 @@ export const createProfileStyles = (theme: Theme) =>
       fontFamily: fontSemi,
     },
     footer: {
-      position: "absolute",
-      bottom: 30,
-      left: 0,
-      right: 0,
+      position: "relative",
       alignItems: "center",
     },
     footerText: {

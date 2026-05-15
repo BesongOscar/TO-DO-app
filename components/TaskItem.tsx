@@ -22,6 +22,7 @@ import { useThemeStyles } from "../hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createTaskItemStyles } from "../styles/components/TaskItem";
 import { Task } from "../types";
+import { useTranslation } from "react-i18next";
 
 // Helper to determine if a task is overdue (due date before today)
 const isOverdue = (dueDateStr: string): boolean => {
@@ -86,6 +87,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 }) => {
   const styles = useThemeStyles(createTaskItemStyles);
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editText, setEditText] = useState<string>(task.text);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
@@ -182,7 +184,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             <TouchableOpacity
               style={styles.gripIcon}
               activeOpacity={0.6}
-              accessibilityLabel="Drag to reorder"
+               accessibilityLabel={t("tasks.drag_reorder")}
               accessibilityRole="button"
             >
               <Ionicons name="reorder-two" size={20} color={theme.textMuted} />
@@ -197,7 +199,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           onLongPress={handleLongPress}
           delayLongPress={200}
           activeOpacity={0.7}
-          accessibilityLabel={`Task: ${task.text}${task.completed ? ", completed" : ""}${task.important ? ", important" : ""}`}
+           accessibilityLabel={`Task: ${task.text}${task.completed ? `, ${t("tasks.completed").toLowerCase()}` : ""}${task.important ? ", important" : ""}`}
           accessibilityRole="button"
         >
           <View style={{ flex: 1 }}>
@@ -246,7 +248,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           onPress={onToggle}
           activeOpacity={0.7}
           accessibilityLabel={
-            task.completed ? "Mark task as incomplete" : "Mark task as complete"
+            task.completed ? t("tasks.mark_incomplete") : t("tasks.mark_complete")
           }
           accessibilityRole="checkbox"
         >
@@ -281,7 +283,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 color={theme.text}
                 style={styles.menuIcon}
               />
-              <Text style={styles.menuItemText}>Edit task</Text>
+              <Text style={styles.menuItemText}>{t("tasks.edit_task")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.menuItem}
@@ -295,7 +297,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 style={styles.menuIcon}
               />
               <Text style={[styles.menuItemText, styles.menuItemDestructive]}>
-                Delete task
+                {t("tasks.delete_task")}
               </Text>
             </TouchableOpacity>
             <View style={styles.menuDivider} />
@@ -305,7 +307,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               activeOpacity={0.7}
             >
               <Text style={[styles.menuItemText, styles.menuItemCancel]}>
-                Cancel
+                {t("common.cancel")}
               </Text>
             </TouchableOpacity>
           </View>

@@ -1,6 +1,6 @@
 /**
  * MainContent - Central task list area with filtering
- * 
+ *
  * Renders the appropriate list view based on currentList:
  * - "planned" -> PlannedTasksList (grouped by date)
  * - Others -> TasksList (pending + completed sections)
@@ -20,6 +20,7 @@ import TasksList from "../TaskList";
 import PlannedTasksList from "../PlannedTasksList";
 import EmptyState from "../EmptyState";
 import { Task, ListItem } from "../../types";
+import { useTranslation } from "react-i18next";
 
 const filterTasks = (tasks: Task[], list: ListItem): Task[] => {
   switch (list.filterKey) {
@@ -103,21 +104,34 @@ const MainContent: React.FC<MainContentProps> = ({
     setShowBanner(false);
     if (user?.uid) {
       const key = `suggestionBannerDismissed_${user.uid}`;
-      await AsyncStorage.setItem(key, JSON.stringify({ date: getTodayDateString(), dismissed: true }));
+      await AsyncStorage.setItem(
+        key,
+        JSON.stringify({ date: getTodayDateString(), dismissed: true }),
+      );
     }
   };
 
-  const filteredTasks = useMemo(() => filterTasks(tasks, currentList), [tasks, currentList]);
-  const pendingTasks = useMemo(() => filteredTasks.filter((t) => !t.completed), [filteredTasks]);
-  const completedTasks = useMemo(() => filteredTasks.filter((t) => t.completed), [filteredTasks]);
+  const filteredTasks = useMemo(
+    () => filterTasks(tasks, currentList),
+    [tasks, currentList],
+  );
+  const pendingTasks = useMemo(
+    () => filteredTasks.filter((t) => !t.completed),
+    [filteredTasks],
+  );
+  const completedTasks = useMemo(
+    () => filteredTasks.filter((t) => t.completed),
+    [filteredTasks],
+  );
 
   const hour = new Date().getHours();
+  const { t } = useTranslation();
   const greeting =
     hour < 12
-      ? "Good morning!"
+      ? t("greeting.morning")
       : hour < 18
-        ? "Good afternoon!"
-        : "Good evening!";
+        ? t("greeting.afternoon")
+        : t("greeting.evening");
   const todayDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -130,7 +144,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {showBanner && (
         <SuggestionsBanner
-          message={`${greeting} Here are your tasks for today.`}
+          message={t("greeting.banner", { greeting })}
           onClose={handleCloseBanner}
         />
       )}
@@ -142,18 +156,18 @@ const MainContent: React.FC<MainContentProps> = ({
           title={
             currentList.filterKey === "all" &&
             currentList.name === "Search Results"
-              ? "No results found"
+              ? t("tasks.no_results")
               : currentList.filterKey === "planned"
-                ? "No planned tasks"
-                : `No tasks in "${currentList.name}"`
+                ? t("tasks.no_planned")
+                : t("tasks.no_tasks", { listName: currentList.name })
           }
           message={
             currentList.filterKey === "all" &&
             currentList.name === "Search Results"
-              ? "Try a different search term"
+              ? t("tasks.no_results_hint")
               : currentList.filterKey === "planned"
-                ? "Set a due date on a task to see it here"
-                : "Add a task above to get started"
+                ? t("tasks.no_planned_hint")
+                : t("tasks.no_tasks_add")
           }
         />
       ) : currentList.filterKey === "planned" ? (

@@ -1,6 +1,8 @@
 {
   "expo": {
-    "scheme": ["todoapp"],
+    "scheme": [
+      "todoapp"
+    ],
     "name": "TODO App",
     "slug": "TODO-App",
     "version": "1.0.0",
@@ -23,7 +25,8 @@
       "@react-native-community/datetimepicker",
       "expo-router",
       "expo-font",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-localization"
     ],
     "android": {
       "adaptiveIcon": {

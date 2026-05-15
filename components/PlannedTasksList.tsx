@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { createPlannedTasksListStyles } from "../styles/components/PlannedTasksList";
 import { Task } from "../types";
+import i18n from "@/src/i18n";
 
 interface PlannedTasksListProps {
   tasks: Task[];
@@ -45,12 +46,12 @@ const getDateCategory = (
   const diffTime = taskDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) return { category: "Overdue", isOverdue: true };
-  if (diffDays === 0) return { category: "Today", isOverdue: false };
-  if (diffDays === 1) return { category: "Tomorrow", isOverdue: false };
-  if (diffDays <= 7) return { category: "This Week", isOverdue: false };
-  if (diffDays <= 14) return { category: "Next Week", isOverdue: false };
-  return { category: "Later", isOverdue: false };
+  if (diffDays < 0)  return { category: i18n.t('date.overdue'),   isOverdue: true  };
+  if (diffDays === 0) return { category: i18n.t('date.today'),    isOverdue: false };
+  if (diffDays === 1) return { category: i18n.t('date.tomorrow'), isOverdue: false };
+  if (diffDays <= 7)  return { category: i18n.t('date.this_week'),isOverdue: false };
+  if (diffDays <= 14) return { category: i18n.t('date.next_week'),isOverdue: false };
+  return              { category: i18n.t('date.later'),           isOverdue: false };
 };
 
 /**
@@ -90,18 +91,18 @@ const groupTasksByDate = (tasks: Task[]): TaskGroup[] => {
 
   // Render sections in a meaningful chronological order
   const orderedCategories = [
-    "Today",
-    "Tomorrow",
-    "This Week",
-    "Next Week",
-    "Later",
+    i18n.t('date.today'),
+    i18n.t('date.tomorrow'),
+    i18n.t('date.this_week'),
+    i18n.t('date.next_week'),
+    i18n.t('date.later'),
   ];
 
   const result: TaskGroup[] = [];
 
   // Overdue tasks always appear first so the user can't miss them
   if (overdueTasks.length > 0) {
-    result.push({ title: "Overdue", tasks: overdueTasks, isOverdue: true });
+    result.push({ title: i18n.t('date.overdue'), tasks: overdueTasks, isOverdue: true });
   }
 
   orderedCategories.forEach((category) => {
@@ -116,7 +117,7 @@ const groupTasksByDate = (tasks: Task[]): TaskGroup[] => {
 
   // Completed tasks are always last, grouped together regardless of due date
   if (completedTasks.length > 0) {
-    result.push({ title: "Completed", tasks: completedTasks });
+    result.push({ title: i18n.t('date.completed'), tasks: completedTasks });
   }
 
   return result;

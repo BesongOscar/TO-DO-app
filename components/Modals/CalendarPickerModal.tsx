@@ -16,6 +16,7 @@ import {
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createCalendarPickerModalStyles } from "../../styles/components/Modals/CalendarPickerModal";
 import TimePicker from "../TimePicker";
+import { useTranslation } from "react-i18next";
 
 interface CalendarDay {
   date: Date;
@@ -58,6 +59,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
   onClose,
 }) => {
   const styles = useThemeStyles(createCalendarPickerModalStyles);
+  const { t } = useTranslation();
   const today = new Date();
 
   // `new Date(currentDate)` — now uses parseDateString so
@@ -191,7 +193,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
           onPress={() => {}}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Select Date</Text>
+          <Text style={styles.title}>{t("detail.select_date")}</Text>
 
           {/* Calendar */}
           <View style={styles.calendarContainer}>
@@ -247,7 +249,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
           {selectedDate && (
             <View style={styles.timeSection}>
               <View style={styles.timeRow}>
-                <Text style={styles.timeLabel}>Time</Text>
+                <Text style={styles.timeLabel}>{t("detail.time")}</Text>
                 {hasTime ? (
                   <TouchableOpacity
                     style={styles.timeDisplay}
@@ -257,7 +259,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
                       {`${String(selectedHour).padStart(2, "0")}:${String(selectedMinute).padStart(2, "0")}`}
                     </Text>
                     <TouchableOpacity onPress={handleRemoveTime}>
-                      <Text style={styles.removeTimeText}>Remove</Text>
+                      <Text style={styles.removeTimeText}>{t("detail.remove_time")}</Text>
                     </TouchableOpacity>
                   </TouchableOpacity>
                 ) : (
@@ -265,7 +267,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
                     style={styles.setTimeButton}
                     onPress={() => setShowTimePicker(true)}
                   >
-                    <Text style={styles.setTimeText}>Set time</Text>
+                    <Text style={styles.setTimeText}>{t("detail.set_time")}</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -284,7 +286,7 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
           {/* Preview */}
           {selectedDate && (
             <View style={styles.preview}>
-              <Text style={styles.previewLabel}>Selected:</Text>
+              <Text style={styles.previewLabel}>{t("detail.selected")}</Text>
               <Text style={styles.previewDate}>
                 {selectedDate.toLocaleDateString("en-US", {
                   weekday: "short",
@@ -301,13 +303,13 @@ const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
           {/* Buttons */}
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
-              <Text style={styles.clearText}>Clear</Text>
+              <Text style={styles.clearText}>{t("detail.clear")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveText}>Save</Text>
+              <Text style={styles.saveText}>{t("common.save")}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

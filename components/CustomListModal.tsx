@@ -16,6 +16,7 @@ import {
 } from "../styles/components/CustomListModal";
 import EMOJI_OPTIONS from "../constants/customList"
 import { CustomList } from "../types";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -37,6 +38,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
   const modalCommonStyles = useThemeStyles(createModalCommonStyles);
   const customListModalStyles = useThemeStyles(createCustomListModalStyles);
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(EMOJI_OPTIONS[0]);
 
@@ -52,7 +54,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
 
   const handleSave = () => {
     if (!name.trim()) {
-      Alert.alert("Error", "List name is required");
+      Alert.alert(t("errors.something_wrong"), t("lists.list_name_required"));
       return;
     }
     onSave(name.trim(), icon);
@@ -61,12 +63,12 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
 
   const handleDelete = () => {
     Alert.alert(
-      "Delete List",
-      "This will also delete all tasks in this list. This cannot be undone.",
+      t("lists.delete_list"),
+      t("lists.delete_list_confirm"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () => {
             onDelete?.();
@@ -88,13 +90,13 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
         <View style={modalCommonStyles.modalContent}>
           <View style={modalCommonStyles.modalHeader}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={modalCommonStyles.modalCancelText}>Cancel</Text>
+              <Text style={modalCommonStyles.modalCancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <Text style={modalCommonStyles.modalTitle}>
-              {initialData ? "Edit List" : "New List"}
+              {initialData ? t("lists.edit_list") : t("lists.new_list")}
             </Text>
             <TouchableOpacity onPress={handleSave}>
-              <Text style={modalCommonStyles.modalSaveText}>Save</Text>
+              <Text style={modalCommonStyles.modalSaveText}>{t("common.save")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -102,21 +104,21 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
             <View style={customListModalStyles.listPreview}>
               <Text style={customListModalStyles.listPreviewIcon}>{icon}</Text>
               <Text style={customListModalStyles.listPreviewName}>
-                {name || "List Name"}
+                {name || t("lists.list_name")}
               </Text>
             </View>
 
-            <Text style={customListModalStyles.inputLabel}>Name</Text>
+            <Text style={customListModalStyles.inputLabel}>{t("lists.list_name")}</Text>
             <TextInput
               style={customListModalStyles.listNameInput}
               value={name}
               onChangeText={setName}
-              placeholder="Enter list name"
+              placeholder={t("lists.list_name_placeholder")}
               placeholderTextColor={theme.placeholderTextColor}
               maxLength={50}
             />
 
-            <Text style={customListModalStyles.inputLabel}>Icon</Text>
+            <Text style={customListModalStyles.inputLabel}>{t("lists.list_icon")}</Text>
             <View style={customListModalStyles.emojiGrid}>
               {EMOJI_OPTIONS.map((emoji, i) => (
                 <TouchableOpacity
@@ -138,7 +140,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
                 onPress={handleDelete}
               >
                 <Text style={customListModalStyles.deleteListText}>
-                  Delete List
+                  {t("lists.delete_list")}
                 </Text>
               </TouchableOpacity>
             )}

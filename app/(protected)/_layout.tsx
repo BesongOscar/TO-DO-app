@@ -8,6 +8,8 @@ import { useTasks } from "../../context/TasksContext";
 import { useTheme } from "../../context/ThemeContext";
 import BottomSheet from "../../components/Index/BottomSheet";
 import BottomPanel from "@/components/Index/BottomPanel";
+import { fontSemi, androidPoppinsExtras } from "@/styles/common";
+import { useTranslation } from 'react-i18next';
 
 export default function ProtectedLayout() {
   const { user, loading } = useAuth();
@@ -19,6 +21,7 @@ export default function ProtectedLayout() {
     setSelectedTaskId,
   } = useTasks();
   const { theme, isDark } = useTheme();
+    const { t } = useTranslation();
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
 
   if (loading) {
@@ -58,13 +61,14 @@ export default function ProtectedLayout() {
             },
             headerTitleStyle: {
               fontSize: 24,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
               color: "#fff",
+              ...androidPoppinsExtras,
             },
-            tabBarLabel: "My Day",
+            tabBarLabel: t('navigation.my_day'),
             tabBarLabelStyle: {
               fontSize: 12,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
               marginTop: 2,
             },
             tabBarIcon: ({ focused, color }) => (
@@ -80,10 +84,10 @@ export default function ProtectedLayout() {
           name="Lists"
           options={{
             headerShown: false,
-            tabBarLabel: "Lists",
+            tabBarLabel: t('navigation.lists'),
             tabBarLabelStyle: {
               fontSize: 12,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
               marginTop: 2,
             },
             tabBarIcon: ({ focused, color }) => (
@@ -106,13 +110,15 @@ export default function ProtectedLayout() {
             },
             headerTitleStyle: {
               fontSize: 24,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
               color: "#fff",
+              ...androidPoppinsExtras,
             },
-            tabBarLabel: "Planned",
+            tabBarLabel: t('navigation.planned'),
             tabBarLabelStyle: {
               fontSize: 12,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
+              ...androidPoppinsExtras,
               marginTop: 2,
             },
             tabBarIcon: ({ focused, color }) => (
@@ -128,10 +134,11 @@ export default function ProtectedLayout() {
           name="profile"
           options={{
             headerShown: false,
-            tabBarLabel: "Profile",
+            tabBarLabel: t('navigation.profile'),
             tabBarLabelStyle: {
               fontSize: 12,
-              fontFamily: "Poppins-SemiBold",
+              fontFamily: fontSemi,
+              ...androidPoppinsExtras,
               marginTop: 2,
             },
             tabBarIcon: ({ focused, color }) => (

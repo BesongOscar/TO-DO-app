@@ -1,5 +1,7 @@
 import { StyleSheet } from "react-native";
 import type { Theme } from "../../../theme";
+import { fontReg, fontSemi, fontBold, androidPoppinsExtras } from "../../../common";
+
 
 export const createListsIndexStyles = (theme: Theme) => StyleSheet.create({
   container: {
@@ -16,7 +18,8 @@ export const createListsIndexStyles = (theme: Theme) => StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontFamily: "Poppins-SemiBold",
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
     color: "#fff",
   },
   list: {
@@ -40,13 +43,16 @@ export const createListsIndexStyles = (theme: Theme) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
   },
   listInfo: {
     flex: 1,
   },
   listName: {
     fontSize: 16,
-    fontFamily: "Poppins-Medium",
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
     color: theme.text,
   },
   countContainer: {
@@ -60,7 +66,8 @@ export const createListsIndexStyles = (theme: Theme) => StyleSheet.create({
   },
   count: {
     fontSize: 14,
-    fontFamily: "Poppins-Medium",
+    fontFamily: fontReg,
+    ...androidPoppinsExtras,
     color: theme.textMuted,
   },
 });

@@ -11,6 +11,7 @@ import TaskItem from "./TaskItem";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { Task } from "../types";
 import { createCompletedSectionStyles } from "../styles/components/CompletedSection";
+import { useTranslation } from "react-i18next";
 
 interface CompletedSectionProps {
   completedTasks: Task[];
@@ -28,6 +29,7 @@ const CompletedSection: React.FC<CompletedSectionProps> = ({
   onDelete,
 }) => {
   const styles = useThemeStyles(createCompletedSectionStyles);
+  const { t } = useTranslation();
   if (completedTasks.length === 0) return null;
 
   return (
@@ -35,7 +37,7 @@ const CompletedSection: React.FC<CompletedSectionProps> = ({
       {/* Section header */}
       <View style={styles.completedHeader}>
         <Text style={styles.completedTitle}>
-          Completed ({completedTasks.length})
+          {t("tasks.completed_count", { count: completedTasks.length })}
         </Text>
       </View>
 

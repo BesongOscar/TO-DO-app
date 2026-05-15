@@ -28,6 +28,7 @@ import { useThemeStyles } from "../hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createTaskListStyles } from "../styles/components/TaskList";
 import { Task } from "../types";
+import { useTranslation } from "react-i18next";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -186,6 +187,7 @@ const TasksList: React.FC<TasksListProps> = ({
 }) => {
   const styles = useThemeStyles(createTaskListStyles);
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
@@ -229,7 +231,7 @@ const TasksList: React.FC<TasksListProps> = ({
       {completedTasks.length > 0 && (
         <View style={styles.completedHeader}>
           <Text style={styles.completedTitle}>
-            Completed ({completedTasks.length})
+            {t("tasks.completed_count", { count: completedTasks.length })}
           </Text>
         </View>
       )}

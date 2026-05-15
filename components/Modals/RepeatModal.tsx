@@ -1,10 +1,3 @@
-/**
- * RepeatModal - Task repeat scheduling modal
- * 
- * Supports daily, weekly, monthly, yearly, and custom repeat options.
- * Weekly includes day-of-week toggles; monthly includes last-day support.
- */
-
 import React, { useState } from "react";
 import {
   View,
@@ -17,30 +10,23 @@ import {
 import { RepeatType } from "../../types";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createRepeatModalStyles } from "../../styles/components/Modals/RepeatModal";
+import { useTranslation } from "react-i18next";
 
 interface RepeatOption {
   label: string;
   value: RepeatType;
 }
 
-const REPEAT_OPTIONS: RepeatOption[] = [
-  { label: "Never", value: "none" },
-  { label: "Daily", value: "daily" },
-  { label: "Weekly", value: "weekly" },
-  { label: "Monthly", value: "monthly" },
-  { label: "Yearly", value: "yearly" },
-];
-
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface RepeatModalProps {
   visible: boolean;
   currentRepeat: RepeatType | undefined;
-  currentRepeatDays?: number[] | undefined; // for weekly repeats
-  currentRepeatOnDay?: number | undefined; // for monthly/yearly repeats
-  currentRepeatOnLastDay?: boolean | undefined; // for monthly repeats
-  currentRepeatEndDate?: string | undefined; // optional end date for repeats
-  dueTime: string | undefined; // for preview display
+  currentRepeatDays?: number[] | undefined;
+  currentRepeatOnDay?: number | undefined;
+  currentRepeatOnLastDay?: boolean | undefined;
+  currentRepeatEndDate?: string | undefined;
+  dueTime: string | undefined;
   onSelect: (
     repeat: RepeatType,
     options?: {
@@ -65,6 +51,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   onClose,
 }) => {
   const styles = useThemeStyles(createRepeatModalStyles);
+  const { t } = useTranslation();
   const [selectedRepeat, setSelectedRepeat] = useState<RepeatType>(
     currentRepeat || "none",
   );
@@ -75,7 +62,6 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   const [isLastDay, setIsLastDay] = useState<boolean>(
     currentRepeatOnLastDay || false,
   );
-  // End repeat state
   const [endRepeatType, setEndRepeatType] = useState<"never" | "onDate">(
     currentRepeatEndDate ? "onDate" : "never",
   );
@@ -97,8 +83,16 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   const timeSuffix = dueTime
-    ? ` at ${dueTime.slice(0, 2)}:${dueTime.slice(3)}`
+    ? ` ${t("date.at")} ${dueTime.slice(0, 2)}:${dueTime.slice(3)}`
     : "";
+
+  const REPEAT_OPTIONS: RepeatOption[] = [
+    { label: t("repeat.never"), value: "none" },
+    { label: t("repeat.daily"), value: "daily" },
+    { label: t("repeat.weekly"), value: "weekly" },
+    { label: t("repeat.monthly"), value: "monthly" },
+    { label: t("repeat.yearly"), value: "yearly" },
+  ];
 
   const toggleDay = (day: number) => {
     setSelectedDays((prev) =>
@@ -109,20 +103,20 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   const getRepeatLabel = (): string => {
     switch (selectedRepeat) {
       case "none":
-        return "Never";
+        return t("repeat.never");
       case "daily":
-        return `Daily${timeSuffix}`;
+        return `${t("repeat.every_day")}${timeSuffix}`;
       case "weekly": {
-        if (selectedDays.length === 0) return `Weekly${timeSuffix}`;
+        if (selectedDays.length === 0) return `${t("repeat.every_week")}${timeSuffix}`;
         const dayNames = selectedDays.sort().map((d) => DAY_LABELS[d]);
-        return `Weekly on ${dayNames.join(", ")}${timeSuffix}`;
+        return `${t("repeat.repeat_on")} ${dayNames.join(", ")}${timeSuffix}`;
       }
       case "monthly": {
-        if (isLastDay) return `Last day of month${timeSuffix}`;
-        return `Monthly on day ${monthlyDay}${timeSuffix}`;
+        if (isLastDay) return `${t("repeat.last_day")}${timeSuffix}`;
+        return `${t("repeat.day_of_month")} ${monthlyDay}${timeSuffix}`;
       }
       case "yearly":
-        return `Yearly${timeSuffix}`;
+        return `${t("repeat.every_year")}${timeSuffix}`;
       default:
         return "";
     }
@@ -171,10 +165,9 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
           onPress={() => {}}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Repeat</Text>
+          <Text style={styles.title}>{t("repeat.title")}</Text>
 
           <ScrollView style={styles.optionsList}>
-            {/* Repeat Type Selection */}
             {REPEAT_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option.value}
@@ -193,7 +186,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
                 >
                   {option.label}
                   {option.value !== "none" && timeSuffix && (
-                    <Text style={styles.timeHint}> at {dueTime}</Text>
+                    <Text style={styles.timeHint}> {t("date.at")} {dueTime}</Text>
                   )}
                 </Text>
                 {selectedRepeat === option.value && (
@@ -202,10 +195,9 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
               </TouchableOpacity>
             ))}
 
-            {/* Weekly Day Picker */}
             {selectedRepeat === "weekly" && (
               <View style={styles.dayPickerContainer}>
-                <Text style={styles.sectionLabel}>Repeat on:</Text>
+                <Text style={styles.sectionLabel}>{t("repeat.repeat_on")}</Text>
                 <View style={styles.dayRow}>
                   {DAY_LABELS.map((label, index) => (
                     <TouchableOpacity
@@ -232,10 +224,9 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
               </View>
             )}
 
-            {/* Monthly Options */}
             {selectedRepeat === "monthly" && (
               <View style={styles.monthlyContainer}>
-                <Text style={styles.sectionLabel}>Repeat on:</Text>
+                <Text style={styles.sectionLabel}>{t("repeat.repeat_on")}</Text>
                 <TouchableOpacity
                   style={[
                     styles.monthlyOption,
@@ -243,7 +234,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
                   ]}
                   onPress={() => setIsLastDay(false)}
                 >
-                  <Text style={styles.monthlyOptionText}>Day of month</Text>
+                  <Text style={styles.monthlyOptionText}>{t("repeat.day_of_month")}</Text>
                   {!isLastDay && (
                     <View style={styles.dayNumberRow}>
                       <TouchableOpacity
@@ -271,18 +262,15 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
                   ]}
                   onPress={() => setIsLastDay(true)}
                 >
-                  <Text style={styles.monthlyOptionText}>
-                    Last day of month
-                  </Text>
+                  <Text style={styles.monthlyOptionText}>{t("repeat.last_day")}</Text>
                   {isLastDay && <Text style={styles.checkmark}>✓</Text>}
                 </TouchableOpacity>
               </View>
             )}
 
-            {/* End Repeat Section */}
             {selectedRepeat !== "none" && (
               <View style={styles.endRepeatContainer}>
-                <Text style={styles.sectionLabel}>End Repeat</Text>
+                <Text style={styles.sectionLabel}>{t("repeat.end_repeat")}</Text>
                 <TouchableOpacity
                   style={[
                     styles.endRepeatOption,
@@ -290,7 +278,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
                   ]}
                   onPress={() => setEndRepeatType("never")}
                 >
-                  <Text style={styles.optionText}>Never</Text>
+                  <Text style={styles.optionText}>{t("repeat.never")}</Text>
                   {endRepeatType === "never" && (
                     <Text style={styles.checkmark}>✓</Text>
                   )}
@@ -302,7 +290,7 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
                   ]}
                   onPress={() => setEndRepeatType("onDate")}
                 >
-                  <Text style={styles.optionText}>On Date</Text>
+                  <Text style={styles.optionText}>{t("repeat.on_date")}</Text>
                   {endRepeatType === "onDate" && (
                     <Text style={styles.checkmark}>✓</Text>
                   )}
@@ -357,23 +345,22 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
             )}
           </ScrollView>
 
-          {/* Preview */}
           <View style={styles.preview}>
-            <Text style={styles.previewLabel}>Selected:</Text>
+            <Text style={styles.previewLabel}>{t("repeat.selected_label")}</Text>
             <Text style={styles.previewDate}>
               {getRepeatLabel()}
               {endRepeatType === "onDate" &&
                 selectedRepeat !== "none" &&
-                ` until ${endDateYear}/${String(endDateMonth).padStart(2, "0")}/${String(endDateDay).padStart(2, "0")}`}
+                ` ${t("date.until")} ${endDateYear}/${String(endDateMonth).padStart(2, "0")}/${String(endDateDay).padStart(2, "0")}`}
             </Text>
           </View>
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveText}>Save</Text>
+              <Text style={styles.saveText}>{t("common.save")}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

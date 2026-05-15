@@ -14,6 +14,7 @@ import {
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { useTheme } from "../../context/ThemeContext";
 import { createNoteModalStyles } from "../../styles/components/Modals/NoteModal";
+import { useTranslation } from "react-i18next";
 
 interface NoteModalProps {
   visible: boolean;
@@ -30,6 +31,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
 }) => {
   const styles = useThemeStyles(createNoteModalStyles);
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [noteText, setNoteText] = useState<string>(currentNote || "");
 
   /**
@@ -68,12 +70,12 @@ const NoteModal: React.FC<NoteModalProps> = ({
           onPress={() => {}}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Add Note</Text>
+          <Text style={styles.title}>{t("note.title")}</Text>
 
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.textInput}
-              placeholder="Add a note..."
+              placeholder={t("note.placeholder")}
               placeholderTextColor={theme.placeholderTextColor}
               value={noteText}
               onChangeText={setNoteText}
@@ -85,12 +87,14 @@ const NoteModal: React.FC<NoteModalProps> = ({
           </View>
 
           {noteText.length > 0 && (
-            <Text style={styles.charCount}>{noteText.length} characters</Text>
+            <Text style={styles.charCount}>
+              {t("note.characters", { count: noteText.length })}
+            </Text>
           )}
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -106,7 +110,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
                   !noteText.trim() && styles.saveTextDisabled,
                 ]}
               >
-                Save
+                {t("common.save")}
               </Text>
             </TouchableOpacity>
           </View>

@@ -10,6 +10,7 @@ import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createAddTaskInputStyles } from "../styles/components/AddTaskInput";
+import { useTranslation } from 'react-i18next';
 
 interface AddTaskInputProps {
   onAddTask: (text: string) => void;
@@ -18,6 +19,7 @@ interface AddTaskInputProps {
 const AddTaskInput: React.FC<AddTaskInputProps> = ({ onAddTask }) => {
   const styles = useThemeStyles(createAddTaskInputStyles);
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [taskText, setTaskText] = useState<string>("");
 
   const handleAddTask = (): void => {
@@ -31,7 +33,7 @@ const AddTaskInput: React.FC<AddTaskInputProps> = ({ onAddTask }) => {
     <View style={styles.addTaskContainer}>
       <TextInput
         style={styles.addTaskInput}
-        placeholder="Add a task"
+        placeholder={t('tasks.add_placeholder')}
         placeholderTextColor={theme.placeholderTextColor}
         value={taskText}
         onChangeText={setTaskText}

@@ -17,6 +17,7 @@ import {
   firestoreUpdateTask,
 } from "@/src/firebase/tasks";
 import { useTaskNotifications } from "../src/hooks/useTaskNotifications";
+import i18n from "@/src/i18n";
 
 /**
  * TasksContext - Manages global task state and Firestore persistence
@@ -145,9 +146,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         } catch (e) {
           console.warn("Failed to save tasks to Firestore:", e);
           Alert.alert(
-            "Save Failed",
-            "Your changes couldn't be saved. Please check your connection and try again.",
-            [{ text: "OK" }],
+            i18n.t("errors.save_failed"),
+            "",
+            [{ text: i18n.t("common.ok") }],
           );
         }
       }, 500);
@@ -164,9 +165,8 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  
   const addTask = useCallback(
-        (text: string, listName?: string, listId?: string): void => {
+    (text: string, listName?: string, listId?: string): void => {
       const newTask: Task = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         text: text.trim(),
@@ -226,11 +226,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
           order: newOrder,
         }).catch((e) => {
           console.warn("Failed to toggle task in Firestore:", e);
-          Alert.alert(
-            "Save Failed",
-            "Please check your connection and try again.",
-            [{ text: "OK" }],
-          );
+          Alert.alert(i18n.t("errors.save_failed"), "", [
+            { text: i18n.t("common.ok") },
+          ]);
           setTasks((prev) =>
             prev.map((t) =>
               t.id === taskId
@@ -261,7 +259,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       if (user) {
-        firestoreUpdateTask(user.uid, taskId, { important: newImportant }).catch((e) => {
+        firestoreUpdateTask(user.uid, taskId, {
+          important: newImportant,
+        }).catch((e) => {
           console.warn("Failed to toggle important in Firestore:", e);
           setTasks((prev) =>
             prev.map((t) =>
@@ -274,7 +274,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     [user, onTaskUpdated],
   );
 
-    // Delete a task by ID, removes it from local state immediately for responsiveness, then deletes it from Firestore
+  // Delete a task by ID, removes it from local state immediately for responsiveness, then deletes it from Firestore
   const deleteTask = useCallback(
     (taskId: string): void => {
       const prevTask = tasksRef.current.find((t) => t.id === taskId);
@@ -288,9 +288,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
             return [...prev, prevTask];
           });
           Alert.alert(
-            "Delete Failed",
-            "Could not delete the task. Please try again.",
-            [{ text: "OK" }],
+            i18n.t("errors.delete_failed"),
+            "",
+            [{ text: i18n.t("common.ok") }],
           );
         });
       }
@@ -315,15 +315,11 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
       if (user && prevTask) {
         firestoreUpdateTask(user.uid, taskId, updates).catch((e) => {
           console.warn("Failed to update task in Firestore:", e);
-          setTasks((prev) =>
-            prev.map((t) =>
-              t.id === taskId ? prevTask : t,
-            ),
-          );
+          setTasks((prev) => prev.map((t) => (t.id === taskId ? prevTask : t)));
           Alert.alert(
-            "Update Failed",
-            "Could not save changes. Please try again.",
-            [{ text: "OK" }],
+            i18n.t("errors.update_failed"),
+            "",
+            [{ text: i18n.t("common.ok") }],
           );
         });
       }
@@ -357,9 +353,9 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (e) {
       console.warn("Failed to refresh tasks:", e);
       Alert.alert(
-        "Refresh Failed",
-        "Could not load tasks. Please check your connection and try again.",
-        [{ text: "OK" }],
+        i18n.t("errors.refresh_failed"),
+        "",
+        [{ text: i18n.t("common.ok") }],
       );
     } finally {
       setRefreshing(false);

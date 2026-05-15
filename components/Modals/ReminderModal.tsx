@@ -21,6 +21,7 @@ import TimePicker from "../TimePicker";
 import { requestNotificationPermissions } from "../../src/notifications/notificationService";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createReminderModalStyles } from "../../styles/components/Modals/ReminderModal";
+import { useTranslation } from "react-i18next";
 
 interface ReminderOption {
   label: string;
@@ -46,6 +47,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   onClose,
 }) => {
   const styles = useThemeStyles(createReminderModalStyles);
+  const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [customHour, setCustomHour] = useState(9);
@@ -69,22 +71,22 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
 
     // "At due time" — only if date+time both set
     if (dueDate && dueTime) {
-      options.push({ label: "At due time", value: "atDueTime", description: `${dueDate} at ${dueTime}` });
+      options.push({ label: t("reminder.at_due_time"), value: "atDueTime", description: `${dueDate} ${t("date.at")} ${dueTime}` });
     }
 
     if (dueDate) {
       const target = getTargetDateTime();
       options.push(
-        { label: "15 minutes before", value: "15min", description: formatRelativeTime(new Date(target.getTime() - 15 * 60000)) },
-        { label: "30 minutes before", value: "30min", description: formatRelativeTime(new Date(target.getTime() - 30 * 60000)) },
-        { label: "1 hour before", value: "1hour", description: formatRelativeTime(new Date(target.getTime() - 60 * 60000)) },
-        { label: "2 hours before", value: "2hours", description: formatRelativeTime(new Date(target.getTime() - 120 * 60000)) },
-        { label: "1 day before", value: "1day", description: formatRelativeTime(new Date(target.getTime() - 24 * 60 * 60000)) },
+        { label: t("reminder.15_min"), value: "15min", description: formatRelativeTime(new Date(target.getTime() - 15 * 60000)) },
+        { label: t("reminder.30_min"), value: "30min", description: formatRelativeTime(new Date(target.getTime() - 30 * 60000)) },
+        { label: t("reminder.1_hour"), value: "1hour", description: formatRelativeTime(new Date(target.getTime() - 60 * 60000)) },
+        { label: t("reminder.2_hours"), value: "2hours", description: formatRelativeTime(new Date(target.getTime() - 120 * 60000)) },
+        { label: t("reminder.1_day"), value: "1day", description: formatRelativeTime(new Date(target.getTime() - 24 * 60 * 60000)) },
       );
     }
     options.push(
-      { label: "Custom time", value: "custom" },
-      { label: "No Reminder", value: "" },
+      { label: t("reminder.custom_time"), value: "custom" },
+      { label: t("reminder.no_reminder"), value: "" },
     );
 
     return options;
@@ -101,8 +103,8 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
       minute: "2-digit",
     });
 
-    if (isToday) return `Today at ${timeStr}`;
-    if (isTomorrow) return `Tomorrow at ${timeStr}`;
+    if (isToday) return `${t("date.today")} ${t("date.at")} ${timeStr}`;
+    if (isTomorrow) return `${t("date.tomorrow")} ${t("date.at")} ${timeStr}`;
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -154,12 +156,12 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
       requestNotificationPermissions().then((granted) => {
         if (!granted) {
           Alert.alert(
-            "Notifications Disabled",
-            "Enable notifications in Settings to receive task reminders.",
+            t("notifications.disabled_title"),
+            t("notifications.disabled_body"),
             [
-              { text: "Not Now", style: "cancel" },
+              { text: t("notifications.not_now"), style: "cancel" },
               {
-                text: "Open Settings",
+                text: t("notifications.open_settings"),
                 onPress: () => {
                   if (Platform.OS === "ios") {
                     Linking.openURL("app-settings:");
@@ -226,7 +228,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
           onPress={() => {}}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Remind Me</Text>
+          <Text style={styles.title}>{t("reminder.title")}</Text>
 
           <ScrollView style={styles.optionsList}>
             {REMINDER_OPTIONS.map((option) => (
@@ -276,7 +278,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
           {/* Preview */}
           {selectedOption && selectedOption !== "custom" && selectedOption !== "" && (
             <View style={styles.preview}>
-              <Text style={styles.previewLabel}>Reminder:</Text>
+              <Text style={styles.previewLabel}>{t("reminder.reminder_label")}</Text>
               <Text style={styles.previewDate}>
                 {formatRelativeTime(new Date(getReminderTime(selectedOption)!))}
               </Text>
@@ -285,7 +287,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
 
           {selectedOption === "custom" && (
             <View style={styles.preview}>
-              <Text style={styles.previewLabel}>Reminder:</Text>
+              <Text style={styles.previewLabel}>{t("reminder.reminder_label")}</Text>
               <Text style={styles.previewDate}>
                 {`${String(customHour).padStart(2, "0")}:${String(customMinute).padStart(2, "0")}`}
               </Text>
@@ -294,10 +296,10 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveText}>Save</Text>
+              <Text style={styles.saveText}>{t("common.save")}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
