@@ -1,3 +1,11 @@
+/**
+ * BottomSheet - Draggable slide-up panel for task details
+ * 
+ * PanResponder-based drag to dismiss, animated slide-in/slide-out.
+ * Shared across all tabs from the protected layout.
+ * Wraps BottomPanel content with dismiss gesture handling.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -5,7 +13,6 @@ import {
   TouchableWithoutFeedback,
   PanResponder,
   Keyboard,
-  StyleSheet,
 } from "react-native";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createBottomSheetStyles, SHEET_HEIGHT } from "../../styles/components/Index/BottomSheet";
