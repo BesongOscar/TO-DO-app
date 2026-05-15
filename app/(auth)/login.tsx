@@ -6,13 +6,11 @@
  */
 
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   useWindowDimensions,
   Alert,
-  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -94,7 +92,7 @@ export default function Login() {
         </View>
       </View>
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Sign in to continue to your account</Text>
+      <Text style={styles.subtitle}>Sign in to have access to your account</Text>
 
       <Formik
         initialValues={{
@@ -117,7 +115,7 @@ export default function Login() {
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
-                placeholder="Email"
+                placeholder="Email Address"
                 style={styles.input}
                 placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}

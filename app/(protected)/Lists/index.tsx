@@ -49,7 +49,7 @@ export default function ListsIndexScreen() {
             name="add"
             size={28}
             color="#fff"
-            style={{ marginRight: 16 }}
+            style={{ marginRight: 8 }}
           />
         </TouchableOpacity>
       ),

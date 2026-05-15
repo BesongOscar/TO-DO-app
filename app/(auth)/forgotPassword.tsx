@@ -91,7 +91,7 @@ export default function ForgotPassword() {
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
-                placeholder="Email"
+                placeholder="Email Address"
                 style={styles.input}
                 placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}

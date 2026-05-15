@@ -100,7 +100,7 @@ export default function Signup() {
         </View>
       </View>
       <Text style={styles.title}>Sign Up</Text>
-      <Text style={styles.subtitle}>Create an account to sync your tasks</Text>
+      <Text style={styles.subtitle}>Create an account to get started</Text>
 
       <Formik
         initialValues={{
@@ -141,7 +141,7 @@ export default function Signup() {
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
               <TextInput
-                placeholder="Email"
+                placeholder="Email Address"
                 style={styles.input}
                 placeholderTextColor={theme.placeholderTextColor}
                 value={values.email}

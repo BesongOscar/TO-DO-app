@@ -57,7 +57,7 @@ export default function ListDetailScreen() {
     } else {
       navigation.setOptions({
         headerShown: true,
-        headerTitle: currentList?.name ?? "",
+        // headerTitle: currentList?.name ?? "",
         headerRight: () => (
           <View style={styles.headerRightRow}>
             <TouchableOpacity onPress={() => setSearchMode(true)}>

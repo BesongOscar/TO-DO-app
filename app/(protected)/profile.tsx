@@ -43,7 +43,10 @@ export default function Profile() {
             await logout();
             expoRouter.dismissTo("/login");
           } catch (error: unknown) {
-            Alert.alert("Error", error instanceof Error ? error.message : "Failed to logout");
+            Alert.alert(
+              "Error",
+              error instanceof Error ? error.message : "Failed to logout",
+            );
           }
         },
       },
@@ -75,7 +78,10 @@ export default function Profile() {
         await uploadProfilePhoto(result.assets[0].uri);
         Alert.alert("Success", "Profile photo updated!");
       } catch (error: unknown) {
-        Alert.alert("Error", error instanceof Error ? error.message : "Failed to upload photo");
+        Alert.alert(
+          "Error",
+          error instanceof Error ? error.message : "Failed to upload photo",
+        );
       } finally {
         setUploading(false);
       }
@@ -93,7 +99,10 @@ export default function Profile() {
       setIsEditingName(false);
       Alert.alert("Success", "Name updated!");
     } catch (error: unknown) {
-      Alert.alert("Error", error instanceof Error ? error.message : "Failed to update name");
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "Failed to update name",
+      );
       console.error("Failed to update name:", error);
     }
   };
@@ -102,10 +111,14 @@ export default function Profile() {
     return null;
   }
 
-  const themeOptions: { mode: 'light' | 'dark' | 'system'; icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-    { mode: 'light', icon: 'sunny', label: 'Light' },
-    { mode: 'dark', icon: 'moon', label: 'Dark' },
-    { mode: 'system', icon: 'settings-outline', label: 'System' },
+  const themeOptions: {
+    mode: "light" | "dark" | "system";
+    icon: keyof typeof Ionicons.glyphMap;
+    label: string;
+  }[] = [
+    { mode: "light", icon: "sunny", label: "Light" },
+    { mode: "dark", icon: "moon", label: "Dark" },
+    { mode: "system", icon: "settings-outline", label: "System" },
   ] as const;
 
   return (
@@ -135,43 +148,11 @@ export default function Profile() {
               <Ionicons name="camera" size={16} color="#fff" />
             </View>
           </TouchableOpacity>
-          {uploading && (
-            <Text style={styles.uploadingText}>Uploading...</Text>
-          )}
+          {uploading && <Text style={styles.uploadingText}>Uploading...</Text>}
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Theme</Text>
-        <View style={styles.themeRow}>
-          {themeOptions.map(({ mode, icon, label }) => (
-            <TouchableOpacity
-              key={mode}
-              style={[
-                styles.themeOption,
-                themeMode === mode && styles.themeOptionActive,
-              ]}
-              onPress={() => setThemeMode(mode)}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={icon}
-                size={20}
-                color={themeMode === mode ? theme.primary : theme.textSecondary}
-              />
-              <Text
-                style={[
-                  styles.themeOptionText,
-                  themeMode === mode && styles.themeOptionTextActive,
-                ]}
-              >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
+      {/* Account */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account</Text>
 
@@ -228,13 +209,42 @@ export default function Profile() {
         </View>
       </View>
 
+      {/* Theme */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Theme</Text>
+        <View style={styles.themeRow}>
+          {themeOptions.map(({ mode, icon, label }) => (
+            <TouchableOpacity
+              key={mode}
+              style={[
+                styles.themeOption,
+                themeMode === mode && styles.themeOptionActive,
+              ]}
+              onPress={() => setThemeMode(mode)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={icon}
+                size={20}
+                color={themeMode === mode ? theme.primary : theme.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  themeMode === mode && styles.themeOptionTextActive,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Actions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Actions</Text>
-
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={handleLogout}
-        >
+        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <Ionicons name="log-out" size={24} color={theme.error} />
           <Text style={styles.menuText}>Logout</Text>
           <Ionicons name="chevron-forward" size={24} color={theme.textMuted} />

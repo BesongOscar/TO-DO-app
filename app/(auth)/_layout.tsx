@@ -15,8 +15,12 @@ export default function AuthLayout() {
 
   return (
     <>
-      <StatusBar style={isDark ? "light" : "dark"} backgroundColor={theme.background} />
+      <StatusBar
+        style={isDark ? "light" : "dark"}
+        backgroundColor={theme.background}
+      />
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="welcome" />
         <Stack.Screen name="signup" />
         <Stack.Screen name="login" />
         <Stack.Screen name="forgotPassword" />
