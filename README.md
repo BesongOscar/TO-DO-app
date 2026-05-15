@@ -13,7 +13,8 @@ React Native TODO app with Firebase - featuring task management, tab-based navig
 - **Custom Lists** - Create, edit, and delete custom task lists with custom icons and colors
 - **User Profiles** - Firebase Auth with email/password + Google OAuth via @react-native-google-signin, profile photos via Firebase Storage
 - **Bottom Panel** - Slide-up task detail panel with calendar picker, reminder, and note modals
-- **Search** - Filter tasks by keyword across all lists
+- **Animated Splash** - Branded animated splash with logo fade-in/scale on app launch
+- **Onboarding** - First-launch walkthrough slides (shown once, persisted to AsyncStorage)
 - **Pull-to-Refresh** - Sync tasks from Firestore with pull gesture
 - **Theme Support** - Light/dark/system-wide theming via ThemeContext; persisted to AsyncStorage
 - **EAS Build** - Configured for Expo Application Services (development, preview, production builds)
