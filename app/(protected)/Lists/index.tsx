@@ -10,7 +10,7 @@ import React, { useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
+  SectionList,
   TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -22,6 +22,7 @@ import { useTasks } from "../../../context/TasksContext";
 import { CustomList, TaskCounts } from "../../../types";
 import CustomListModal from "../../../components/CustomListModal";
 import { useThemeStyles } from "../../../hooks/useThemeStyles";
+import { createListsIndexStyles } from "../../../styles/app/(protected)/Lists/index";
 
 interface ListEntry {
   key: string;
@@ -37,7 +38,7 @@ export default function ListsIndexScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const navigation = useNavigation();
-  const { counts } = useTasks();
+  const { tasks, counts } = useTasks();
   const { customLists, addList } = useCustomLists();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -72,11 +73,14 @@ export default function ListsIndexScreen() {
     name: list.name,
     icon: list.icon,
     color: list.color,
-    count: list.taskCount,
+    count: tasks.filter((t) => t.listId === list.id && !t.completed).length,
     isCustom: true,
   }));
 
-  const allLists = [...defaultLists, ...customListEntries];
+  const sections = [
+    { title: "Default Lists", data: defaultLists },
+    ...(customListEntries.length > 0 ? [{ title: "Custom Lists", data: customListEntries }] : []),
+  ];
 
   const styles = useThemeStyles(createListsIndexStyles);
 
@@ -84,10 +88,14 @@ export default function ListsIndexScreen() {
     router.push(`/(protected)/Lists/${entry.id}`);
   };
 
-  const handleAddCustomList = (name: string, icon: string) => {
-    addList(name, icon);
+  const handleAddCustomList = (name: string, icon: string, color: string) => {
+    addList(name, icon, color);
     setModalVisible(false);
   };
+
+  const renderSectionHeader = ({ section }: { section: { title: string } }) => (
+    <Text style={styles.sectionHeader}>{section.title}</Text>
+  );
 
   const renderItem = ({ item }: { item: ListEntry }) => (
     <TouchableOpacity
@@ -111,8 +119,9 @@ export default function ListsIndexScreen() {
 
   return (
     <View style={[styles.container]}>
-      <FlatList
-        data={allLists}
+      <SectionList
+        sections={sections}
+        renderSectionHeader={renderSectionHeader}
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.list}
@@ -125,5 +134,3 @@ export default function ListsIndexScreen() {
     </View>
   );
 }
-
-import { createListsIndexStyles } from "../../../styles/app/(protected)/Lists/index";

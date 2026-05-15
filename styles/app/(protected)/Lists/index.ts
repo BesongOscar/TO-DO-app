@@ -25,6 +25,17 @@ export const createListsIndexStyles = (theme: Theme) => StyleSheet.create({
   list: {
     paddingVertical: 8,
   },
+  sectionHeader: {
+    fontSize: 13,
+    fontFamily: fontSemi,
+    ...androidPoppinsExtras,
+    color: theme.textMuted,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 8,
+  },
   listItem: {
     flexDirection: "row",
     alignItems: "center",

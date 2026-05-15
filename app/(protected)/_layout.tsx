@@ -161,7 +161,6 @@ export default function ProtectedLayout() {
             selectedTask={selectedTask}
             onClose={() => setSelectedTaskId(null)}
             onUpdateTask={updateTask}
-            onStarToggle={() => toggleImportant(selectedTask.id)}
           />
         )}
       </BottomSheet>

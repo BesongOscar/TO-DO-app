@@ -60,6 +60,12 @@ export const createCustomListModalStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 28,
     marginRight: 12,
   },
+  listPreviewColor: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    marginRight: 10,
+  },
   listPreviewName: {
     fontSize: 18,
     fontWeight: "600",
@@ -103,6 +109,22 @@ export const createCustomListModalStyles = (theme: Theme) => StyleSheet.create({
   emojiOptionSelected: {
     backgroundColor: "#e1f3ff",
     borderRadius: 8,
+  },
+  colorGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: -3,
+  },
+  colorOption: {
+    width: "12.5%",
+    height: "12.5%",
+    aspectRatio: 1,
+    borderRadius: 8,
+    margin: 4,
+  },
+  colorOptionSelected: {
+    borderWidth: 3,
+    borderColor: theme.primary,
   },
   emojiText: {
     fontSize: 24,

@@ -7,9 +7,7 @@
 
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { fontReg, fontSemi, androidPoppinsExtras } from "@/styles/common";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
-
 import { createBottomPanelStyles } from "../../styles/components/Index/BottomPanel";
 import DetailOption from "../DetailOption";
 import { RepeatType, Task } from "../../types";
@@ -106,11 +104,18 @@ interface DetailOptionConfig {
   key: string;
 }
 
+// ── Component ───────────────────────────────────────────────────────────────
+
+interface BottomPanelProps {
+  selectedTask: Task | null;
+  onClose: () => void;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
+}
+
 const BottomPanel: React.FC<BottomPanelProps> = ({
   selectedTask,
   onClose,
   onUpdateTask,
-  onStarToggle,
 }) => {
   const styles = useThemeStyles(createBottomPanelStyles);
   const { t } = useTranslation();
@@ -140,7 +145,7 @@ const BottomPanel: React.FC<BottomPanelProps> = ({
     else if (option.key === "repeat") setModalType("repeat");
     else if (option.key === "note") setModalType("note");
     else if (option.key === "favorite") {
-      onStarToggle();
+      onUpdateTask(selectedTask.id, { important: !selectedTask.important });
     }
   };
 
@@ -199,10 +204,6 @@ const BottomPanel: React.FC<BottomPanelProps> = ({
           );
         })}
       </ScrollView>
-
-      <View style={styles.taskDetailFooter}>
-        <Text style={styles.createdDate}>{t("detail.created_today")}</Text>
-      </View>
 
       <CalendarPickerModal
         visible={modalType === "calendar"}

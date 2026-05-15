@@ -4,6 +4,8 @@
     "strict": true,
     "jsx": "react-native",
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+
     "paths": {
       "@/components/*": ["./components/*"],
       "@/context/*": ["./src/context/*"],

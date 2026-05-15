@@ -39,17 +39,7 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-/**
- * Parse a "YYYY-MM-DD" string into a local-timezone Date.
- *
- * `new Date("YYYY-MM-DD")` treats the input as UTC, which shifts the
- * resulting date by the local UTC offset. Using the Date constructor with
- * numeric parts always produces midnight in the local timezone instead.
- */
-const parseDateString = (dateStr: string): Date => {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
+import { parseDateString } from "../../src/utils/date";
 
 const CalendarPickerModal: React.FC<CalendarPickerModalProps> = ({
   visible,

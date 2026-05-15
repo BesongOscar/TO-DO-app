@@ -24,7 +24,7 @@ import {
 interface CustomListsContextValue {
   customLists: CustomList[];
   loading: boolean;
-  addList: (name: string, icon: string) => CustomList;
+  addList: (name: string, icon: string, color: string) => CustomList;
   updateList: (id: string, updates: Partial<Omit<CustomList, "id">>) => void;
   deleteList: (id: string) => void;
 }
@@ -68,12 +68,12 @@ export const CustomListsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Add a new custom list
   const addList = useCallback(
-    (name: string, icon: string): CustomList => {
+    (name: string, icon: string, color: string): CustomList => {
       const newList: CustomList = {
         id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         name: name.trim(),
         icon,
-        color: "#0078d4",
+        color,
         taskCount: 0,
         createdAt: Date.now(),
       };

@@ -187,8 +187,9 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   };
 
   const handleSave = () => {
+    const now = new Date();
+
     if (selectedOption === "custom") {
-      const now = new Date();
       const customDate = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -200,7 +201,11 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
       onSelect(customDate.toISOString());
     } else {
       const reminderTime = getReminderTime(selectedOption);
-      onSelect(reminderTime);
+      if (reminderTime && new Date(reminderTime) <= now) {
+        onSelect(undefined);
+      } else {
+        onSelect(reminderTime);
+      }
     }
     onClose();
   };

@@ -271,7 +271,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [user, onTaskUpdated],
+    [user],
   );
 
   // Delete a task by ID, removes it from local state immediately for responsiveness, then deletes it from Firestore

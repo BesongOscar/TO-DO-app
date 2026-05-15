@@ -4,6 +4,7 @@ import TaskItem from "./TaskItem";
 import { useTheme } from "../context/ThemeContext";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { createPlannedTasksListStyles } from "../styles/components/PlannedTasksList";
+import { parseDateString } from "../src/utils/date";
 import { Task } from "../types";
 import i18n from "@/src/i18n";
 
@@ -40,7 +41,7 @@ const getDateCategory = (
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const taskDate = new Date(dateStr);
+  const taskDate = parseDateString(dateStr);
   taskDate.setHours(0, 0, 0, 0);
 
   const diffTime = taskDate.getTime() - today.getTime();
