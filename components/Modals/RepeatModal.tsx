@@ -1,3 +1,10 @@
+/**
+ * RepeatModal - Recurrence rule configuration modal
+ * 
+ * Supports: daily, weekly (with multi-day selection), monthly
+ * (specific day or last day), yearly. Configurable end date.
+ */
+
 import React, { useState } from "react";
 import {
   View,
@@ -123,7 +130,12 @@ const RepeatModal: React.FC<RepeatModalProps> = ({
   };
 
   const handleSave = () => {
-    const options: Record<string, any> = {};
+    const options: {
+      repeatDays?: number[];
+      repeatOnDay?: number;
+      repeatOnLastDay?: boolean;
+      repeatEndDate?: string;
+    } = {};
 
     if (selectedRepeat === "weekly" && selectedDays.length > 0) {
       options.repeatDays = selectedDays;
