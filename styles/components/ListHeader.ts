@@ -29,4 +29,13 @@ export const createListHeaderStyles = (theme: Theme) => StyleSheet.create({
     fontFamily: fontReg,
     ...androidPoppinsExtras,
   },
+  moreOptionsButton: {
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  moreOptionsIcon: {
+    fontSize: 24,
+    color: theme.textSecondary,
+  },
 });

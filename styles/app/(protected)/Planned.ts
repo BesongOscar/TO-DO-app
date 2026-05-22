@@ -26,6 +26,7 @@ export const createPlannedStyles = (theme: Theme) => StyleSheet.create({
   },
   headerRightRow: {
     flexDirection: "row",
+    marginRight: 10 
   },
   headerIcon: {
     marginRight: 12,

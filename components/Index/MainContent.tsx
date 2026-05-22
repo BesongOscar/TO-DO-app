@@ -7,13 +7,15 @@
  * Handles task filtering, drag-and-drop reorder, and empty states.
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createMainContentStyles } from "../../styles/components/Index/MainContent";
 import { useAuth } from "@/context/AuthContext";
 import ListHeader from "../ListHeader";
+import ListHeaderMenu from "../ListHeaderMenu";
+import { SortBy } from "../../types";
 import SuggestionsBanner from "../SuggestionBanner";
 import AddTaskInput from "../AddTaskInput";
 import TasksList from "../TaskList";
@@ -61,6 +63,10 @@ interface MainContentProps {
   showReorderControls?: boolean;
   refreshing?: boolean;
   onRefresh?: () => void;
+  sortBy: SortBy;
+  onSortChange: (sortBy: SortBy) => void;
+  onEditList?: () => void;
+  onDeleteList?: () => void;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
@@ -75,10 +81,15 @@ const MainContent: React.FC<MainContentProps> = ({
   onReorderTasks,
   refreshing = false,
   onRefresh,
+  sortBy,
+  onSortChange,
+  onEditList,
+  onDeleteList,
 }) => {
   const styles = useThemeStyles(createMainContentStyles);
   const { user } = useAuth();
   const [showBanner, setShowBanner] = useState<boolean>(true);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const loadBannerState = async () => {
@@ -124,6 +135,14 @@ const MainContent: React.FC<MainContentProps> = ({
     [filteredTasks],
   );
 
+  const handleMarkAllComplete = useCallback(() => {
+    pendingTasks.forEach((task) => onToggleTask(task.id));
+  }, [pendingTasks, onToggleTask]);
+
+  const handleDeleteCompleted = useCallback(() => {
+    completedTasks.forEach((task) => onDelete(task.id));
+  }, [completedTasks, onDelete]);
+
   const hour = new Date().getHours();
   const { t } = useTranslation();
   const greeting =
@@ -140,7 +159,11 @@ const MainContent: React.FC<MainContentProps> = ({
 
   return (
     <View style={styles.mainContent}>
-      <ListHeader title={currentList.name} date={todayDate} />
+      <ListHeader
+        title={currentList.name}
+        date={todayDate}
+        onMoreOptions={() => setMenuVisible(true)}
+      />
 
       {showBanner && (
         <SuggestionsBanner
@@ -194,6 +217,19 @@ const MainContent: React.FC<MainContentProps> = ({
           onRefresh={onRefresh}
         />
       )}
+      <ListHeaderMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        currentList={currentList}
+        sortBy={sortBy}
+        onSortChange={onSortChange}
+        onMarkAllComplete={handleMarkAllComplete}
+        onDeleteCompleted={handleDeleteCompleted}
+        onEditList={onEditList}
+        onDeleteList={onDeleteList}
+        pendingCount={pendingTasks.length}
+        completedCount={completedTasks.length}
+      />
     </View>
   );
 };

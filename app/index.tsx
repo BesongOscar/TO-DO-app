@@ -19,7 +19,6 @@ import { ONBOARDING_KEY } from "./(auth)/welcome";
 export default function Index() {
   const { user, loading: authLoading } = useAuth();
 
-  // null = not checked yet, true/false = result from AsyncStorage
   const [onboardingSeen, setOnboardingSeen] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -33,7 +32,8 @@ export default function Index() {
 
   if (!onboardingSeen) return <Redirect href="/welcome" />;
 
-  if (user && !user.emailVerified) return <Redirect href="/emailVerification" />;
+  if (user && !user.emailVerified)
+    return <Redirect href="/emailVerification" />;
 
   return <Redirect href={user ? "/(protected)/myDay" : "/login"} />;
 }

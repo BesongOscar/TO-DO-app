@@ -7,7 +7,12 @@ React Native TODO app with Firebase - featuring task management, tab-based navig
 - **Tab Navigation** - Bottom tab bar with separate screens for My Day, Lists, Planned, and Profile (replaces sidebar layout)
 - **Dynamic Lists** - Lists tab shows all lists overview; tapping opens a dynamic route for each list's tasks
 - **Drag & Drop Reorder** - Long-press drag handle to reorder tasks; order persists to Firestore
-- **Smart Repeats** - Advanced repeat options: multi-day weekly, last-day-of-month monthly, repeat end dates
+- **Sorting** - Sort tasks by default order, name, due date, or importance via ListHeaderMenu
+- **Bulk Actions** - Mark all pending tasks complete or delete all completed tasks at once
+- **Custom List Color Picker** - Choose custom colors when creating lists
+- **SectionList** - Lists tab uses SectionList to group default and custom lists
+- **Internationalization** - Full i18n with English and French; auto-detects device language
+- **Theme System** - Consistent color scheme across auth screens, layout, and protected screens
 - **Local Notifications** - Schedule and cancel task reminders with expo-notifications; handles repeat scheduling natively
 - **Time Picker** - Platform-specific time picker (iOS spinner, Android dialog)
 - **Custom Lists** - Create, edit, and delete custom task lists with custom icons and colors

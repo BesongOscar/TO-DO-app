@@ -8,7 +8,7 @@ import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createPlannedStyles } from "../../styles/app/(protected)/Planned";
 import { useTasks } from "../../context/TasksContext";
 import MainContent from "../../components/Index/MainContent";
-import { ListItem } from "../../types";
+import { ListItem, SortBy } from "../../types";
 
 const plannedList: ListItem = {
   id: "3",
@@ -37,6 +37,7 @@ export default function PlannedScreen() {
   const styles = useThemeStyles(createPlannedStyles);
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("order");
 
   useLayoutEffect(() => {
     if (searchMode) {
@@ -50,18 +51,6 @@ export default function PlannedScreen() {
             <TouchableOpacity onPress={() => setSearchMode(true)}>
               <Ionicons
                 name="search"
-                size={24}
-                color="#fff"
-                style={styles.headerIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                // Placeholder for more options
-              }}
-            >
-              <Ionicons
-                name="ellipsis-vertical"
                 size={24}
                 color="#fff"
                 style={styles.headerIcon}
@@ -120,6 +109,8 @@ export default function PlannedScreen() {
         onReorderTasks={reorderTasks}
         refreshing={refreshing}
         onRefresh={refreshTasks}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
     </View>
   );

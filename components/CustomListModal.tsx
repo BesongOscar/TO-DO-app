@@ -166,7 +166,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
                 ))}
               </View>
 
-            {initialData && onDelete && (
+            {/* {initialData && onDelete && (
               <TouchableOpacity
                 style={customListModalStyles.deleteListButton}
                 onPress={handleDelete}
@@ -175,7 +175,7 @@ const CustomListModal: React.FC<CustomListModalProps> = ({
                   {t("lists.delete_list")}
                 </Text>
               </TouchableOpacity>
-            )}
+            )} */}
           </ScrollView>
         </View>
       </View>

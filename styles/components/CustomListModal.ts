@@ -43,7 +43,7 @@ export const createModalCommonStyles = (theme: Theme) => StyleSheet.create({
     ...androidPoppinsExtras,
   },
   modalBody: {
-    padding: 16,
+    padding: 18,
   },
 });
 

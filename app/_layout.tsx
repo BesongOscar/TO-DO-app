@@ -38,7 +38,7 @@ export default function RootLayout() {
     "Poppins-SemiBold": Poppins_600SemiBold,
     "Poppins-Bold": Poppins_700Bold,
   });
-  const [i18nReady, setI18nReady] = useState(false); // ← add this
+  const [i18nReady, setI18nReady] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
 
   // Initialize i18n once on mount

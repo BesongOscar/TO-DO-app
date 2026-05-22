@@ -31,6 +31,7 @@ export const createListDetailStyles = (theme: Theme) => StyleSheet.create({
   },
   headerRightRow: {
     flexDirection: "row",
+    marginRight:  10
   },
   headerIcon: {
     marginRight: 8,

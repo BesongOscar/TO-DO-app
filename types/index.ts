@@ -41,6 +41,9 @@ export type FilterKey =
   | "tasks"
   | "listId";
 
+// ─── Sort ───────────────────────────────────────────────────────────────────
+export type SortBy = "order" | "name" | "dueDate" | "important";
+
 // ─── Counts ───────────────────────────────────────────────────────────────────
 export interface TaskCounts {
   myDay: number;

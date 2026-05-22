@@ -19,7 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { sidebarLists } from "../../../constants/Lists";
 import { useCustomLists } from "../../../context/CustomListsContext";
 import { useTasks } from "../../../context/TasksContext";
-import { CustomList, TaskCounts } from "../../../types";
+import { TaskCounts } from "../../../types";
 import CustomListModal from "../../../components/CustomListModal";
 import { useThemeStyles } from "../../../hooks/useThemeStyles";
 import { createListsIndexStyles } from "../../../styles/app/(protected)/Lists/index";

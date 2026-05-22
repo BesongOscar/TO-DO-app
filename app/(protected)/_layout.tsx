@@ -7,7 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTasks } from "../../context/TasksContext";
 import { useTheme } from "../../context/ThemeContext";
 import BottomSheet from "../../components/Index/BottomSheet";
-import BottomPanel from "@/components/Index/BottomPanel";
+import BottomPanel from "@/components/Index/BottomPanel"; 
 import { fontSemi, androidPoppinsExtras } from "@/styles/common";
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +16,6 @@ export default function ProtectedLayout() {
   const {
     tasks,
     updateTask,
-    toggleImportant,
     selectedTaskId,
     setSelectedTaskId,
   } = useTasks();

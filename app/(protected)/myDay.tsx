@@ -9,7 +9,7 @@ import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { createMyDayStyles } from "../../styles/app/(protected)/myDay";
 import { useTasks } from "../../context/TasksContext";
 import MainContent from "../../components/Index/MainContent";
-import { ListItem } from "../../types";
+import { ListItem, SortBy } from "../../types";
 
 const myDayList: ListItem = {
   id: "1",
@@ -39,6 +39,7 @@ export default function MyDayScreen() {
   const styles = useThemeStyles(createMyDayStyles);
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("order");
 
   useLayoutEffect(() => {
     if (searchMode) {
@@ -53,18 +54,6 @@ export default function MyDayScreen() {
             <TouchableOpacity onPress={() => setSearchMode(true)}>
               <Ionicons
                 name="search"
-                size={24}
-                color="#fff"
-                style={styles.headerIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                // Placeholder for more options
-              }}
-            >
-              <Ionicons
-                name="ellipsis-vertical"
                 size={24}
                 color="#fff"
                 style={styles.headerIcon}
@@ -123,6 +112,8 @@ export default function MyDayScreen() {
         onReorderTasks={reorderTasks}
         refreshing={refreshing}
         onRefresh={refreshTasks}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
     </View>
   );

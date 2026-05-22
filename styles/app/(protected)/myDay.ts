@@ -24,6 +24,7 @@ export const createMyDayStyles = (theme: Theme) => StyleSheet.create({
     fontFamily: "Poppins-Medium",
   },
   headerRightRow: {
+    marginRight: 10,
     flexDirection: "row",
   },
   headerIcon: {
