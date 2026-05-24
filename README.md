@@ -101,8 +101,12 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 
 ## Testing
 
-Run lint and typecheck:
+### Lint & TypeScript
 `npm run lint`
 `npm run typecheck`
 
-No unit/e2e tests currently configured.
+### Unit Tests (Jest)
+Run all tests: `npm test`
+Run specific suite: `npx jest src/tests/components/TaskItem.test.tsx`
+
+Test suites: 16 suites, 120 tests covering components, hooks, services, and utilities.
