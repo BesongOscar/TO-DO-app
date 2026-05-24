@@ -58,7 +58,6 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 ## File Structure
 
 ```
-├── locales/               # Translation files (en.json, fr.json)
 ├── app/                    # Expo Router screens (file-based routing)
 │   ├── (auth)/            # Auth screens (login, signup, forgotPassword, emailVerification)
 │   ├── (protected)/       # Protected screens with bottom tab navigation
