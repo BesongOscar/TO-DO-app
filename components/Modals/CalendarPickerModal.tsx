@@ -13,7 +13,7 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createCalendarPickerModalStyles } from "../../styles/components/Modals/CalendarPickerModal";
 import TimePicker from "../TimePicker";
 import { useTranslation } from "react-i18next";

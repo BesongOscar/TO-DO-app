@@ -7,7 +7,7 @@
 
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { createDetailOptionStyles } from "../styles/components/DetailOption";
 
 interface DetailOptionProps {

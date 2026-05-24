@@ -1,7 +1,7 @@
 import { TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createArrowBackStyles } from "../styles/components/arrowBack";
 

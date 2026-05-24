@@ -7,7 +7,7 @@
 
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createAddTaskInputStyles } from "../styles/components/AddTaskInput";
 import { useTranslation } from 'react-i18next';

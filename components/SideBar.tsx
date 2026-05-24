@@ -7,7 +7,7 @@
 
 import React from "react";
 import { View, SectionList, TouchableOpacity, Text } from "react-native";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { createSideBarStyles } from "../styles/components/SideBar";
 import { SidebarItem } from "./SideBarItem";
 import { ListItem } from "../types";

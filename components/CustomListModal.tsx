@@ -16,7 +16,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import {
   createModalCommonStyles,

@@ -9,7 +9,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { fontReg, fontSemi, androidPoppinsExtras } from "@/styles/common";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createHeaderStyles } from "../../styles/components/Index/header";
 import { useAuth } from "@/context/AuthContext";
 

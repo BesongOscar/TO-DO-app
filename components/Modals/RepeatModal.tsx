@@ -15,7 +15,7 @@ import {
   ScrollView,
 } from "react-native";
 import { RepeatType } from "../../types";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createRepeatModalStyles } from "../../styles/components/Modals/RepeatModal";
 import { useTranslation } from "react-i18next";
 

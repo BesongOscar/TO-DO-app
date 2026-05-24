@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ListItem, SortBy, Task } from "../types";
 import { useNavigation } from "expo-router";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { createListScreensStyles } from "../styles/components/ListScreens";
 import { useTasks } from "../context/TasksContext";
 import MainContent from "./Index/MainContent";

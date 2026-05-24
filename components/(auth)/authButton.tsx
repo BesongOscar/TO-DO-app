@@ -6,7 +6,7 @@
  */
 
 import { TouchableOpacity, Text, View } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createAuthButtonStyles } from "../../styles/components/(auth)/authButton";
 
 type AuthButtonProps = {

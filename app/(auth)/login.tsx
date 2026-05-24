@@ -19,10 +19,9 @@ import { AuthButton } from "@/components/(auth)/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import * as Yup from "yup";
 import { Formik } from "formik";
 import { useTheme } from "../../context/ThemeContext";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
 import { createLoginStyles } from "@/styles/app/(auth)/login";
 import { GoogleIcon } from "@/components/(auth)/GoogleIcon";
@@ -30,11 +29,7 @@ import {
   signInWithGoogle,
   getGoogleSignInErrorMessage,
 } from "@/src/auth/googleAuth";
-
-export const loginValidationSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().required("Password is required"),
-});
+import { loginValidationSchema } from "../../src/utils/validationSchemas";
 
 export default function Login() {
   const { width } = useWindowDimensions();

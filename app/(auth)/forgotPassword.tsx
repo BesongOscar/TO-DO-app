@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createForgotPasswordStyles } from "@/styles/app/(auth)/forgotPassword";
 import { Ionicons } from "@expo/vector-icons";
 import { Formik } from "formik";

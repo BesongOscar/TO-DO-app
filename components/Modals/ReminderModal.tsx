@@ -19,7 +19,7 @@ import {
 } from "react-native";
 import TimePicker from "../TimePicker";
 import { requestNotificationPermissions } from "../../src/notifications/notificationService";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createReminderModalStyles } from "../../styles/components/Modals/ReminderModal";
 import { useTranslation } from "react-i18next";
 

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createEmailVerificationStyles } from "@/styles/app/(auth)/emailVerification";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";

@@ -9,7 +9,7 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { View, ActivityIndicator } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useTheme } from "../../context/ThemeContext";
 import { createMainContentStyles } from "../../styles/components/Index/MainContent";
 import { useAuth } from "@/context/AuthContext";
@@ -24,27 +24,7 @@ import PlannedTasksList from "../PlannedTasksList";
 import EmptyState from "../EmptyState";
 import { Task, ListItem } from "../../types";
 import { useTranslation } from "react-i18next";
-
-const filterTasks = (tasks: Task[], list: ListItem): Task[] => {
-  switch (list.filterKey) {
-    case "myDay":
-      return tasks.filter((t) => t.myDay);
-    case "important":
-      return tasks.filter((t) => t.important);
-    case "completed":
-      return tasks.filter((t) => t.completed);
-    case "all":
-      return tasks;
-    case "planned":
-      return tasks.filter((t) => Boolean(t.dueDate));
-    case "tasks":
-      return tasks.filter((t) => !t.myDay && !t.important);
-    case "listId":
-      return tasks.filter((t) => t.listId === list.id);
-    default:
-      return tasks;
-  }
-};
+import { filterTasks } from "../../src/utils/taskFilters";
 
 interface MainContentProps {
   currentList: ListItem;

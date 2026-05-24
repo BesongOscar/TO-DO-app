@@ -10,10 +10,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthButton } from "@/components/(auth)/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
-import * as Yup from "yup";
 import { Formik } from "formik";
 import { useTheme } from "../../context/ThemeContext";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { createSignupStyles } from "@/styles/app/(auth)/signup";
@@ -22,6 +21,7 @@ import {
   signInWithGoogle,
   getGoogleSignInErrorMessage,
 } from "@/src/auth/googleAuth";
+import { signupValidationSchema } from "../../src/utils/validationSchemas";
 
 /**
  * Signup - New user registration screen
@@ -29,17 +29,6 @@ import {
  * Uses Formik for form handling and Yup for validation.
  * Requires name, email, and matching password/confirmation.
  */
-
-export const signupValidationSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
-});
 
 export default function Signup() {
   const { width } = useWindowDimensions();

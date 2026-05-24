@@ -7,7 +7,7 @@
 
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createBottomPanelStyles } from "../../styles/components/Index/BottomPanel";
 import DetailOption from "../DetailOption";
 import { RepeatType, Task } from "../../types";

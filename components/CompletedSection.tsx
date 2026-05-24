@@ -8,7 +8,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import TaskItem from "./TaskItem";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { Task } from "../types";
 import { createCompletedSectionStyles } from "../styles/components/CompletedSection";
 import { useTranslation } from "react-i18next";

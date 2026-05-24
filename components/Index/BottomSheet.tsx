@@ -14,7 +14,7 @@ import {
   PanResponder,
   Keyboard,
 } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createBottomSheetStyles, SHEET_HEIGHT } from "../../styles/components/Index/BottomSheet";
 
 interface BottomSheetProps {

@@ -15,7 +15,7 @@ import {
   Pressable,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createListHeaderMenuStyles } from "../styles/components/ListHeaderMenu";
 import { ListItem, SortBy } from "../types";
@@ -64,7 +64,7 @@ const ListHeaderMenu: React.FC<ListHeaderMenuProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
     >
       <Pressable style={styles.overlay} onPress={onClose}>

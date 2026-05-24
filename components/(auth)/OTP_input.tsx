@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { TextInput, View } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { createOTPInputStyles } from "../../styles/components/(auth)/OTP_input";
 
 type OTPInputProps = {

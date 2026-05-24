@@ -18,51 +18,12 @@ import {
   Pressable,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createTaskItemStyles } from "../styles/components/TaskItem";
 import { Task } from "../types";
 import { useTranslation } from "react-i18next";
-
-// Helper to determine if a task is overdue (due date before today)
-const isOverdue = (dueDateStr: string): boolean => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const [year, month, day] = dueDateStr.split("-").map(Number);
-  const dueDate = new Date(year, month - 1, day);
-  return dueDate < today;
-};
-
-// Reusable date formatting for due date badges
-const formatDueDate = (dueDateStr: string, dueTime?: string): string => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const [year, month, day] = dueDateStr.split("-").map(Number);
-  const dueDate = new Date(year, month - 1, day);
-
-  let label: string;
-  if (dueDate.getTime() === today.getTime()) {
-    label = "Today";
-  } else if (dueDate.getTime() === tomorrow.getTime()) {
-    label = "Tomorrow";
-  } else {
-    label = dueDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  if (dueTime) {
-    const [h, m] = dueTime.split(":");
-    const ampm = parseInt(h, 10) >= 12 ? "PM" : "AM";
-    const hour12 = parseInt(h, 10) % 12 || 12;
-    return `${label} at ${hour12}:${m} ${ampm}`;
-  }
-
-  return label;
-};
+import { isOverdue, formatDueDate } from "../src/utils/taskItemHelpers";
 
 interface TaskItemProps {
   task: Task;

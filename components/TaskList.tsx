@@ -24,7 +24,7 @@ import {
   Platform,
 } from "react-native";
 import TaskItem from "./TaskItem";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { useTheme } from "../context/ThemeContext";
 import { createTaskListStyles } from "../styles/components/TaskList";
 import { Task } from "../types";

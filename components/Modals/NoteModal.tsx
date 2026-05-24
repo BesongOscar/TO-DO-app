@@ -11,7 +11,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useTheme } from "../../context/ThemeContext";
 import { createNoteModalStyles } from "../../styles/components/Modals/NoteModal";
 import { useTranslation } from "react-i18next";

@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router as expoRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-import { useThemeStyles } from "../../hooks/useThemeStyles";
+import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useEffect } from "react";
 import { createProfileStyles } from "../../styles/app/(protected)/profile";

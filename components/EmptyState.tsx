@@ -7,7 +7,7 @@
 
 import React from "react";
 import { View, Text, Image } from "react-native";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { createEmptyStateStyles } from "../styles/components/EmptyState";
 
 interface EmptyStateProps {

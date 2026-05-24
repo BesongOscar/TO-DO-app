@@ -12,7 +12,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useTheme } from "../context/ThemeContext";
-import { useThemeStyles } from "../hooks/useThemeStyles";
+import { useThemeStyles } from "../src/hooks/useThemeStyles";
 import { createTimePickerStyles } from "../styles/components/TimePicker";
 
 interface TimePickerProps {
