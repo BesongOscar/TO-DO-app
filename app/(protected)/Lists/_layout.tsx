@@ -1,3 +1,11 @@
+/**
+ * ListsLayout - Stack navigator for Lists screens
+ * 
+ * Provides the stack navigation between the lists overview
+ * (index) and individual list detail ([listId]) screens.
+ * Uses theme-aware header styling.
+ */
+
 import { Stack } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 

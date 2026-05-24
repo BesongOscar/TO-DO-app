@@ -1,3 +1,11 @@
+/**
+ * [listId] - Dynamic list detail screen
+ * 
+ * Renders tasks for a specific list (default or custom).
+ * Supports editing/deleting custom lists and adding tasks.
+ * Uses ListScreens shared component for task display.
+ */
+
 import React, { useMemo, useState, useCallback } from "react";
 import { View, Text, Alert } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
