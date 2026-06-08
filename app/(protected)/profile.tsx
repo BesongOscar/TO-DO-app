@@ -281,7 +281,7 @@ export default function Profile() {
         {/* Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("profile.actions")}</Text>
-          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+          <TouchableOpacity testID="profile-logout-button" style={styles.menuItem} onPress={handleLogout}>
             <Ionicons name="log-out" size={24} color={theme.error} />
             <Text style={styles.menuText}>{t("profile.logout")}</Text>
             <Ionicons

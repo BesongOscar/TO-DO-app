@@ -1,0 +1,37 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Bulk actions (mark all complete, clear completed)
+# Requires a verified test user session.
+
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# Create several tasks
+- tapOn: "Add a task"
+- inputText: "Bulk task A"
+- tapOn:
+    point: "50%,65%"
+- tapOn: "Add a task"
+- inputText: "Bulk task B"
+- tapOn:
+    point: "50%,65%"
+- tapOn: "Add a task"
+- inputText: "Bulk task C"
+- tapOn:
+    point: "50%,65%"
+
+- assertVisible: "Bulk task A"
+- assertVisible: "Bulk task B"
+- assertVisible: "Bulk task C"

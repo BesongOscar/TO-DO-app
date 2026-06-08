@@ -109,3 +109,80 @@ Run all tests: `npm test`
 Run specific suite: `npx jest src/tests/components/TaskItem.test.tsx`
 
 Test suites: 16 suites, 120 tests covering components, hooks, services, and utilities.
+
+### E2E Tests (Maestro)
+
+[Maestro](https://maestro.mobile.dev) is used for end-to-end testing on real devices/emulators.
+
+#### Install Maestro
+
+**Windows (recommended):**
+```powershell
+scoop bucket add maestro
+scoop install maestro
+```
+
+**macOS:**
+```bash
+brew tap mobile-dev-inc/maestro
+brew install maestro
+```
+
+**Linux:**
+```bash
+curl -Ls "https://get.maestro.mobile.dev" | bash
+```
+
+#### Run E2E Tests
+
+1. Build and launch the app on a device/emulator:
+   ```bash
+   npm start
+   # or for development build:
+   npx eas build --profile development --platform android
+   ```
+
+2. Run all flows:
+   ```bash
+   maestro test .maestro/flows
+   ```
+
+3. Run specific flow:
+   ```bash
+   maestro test .maestro/flows/01-auth-flow.yaml
+   ```
+
+4. Helper script:
+   ```powershell
+   .\run-e2e.ps1              # Run all
+   .\run-e2e.ps1 -List        # List flows
+   .\run-e2e.ps1 -Flow auth   # Run auth flow
+   ```
+
+#### Test Flows
+
+| # | Flow | What it covers |
+|---|------|----------------|
+| 01 | `auth-flow` | Onboarding → signup → email verification → login |
+| 02 | `forgot-password` | Password reset form and submission |
+| 03 | `task-crud` | Create, complete, delete tasks |
+| 04 | `navigation` | Tab switching: My Day, Lists, Planned, Profile |
+| 05 | `profile` | Theme, i18n, user info, logout |
+| 06 | `task-details` | Due dates, reminders, notes, important toggles |
+| 07 | `bulk-actions` | Mark all complete, clear completed |
+| 08 | `custom-lists` | Create and manage custom lists |
+| 09 | `search-sort` | Search bar, sort menu |
+
+#### Auth-dependent flows
+
+Flows 03-09 require a logged-in user with a **verified email**. For local testing:
+1. Create a test account via the app signup flow
+2. Verify the email in Firebase Console → Authentication → Users
+3. Update `TEST_EMAIL`/`TEST_PASSWORD` in `.maestro/config.yaml`
+
+#### CI
+
+E2E tests run in CI when a PR is labeled `e2e`. Requires:
+- `EXPO_TOKEN` secret for EAS Build
+- Firebase config secrets
+- Maestro CLI installed on the runner

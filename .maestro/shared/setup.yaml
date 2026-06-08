@@ -1,0 +1,23 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# Shared setup: clear state, skip onboarding, log in with test credentials
+# Called via `runFlow: shared/setup.yaml` from auth-dependent flows
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Get things done"
+    timeout: 15000
+- tapOn: "Skip"
+- assertVisible: "Sign Up"
+- tapOn: "Login"
+- assertVisible: "Welcome Back"
+- tapOn: "Email Address"
+- inputText: ${TEST_EMAIL}
+- tapOn:
+    text: "Password"
+    index: 0
+- inputText: ${TEST_PASSWORD}
+- tapOn: "Sign In"

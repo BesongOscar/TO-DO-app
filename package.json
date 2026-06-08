@@ -10,7 +10,17 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "e2e": "maestro test .maestro/flows",
+    "e2e:auth": "maestro test .maestro/flows/01-auth-flow.yaml",
+    "e2e:forgot": "maestro test .maestro/flows/02-forgot-password.yaml",
+    "e2e:task": "maestro test .maestro/flows/03-task-crud.yaml",
+    "e2e:navigation": "maestro test .maestro/flows/04-navigation.yaml",
+    "e2e:profile": "maestro test .maestro/flows/05-profile.yaml",
+    "e2e:details": "maestro test .maestro/flows/06-task-details.yaml",
+    "e2e:bulk": "maestro test .maestro/flows/07-bulk-actions.yaml",
+    "e2e:lists": "maestro test .maestro/flows/08-custom-lists.yaml",
+    "e2e:search": "maestro test .maestro/flows/09-search-sort.yaml"
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.4.1",

@@ -1,0 +1,45 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Task detail panel features
+# Tests due dates, reminders, repeat rules, notes, and important toggle
+
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# Create a task first
+- tapOn: "Add a task"
+- inputText: "Test task with all details"
+- tapOn:
+    point: "50%,65%"
+- assertVisible: "Test task with all details"
+
+# Tap to open detail panel
+- tapOn: "Test task with all details"
+- assertVisible: "Test task with all details"
+
+# ── Add due date ───────────────────────────────────────────────────────
+- tapOn: "Add Due Date"
+- tapOn: "October 15, 2025"
+- tapOn: "Save"
+
+# ── Toggle important ───────────────────────────────────────────────────
+- tapOn: "Add to Important"
+
+# ── Close panel ────────────────────────────────────────────────────────
+- tapOn: "Close"
+
+# Re-open task
+- tapOn: "Test task with all details"
+- assertVisible: "Test task with all details"

@@ -18,6 +18,8 @@ jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
+jest.mock("@expo/vector-icons/Ionicons", () => "Ionicons");
+
 const baseTask = {
   id: "task-1",
   text: "Buy groceries",

@@ -93,16 +93,17 @@ export default function ForgotPassword() {
           <View style={styles.formContainer}>
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
-              <TextInput
-                placeholder="Email Address"
-                style={styles.input}
-                placeholderTextColor={theme.placeholderTextColor}
-                value={values.email}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  testID="forgot-password-email-input"
+                  placeholder="Email Address"
+                  style={styles.input}
+                  placeholderTextColor={theme.placeholderTextColor}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
             </View>
             {touched.email && errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -111,6 +112,7 @@ export default function ForgotPassword() {
               <ActivityIndicator size="large" color={theme.primary} />
             ) : (
               <TouchableOpacity
+                testID="send-reset-link-button"
                 style={styles.buttonContainer}
                 onPress={() => handleSubmit()}
               >

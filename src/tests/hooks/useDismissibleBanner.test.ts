@@ -35,6 +35,7 @@ describe("useDismissibleBanner", () => {
 
   it("shows banner when no stored data", async () => {
     const { result } = renderHook(() => useDismissibleBanner(uniqueKey()));
+    await act(async () => {});
     await waitFor(
       () => expect(result.current.visible).toBe(true),
       { timeout: 5000 },
@@ -48,6 +49,7 @@ describe("useDismissibleBanner", () => {
       ),
     );
     const { result } = renderHook(() => useDismissibleBanner(uniqueKey()));
+    await act(async () => {});
     await waitFor(
       () => expect(result.current.visible).toBe(false),
       { timeout: 5000 },
@@ -61,6 +63,7 @@ describe("useDismissibleBanner", () => {
       ),
     );
     const { result } = renderHook(() => useDismissibleBanner(uniqueKey()));
+    await act(async () => {});
     await waitFor(
       () => expect(result.current.visible).toBe(true),
       { timeout: 5000 },
@@ -69,6 +72,7 @@ describe("useDismissibleBanner", () => {
 
   it("dismiss() sets visible to false and persists", async () => {
     const { result } = renderHook(() => useDismissibleBanner(uniqueKey()));
+    await act(async () => {});
     await waitFor(
       () => expect(result.current.visible).toBe(true),
       { timeout: 5000 },
@@ -89,6 +93,7 @@ describe("useDismissibleBanner", () => {
   it("uses cached value on re-render (skips AsyncStorage)", async () => {
     const key = uniqueKey();
     const { result, unmount } = renderHook(() => useDismissibleBanner(key));
+    await act(async () => {});
     await waitFor(
       () => expect(result.current.visible).toBe(true),
       { timeout: 5000 },
@@ -99,6 +104,7 @@ describe("useDismissibleBanner", () => {
     (AsyncStorage.getItem as jest.Mock).mockClear();
 
     const { result: result2 } = renderHook(() => useDismissibleBanner(key));
+    await act(async () => {});
     await waitFor(
       () => expect(result2.current.visible).toBe(true),
       { timeout: 5000 },

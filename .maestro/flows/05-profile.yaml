@@ -1,0 +1,42 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Profile, theme, i18n, and logout
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# ── Navigate to Profile ────────────────────────────────────────────────
+- tapOn: "Profile"
+- assertVisible: "Account"
+
+# ── Theme switching ────────────────────────────────────────────────────
+- assertVisible: "Dark"
+- tapOn: "Dark"
+- tapOn: "Light"
+
+# ── Language switching ─────────────────────────────────────────────────
+- assertVisible: "English"
+- assertVisible: "Français"
+- tapOn: "Français"
+- assertVisible: "Français"
+- tapOn: "English"
+
+# ── Logout ─────────────────────────────────────────────────────────────
+- tapOn: "Sign Out"
+- assertVisible: "Are you sure you want to sign out?"
+- tapOn: "Sign Out"
+
+- extendedWaitUntil:
+    visible: "Welcome Back"
+    timeout: 10000
+- assertVisible: "Sign In"

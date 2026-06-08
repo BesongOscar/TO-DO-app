@@ -32,6 +32,7 @@ const AddTaskInput: React.FC<AddTaskInputProps> = ({ onAddTask }) => {
   return (
     <View style={styles.addTaskContainer}>
       <TextInput
+        testID="add-task-input"
         style={styles.addTaskInput}
         placeholder={t("tasks.add_placeholder")}
         placeholderTextColor={theme.placeholderTextColor}
@@ -40,7 +41,7 @@ const AddTaskInput: React.FC<AddTaskInputProps> = ({ onAddTask }) => {
         onSubmitEditing={handleAddTask}
         returnKeyType="done"
       />
-      <TouchableOpacity style={styles.addTaskButton} onPress={handleAddTask}>
+      <TouchableOpacity testID="add-task-button" style={styles.addTaskButton} onPress={handleAddTask}>
         <Text style={styles.addTaskIcon}>+</Text>
       </TouchableOpacity>
     </View>

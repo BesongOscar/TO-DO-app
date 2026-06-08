@@ -31,3 +31,42 @@ jobs:
           EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET }}
           EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           EXPO_PUBLIC_FIREBASE_APP_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}
+
+  e2e-android:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'e2e') || github.actor == 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Install Maestro CLI
+        run: |
+          wget -q https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.6.0/maestro.zip
+          unzip -q maestro.zip -d maestro-cli
+          echo "$(pwd)/maestro-cli" >> $GITHUB_PATH
+
+      - name: Build Android test app with EAS
+        run: npx eas build --platform android --profile development --non-interactive --wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Launch emulator and run Maestro tests
+        run: |
+          echo "Waiting for emulator..."
+          $ANDROID_HOME/emulator/emulator -avd Pixel_API_34 -no-window -no-audio &
+          adb wait-for-device
+          adb install app-release.apk
+          maestro test .maestro/flows
+        env:
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+          EXPO_PUBLIC_FIREBASE_APP_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}

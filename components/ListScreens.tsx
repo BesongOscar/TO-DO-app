@@ -89,14 +89,15 @@ export default function ListScreens({
       {searchMode ? (
         <View style={[styles.searchBar, { paddingTop: insets.top }]}>
           <Ionicons name="search" size={20} color="#fff" />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoFocus
-            placeholder="Search tasks..."
-            placeholderTextColor="rgba(255,255,255,0.6)"
-          />
+            <TextInput
+              testID="search-tasks-input"
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+              placeholder="Search tasks..."
+              placeholderTextColor="rgba(255,255,255,0.6)"
+            />
           <TouchableOpacity
             onPress={() => {
               setSearchMode(false);

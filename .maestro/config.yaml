@@ -1,0 +1,8 @@
+# Maestro E2E Configuration
+# See: https://maestro.mobile.dev/platform/automation/configuration
+
+appId: com.besong_oscar.TODOApp   # Android package
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+  TEST_NAME: "E2E Test User"

@@ -187,7 +187,7 @@ const BottomPanel: React.FC<BottomPanelProps> = ({
         <Text style={styles.taskDetailTitle} numberOfLines={2}>
           {selectedTask.text}
         </Text>
-        <TouchableOpacity onPress={onClose}>
+        <TouchableOpacity testID="close-detail-panel" onPress={onClose}>
           <Text style={styles.closeDetailPanel}>×</Text>
         </TouchableOpacity>
       </View>

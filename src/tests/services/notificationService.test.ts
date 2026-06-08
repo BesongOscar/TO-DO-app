@@ -1,3 +1,5 @@
+jest.mock("expo-notifications", () => ({}));
+
 import { hasRepeatExpired } from "../../notifications/notificationService";
 import { Task } from "../../../types";
 

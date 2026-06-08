@@ -155,6 +155,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
         {/* Task Text */}
         <TouchableOpacity
+          testID={`task-text-${task.id}`}
           style={{ flex: 1, paddingLeft: 10 }}
           onPress={onSelect}
           onLongPress={handleLongPress}
@@ -165,6 +166,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         >
           <View style={{ flex: 1 }}>
             <Text
+              testID={`task-title-${task.id}`}
               style={
                 task.completed ? styles.taskTextCompleted : styles.taskText
               }
@@ -202,6 +204,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
         {/* Task Checkbox */}
         <TouchableOpacity
+          testID={`task-checkbox-${task.id}`}
           style={[
             styles.taskCheckbox,
             task.completed && styles.taskCheckboxCompleted,

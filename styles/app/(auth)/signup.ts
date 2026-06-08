@@ -19,7 +19,7 @@ export const createSignupStyles = (theme: Theme) =>
     imageContainer: {
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 20,
+      marginBottom: 15,
       position: "relative",
     },
     iconCircle: {
@@ -36,7 +36,7 @@ export const createSignupStyles = (theme: Theme) =>
       fontSize: 25,
       fontWeight: "bold",
       color: theme.text,
-      marginBottom: 8,
+      marginBottom: 0,
       fontFamily: fontBold,
       ...androidPoppinsExtras,
     },

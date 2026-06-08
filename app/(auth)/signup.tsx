@@ -117,14 +117,15 @@ export default function Signup() {
           <View style={styles.formContainer}>
             <View style={styles.textInputContainer}>
               <Ionicons name="person" size={20} color={theme.textMuted} />
-              <TextInput
-                placeholder="Name"
-                style={styles.input}
-                placeholderTextColor={theme.placeholderTextColor}
-                value={values.name}
-                onChangeText={handleChange("name")}
-                onBlur={handleBlur("name")}
-              />
+                <TextInput
+                  testID="signup-name-input"
+                  placeholder="Name"
+                  style={styles.input}
+                  placeholderTextColor={theme.placeholderTextColor}
+                  value={values.name}
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                />
             </View>
             {touched.name && errors.name && (
               <Text style={styles.errorText}>{errors.name}</Text>
@@ -132,16 +133,17 @@ export default function Signup() {
             {/* Email Input */}
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
-              <TextInput
-                placeholder="Email Address"
-                style={styles.input}
-                placeholderTextColor={theme.placeholderTextColor}
-                value={values.email}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  testID="signup-email-input"
+                  placeholder="Email Address"
+                  style={styles.input}
+                  placeholderTextColor={theme.placeholderTextColor}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
             </View>
             {touched.email && errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -163,6 +165,7 @@ export default function Signup() {
                   color={theme.textMuted}
                 />
                 <TextInput
+                  testID="signup-password-input"
                   placeholder="Password"
                   style={styles.input}
                   placeholderTextColor={theme.placeholderTextColor}
@@ -199,6 +202,7 @@ export default function Signup() {
                   color={theme.textMuted}
                 />
                 <TextInput
+                  testID="signup-confirm-password-input"
                   placeholder="Confirm Password"
                   style={styles.input}
                   value={values.confirmPassword}
@@ -220,6 +224,7 @@ export default function Signup() {
             )}
 
             <AuthButton
+              testID="signup-submit-button"
               text="Sign Up"
               color={theme.primary}
               textColor="white"
@@ -244,6 +249,7 @@ export default function Signup() {
       </View>
 
       <AuthButton
+        testID="google-signup-button"
         text="Sign Up with Google"
         color={theme.surface}
         textColor={theme.text}

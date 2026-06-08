@@ -1,0 +1,41 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Tab navigation across all screens
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# ── Navigate to Lists tab ──────────────────────────────────────────────
+- tapOn: "Lists"
+- assertVisible: "Default Lists"
+- assertVisible: "My Day"
+- assertVisible: "Important"
+- assertVisible: "Planned"
+- assertVisible: "All"
+- assertVisible: "Assigned to me"
+
+# ── Navigate to Planned tab ────────────────────────────────────────────
+- tapOn: "Planned"
+- assertVisible: "Scheduled Tasks"
+
+# ── Navigate to Profile tab ────────────────────────────────────────────
+- tapOn: "Profile"
+- assertVisible: "Account"
+- assertVisible: "Appearance"
+- assertVisible: "Language"
+
+# ── Navigate back to My Day ────────────────────────────────────────────
+- tapOn: "My Day"
+- assertVisible:
+    text: "My Day"
+    index: 0

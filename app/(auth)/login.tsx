@@ -114,16 +114,17 @@ export default function Login() {
             {/* Email Input */}
             <View style={styles.textInputContainer}>
               <Ionicons name="mail" size={20} color={theme.textMuted} />
-              <TextInput
-                placeholder="Email Address"
-                style={styles.input}
-                placeholderTextColor={theme.placeholderTextColor}
-                value={values.email}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  testID="login-email-input"
+                  placeholder="Email Address"
+                  style={styles.input}
+                  placeholderTextColor={theme.placeholderTextColor}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
             </View>
             {touched.email && errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -145,6 +146,7 @@ export default function Login() {
                   color={theme.textMuted}
                 />
                 <TextInput
+                  testID="login-password-input"
                   placeholder="Password"
                   style={styles.input}
                   placeholderTextColor={theme.placeholderTextColor}
@@ -173,6 +175,7 @@ export default function Login() {
             </TouchableOpacity>
 
             <AuthButton
+              testID="login-submit-button"
               text="Sign In"
               color={theme.primary}
               textColor="white"
@@ -197,6 +200,7 @@ export default function Login() {
       </View>
 
       <AuthButton
+        testID="google-login-button"
         text="Sign In with Google"
         color={theme.surface}
         textColor={theme.text}

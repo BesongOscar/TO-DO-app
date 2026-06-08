@@ -35,7 +35,6 @@ interface ListEntry {
 }
 
 export default function ListsIndexScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const navigation = useNavigation();
   const { tasks, counts } = useTasks();

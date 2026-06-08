@@ -17,6 +17,7 @@ type AuthButtonProps = {
   onPress: () => void;
   disabled?: boolean;
   icon?: React.ReactNode;
+  testID?: string;
 };
 
 export const AuthButton = ({
@@ -27,10 +28,12 @@ export const AuthButton = ({
   onPress,
   icon,
   disabled = false,
+  testID,
 }: AuthButtonProps) => {
   const styles = useThemeStyles(createAuthButtonStyles);
   return (
     <TouchableOpacity
+      testID={testID}
       style={[
         styles.button,
         {

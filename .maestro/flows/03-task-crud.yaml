@@ -1,0 +1,53 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Task CRUD operations
+# Requires a pre-verified test user (see README for setup)
+
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+
+# ── Verify My Day screen loaded ────────────────────────────────────────
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# ── Create tasks ───────────────────────────────────────────────────────
+- tapOn: "Add a task"
+- inputText: "Buy groceries"
+- tapOn:
+    point: "50%,65%"
+- assertVisible: "Buy groceries"
+
+- tapOn: "Add a task"
+- inputText: "Finish project report"
+- tapOn:
+    point: "50%,65%"
+- assertVisible: "Finish project report"
+
+- tapOn: "Add a task"
+- inputText: "Call dentist"
+- tapOn:
+    point: "50%,65%"
+- assertVisible: "Call dentist"
+
+# ── Complete a task ────────────────────────────────────────────────────
+- tapOn:
+    text: "Mark complete"
+- assertVisible: "Buy groceries"
+
+# ── Delete a task via context menu ─────────────────────────────────────
+- longPressOn: "Call dentist"
+- assertVisible: "Delete Task"
+- tapOn: "Delete Task"
+- assertNotVisible: "Call dentist"
+
+# ── Verify remaining tasks ─────────────────────────────────────────────
+- assertVisible: "Buy groceries"
+- assertVisible: "Finish project report"

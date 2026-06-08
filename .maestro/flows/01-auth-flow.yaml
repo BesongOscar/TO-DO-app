@@ -1,0 +1,94 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+  TEST_NAME: "E2E Test User"
+---
+# E2E: Auth flow
+# Tests the complete auth lifecycle: onboarding → signup → email verification → login
+
+- launchApp:
+    clearState: true
+
+# ── Onboarding ────────────────────────────────────────────────────────────
+- extendedWaitUntil:
+    visible: "Get things done"
+    timeout: 15000
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Organize without overthinking"
+    timeout: 5000
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Stay ahead of your day"
+    timeout: 5000
+- tapOn: "Get Started"
+
+# ── Signup screen ────────────────────────────────────────────────────────
+- assertVisible: "Sign Up"
+- assertVisible: "Create an account to get started"
+- assertVisible: "Name"
+- assertVisible: "Email Address"
+- assertVisible:
+    text: "Password"
+    index: 0
+- assertVisible: "Confirm Password"
+- assertVisible: "Sign Up"
+- assertVisible: "Sign Up with Google"
+- assertVisible: "Already have an account?"
+
+# Navigate to login and back
+- tapOn: "Login"
+- assertVisible: "Welcome Back"
+- tapOn: "Signup"
+- assertVisible: "Sign Up"
+
+# Fill the signup form
+- tapOn: "Name"
+- inputText: ${TEST_NAME}
+- hideKeyboard
+- tapOn: "Email Address"
+- inputText: ${TEST_EMAIL}
+- hideKeyboard
+- tapOn:
+    text: "Password"
+    index: 0
+- inputText: ${TEST_PASSWORD}
+- hideKeyboard
+- tapOn: "Confirm Password"
+- inputText: ${TEST_PASSWORD}
+- hideKeyboard
+- tapOn: "Sign Up"
+
+# ── Email verification screen ────────────────────────────────────────────
+- assertVisible: "Verify your email"
+- assertVisible: "I verified my email"
+- assertVisible: "Resend email"
+- assertVisible: "Use a different account"
+
+# Sign out to test login
+- tapOn: "Use a different account"
+
+# ── Login screen ─────────────────────────────────────────────────────────
+- assertVisible: "Welcome Back"
+- assertVisible: "Email Address"
+- assertVisible:
+    text: "Password"
+    index: 0
+- assertVisible: "Sign In"
+- assertVisible: "Sign In with Google"
+- assertVisible: "Forgot Password?"
+
+# Submit login with credentials
+- tapOn: "Email Address"
+- inputText: ${TEST_EMAIL}
+- hideKeyboard
+- tapOn:
+    text: "Password"
+    index: 0
+- inputText: ${TEST_PASSWORD}
+- hideKeyboard
+- tapOn: "Sign In"
+
+# Back to email verification (user email is unverified)
+- assertVisible: "Verify your email"

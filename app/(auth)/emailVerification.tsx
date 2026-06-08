@@ -122,12 +122,13 @@ export default function EmailVerification() {
           style={styles.button}
         />
       ) : (
-        <TouchableOpacity style={styles.verifyButton} onPress={handleContinue}>
+        <TouchableOpacity testID="verify-email-button" style={styles.verifyButton} onPress={handleContinue}>
           <Text style={styles.verifyButtonText}>I verified my email</Text>
         </TouchableOpacity>
       )}
 
       <TouchableOpacity
+        testID="resend-email-button"
         style={styles.secondaryButton}
         onPress={handleResend}
         disabled={isResending}
@@ -140,7 +141,7 @@ export default function EmailVerification() {
       </TouchableOpacity>
 
       <View style={styles.resendRow}>
-        <TouchableOpacity onPress={handleSignOut}>
+        <TouchableOpacity testID="use-different-account-button" onPress={handleSignOut}>
           <Text style={styles.signOutLink}>Use a different account</Text>
         </TouchableOpacity>
       </View>

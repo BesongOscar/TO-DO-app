@@ -1,0 +1,50 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Custom lists management
+# Tests creating, viewing, and navigating custom lists
+
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# ── Navigate to Lists tab ──────────────────────────────────────────────
+- tapOn: "Lists"
+- assertVisible: "Default Lists"
+
+# ── Create a custom list ───────────────────────────────────────────────
+# Tap the + button in the header to open creation modal
+- tapOn:
+    point: "93%,5%"
+- assertVisible: "New List"
+
+# Fill list name
+- tapOn: "List Name"
+- inputText: "E2E Test List"
+
+# Select a color
+- tapOn: "Save"
+
+# Verify the list appears
+- assertVisible: "E2E Test List"
+
+# Tap into the list
+- tapOn: "E2E Test List"
+- assertVisible: "E2E Test List"
+
+# Add a task to the custom list
+- tapOn: "Add a task"
+- inputText: "Task in custom list"
+- tapOn:
+    point: "50%,65%"
+- assertVisible: "Task in custom list"

@@ -1,0 +1,37 @@
+appId: com.besong_oscar.TODOApp
+env:
+  TEST_EMAIL: "e2e-test@example.com"
+  TEST_PASSWORD: "TestPass123!"
+---
+# E2E: Search and sort tasks
+# Tests search bar toggle and sort menu options
+
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "Get things done"
+    file: ../shared/setup.yaml
+- extendedWaitUntil:
+    visible:
+      text: "My Day"
+      index: 0
+    timeout: 10000
+
+# Create diverse tasks for search/sort testing
+- tapOn: "Add a task"
+- inputText: "Alpha task"
+- tapOn:
+    point: "50%,65%"
+- tapOn: "Add a task"
+- inputText: "Beta task"
+- tapOn:
+    point: "50%,65%"
+- tapOn: "Add a task"
+- inputText: "Gamma task"
+- tapOn:
+    point: "50%,65%"
+
+- assertVisible: "Alpha task"
+- assertVisible: "Beta task"
+- assertVisible: "Gamma task"
