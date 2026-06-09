@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import {
   setupNotificationChannel,
   requestNotificationPermissions,
-} from "./notificationService";
+} from "../services/notificationService";
 
 export function useNotifications() {
   const router = useRouter();
@@ -34,13 +34,11 @@ export function useNotifications() {
       const granted = await requestNotificationPermissions();
       if (isMounted) setNotificationPermission(granted);
 
-      // Clean up expired monthly individual notifications
       await cleanupExpiredNotifications();
     };
 
     init();
 
-    // Handle notification taps (background/dead app → app opens)
     responseListenerRef.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const data = response.notification.request.content.data;
@@ -55,12 +53,10 @@ export function useNotifications() {
         }
       });
 
-    // Handle notifications received while app is in foreground
     receivedListenerRef.current = Notifications.addNotificationReceivedListener(
       async (notification) => {
         const data = notification.request.content.data;
         if (data?.type === "task_reminder") {
-          // Could reschedule next occurrence here if needed
         }
       },
     );

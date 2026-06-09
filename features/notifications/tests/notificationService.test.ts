@@ -1,6 +1,6 @@
 jest.mock("expo-notifications", () => ({}));
 
-import { hasRepeatExpired } from "../../notifications/notificationService";
+import { hasRepeatExpired } from "../services/notificationService";
 import { Task } from "../../../types";
 
 const mockDate = (iso: string) => {

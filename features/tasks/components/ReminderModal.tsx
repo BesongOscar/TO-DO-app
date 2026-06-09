@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import TimePicker from "./TimePicker";
-import { requestNotificationPermissions } from "../../../src/notifications/notificationService";
+import { requestNotificationPermissions } from "../../../features/notifications/services/notificationService";
 import { useThemeStyles } from "../../../src/hooks/useThemeStyles";
 import { createReminderModalStyles } from "../../../styles/components/Modals/ReminderModal";
 import { useTranslation } from "react-i18next";

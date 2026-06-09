@@ -1,6 +1,6 @@
-import { UserProfile } from "../domain/UserProfile";
-import { ProfileRepository } from "../repositories/interfaces/ProfileRepository";
-import { StorageProvider } from "../repositories/interfaces/StorageProvider";
+import { UserProfile } from "../../../src/domain/UserProfile";
+import { ProfileRepository } from "../../../src/repositories/interfaces/ProfileRepository";
+import { StorageProvider } from "../../../src/repositories/interfaces/StorageProvider";
 
 export class ProfileService {
   constructor(

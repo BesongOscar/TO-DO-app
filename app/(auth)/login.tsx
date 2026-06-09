@@ -28,7 +28,7 @@ import { GoogleIcon } from "../../features/auth/components/GoogleIcon";
 import {
   signInWithGoogle,
   getGoogleSignInErrorMessage,
-} from "@/src/auth/googleAuth";
+} from "@features/auth/services/googleAuth";
 import { loginValidationSchema } from "../../src/utils/validationSchemas";
 
 export default function Login() {

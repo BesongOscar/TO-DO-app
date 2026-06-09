@@ -19,8 +19,8 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
-import { configureGoogleSignIn } from "../src/auth/googleAuth";
-import { useNotifications } from "../src/notifications/useNotifications";
+import { configureGoogleSignIn } from "../features/auth/services/googleAuth";
+import { useNotifications } from "../features/notifications/hooks/useNotifications";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
 import AnimatedSplash from "../features/shared/components/AnimatedSplash";

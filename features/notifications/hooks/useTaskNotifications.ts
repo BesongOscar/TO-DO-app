@@ -1,18 +1,10 @@
-/**
- * useTaskNotifications - Syncs task reminders with notification scheduling
- * 
- * Provides callback hooks that update scheduled notifications when
- * tasks are loaded, toggled, updated, or deleted.
- * Handles refilling monthly repeat notifications.
- */
-
 import { useCallback } from "react";
 import * as Notifications from "expo-notifications";
 import {
   scheduleTaskReminder,
   cancelTaskReminder,
-} from "../notifications/notificationService";
-import { Task } from "../../types";
+} from "../services/notificationService";
+import { Task } from "../../../types";
 
 export function useTaskNotifications() {
   const onTasksLoaded = useCallback(async (tasks: Task[]): Promise<void> => {

@@ -1,6 +1,6 @@
 import { Task } from "../../domain/Task";
 import { NotificationRepository } from "../interfaces/NotificationRepository";
-import * as notificationService from "../../notifications/notificationService";
+import * as notificationService from "../../../features/notifications/services/notificationService";
 
 export class FirebaseNotificationRepository
   implements NotificationRepository

@@ -1,4 +1,4 @@
-import { getGoogleSignInErrorMessage } from "../../auth/googleAuth";
+import { getGoogleSignInErrorMessage } from "../../../features/auth/services/googleAuth";
 
 const mockIsErrorWithCode = jest.fn();
 
