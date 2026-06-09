@@ -78,15 +78,33 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 │   ├── ListScreens.tsx    # Shared list view with search, sort, bulk actions
 ├── constants/            # App constants (list definitions)
 ├── context/               # React contexts (AuthContext, TasksContext, CustomListsContext, ThemeContext)
+├── features/              # Feature-based modules
+│   ├── auth/             # Auth feature components and logic
+│   ├── lists/            # List feature components
+│   ├── tasks/            # Task feature components
+│   ├── profile/          # Profile feature components
+│   ├── settings/         # Settings feature components
+│   ├── notifications/    # Notification feature components
+│   └── shared/           # Shared UI components across features
 ├── hooks/                 # React hooks (useThemeStyles, useDismissibleBanner)
 ├── locales/               # i18n translation files (en.json, fr.json)
-├── src/                   # Firebase, auth utilities
+├── maestro flows/         # E2E test flows (.maestro/)
+├── src/                   # Core application logic
+│   ├── domain/           # Domain models (Task, List, UserProfile, Reminder)
+│   ├── repositories/     # Data access layer
+│   │   ├── interfaces/   # Repository contracts
+│   │   ├── firebase/     # Firebase implementation
+│   │   ├── watermelon/   # WatermelonDB local implementation
+│   │   └── provider.ts   # Repository provider
+│   ├── services/         # Business logic (AuthService, TaskService, ListService, etc.)
+│   ├── store/            # Zustand state management (authStore, taskStore, listStore, uiStore)
 │   ├── auth/             # Google Sign-In helper
 │   ├── firebase/         # Firestore CRUD operations
 │   ├── hooks/            # App hooks (useTaskNotifications)
 │   ├── i18n/             # i18next initialization and configuration
 │   ├── notifications/    # Notification service and useNotifications hook
-│   └── utils/            # Firestore data normalization helpers
+│   ├── utils/            # Firestore data normalization helpers
+│   └── tests/            # Jest test suites
 ├── styles/               # Theme-aware style files using Theme type
 │   ├── theme.ts         # Light/dark color palette definitions
 │   ├── app/             # App-level styles
@@ -95,6 +113,7 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 │   └── components/      # Component styles
 ├── types/                # TypeScript type definitions
 ├── firestore.rules      # Firebase Security Rules
+├── run-e2e.ps1          # E2E helper script (Windows)
 └── android/              # Native Android project
 ```
 
