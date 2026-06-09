@@ -62,7 +62,7 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onFinish }) => {
   return (
     <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
       <Animated.Image
-        source={require("../assets/icon.png")}
+        source={require("../assets/Icon.png")}
         style={[
           styles.logo,
           {
