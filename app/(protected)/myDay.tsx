@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTasks } from "../../context/TasksContext";
-import ListScreens from "../../components/ListScreens";
+import ListScreens from "../../features/lists/components/ListScreens";
 import { ListItem } from "../../types";
 
 const myDayList: ListItem = {

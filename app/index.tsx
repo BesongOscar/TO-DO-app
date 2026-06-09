@@ -13,8 +13,9 @@ import { useEffect, useState } from "react";
 import { Redirect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "@/context/AuthContext";
-import { AuthLoadingScreen } from "@/components/AuthLoadingScreen";
+import { AuthLoadingScreen } from "../features/auth/components/AuthLoadingScreen";
 import { ONBOARDING_KEY } from "./(auth)/welcome";
+
 
 export default function Index() {
   const { user, loading: authLoading } = useAuth();

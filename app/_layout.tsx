@@ -8,7 +8,7 @@ LogBox.ignoreLogs(["Unable to activate keep awake"]);
 import { Stack } from "expo-router";
 import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";
-import ErrorBoundary from "../components/ErrorBoundary";
+import ErrorBoundary from "../features/shared/components/ErrorBoundary";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import { View, LogBox } from "react-native";
@@ -22,10 +22,10 @@ import {
 import { configureGoogleSignIn } from "../src/auth/googleAuth";
 import { useNotifications } from "../src/notifications/useNotifications";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect } from "react";
-import AnimatedSplash from "../components/AnimatedSplash";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import AnimatedSplash from "../features/shared/components/AnimatedSplash";
 import { initI18n } from "@/src/i18n";
+import { syncManager } from "../src/services/SyncManager";
 
 // Configure Google Sign-In once at app startup
 configureGoogleSignIn();
@@ -64,6 +64,7 @@ export default function RootLayout() {
             <AuthProvider>
               <CustomListsProvider>
                 <TasksProvider>
+                  <SyncInitializer />
                   <NotificationsInitializer />
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(auth)" />
@@ -77,6 +78,17 @@ export default function RootLayout() {
       </GestureHandlerRootView>
     </View>
   );
+}
+
+function SyncInitializer() {
+  useEffect(() => {
+    const unsubscribe = syncManager.start();
+    return () => {
+      unsubscribe();
+      syncManager.stop();
+    };
+  }, []);
+  return null;
 }
 
 function NotificationsInitializer() {

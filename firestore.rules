@@ -3,22 +3,148 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // User profiles
+    // ── Helper functions ──────────────────────────────────────────────
+
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function hasFields(fields) {
+      return fields.keys().hasAll(fields.keys());
+    }
+
+    function onlyFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isString(field) {
+      return field is string;
+    }
+
+    function isNumber(field) {
+      return field is number;
+    }
+
+    function isBool(field) {
+      return field is bool;
+    }
+
+    function isTimestamp(field) {
+      return field is timestamp;
+    }
+
+    function lenBetween(field, min, max) {
+      return isString(field) && field.size() >= min && field.size() <= max;
+    }
+
+    function isValidTimestamp(field) {
+      return field is number && field > 0;
+    }
+
+    // ── User profiles ──────────────────────────────────────────────────
+
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAuthed() && isOwner(userId);
+
+      allow create: if isAuthed() && isOwner(userId)
+        && onlyFields(['name', 'email', 'photoURL', 'createdAt'])
+        && isString(request.resource.data.name)
+        && lenBetween(request.resource.data.name, 1, 100)
+        && isString(request.resource.data.email)
+        && request.resource.data.email.matches('^[^@]+@[^@]+\\.[^@]+$')
+        && request.resource.data.photoURL is string
+        && isValidTimestamp(request.resource.data.createdAt);
+
+      allow update: if isAuthed() && isOwner(userId)
+        && request.resource.data.keys().hasAll(['name'])
+        && request.resource.data.keys().hasOnly(['name', 'email', 'photoURL'])
+        && isString(request.resource.data.name)
+        && lenBetween(request.resource.data.name, 1, 100);
     }
 
-    // Tasks subcollection
+    // ── Tasks ──────────────────────────────────────────────────────────
+
     match /tasks/{userId}/userTasks/{taskId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAuthed() && isOwner(userId);
+
+      allow create: if isAuthed() && isOwner(userId)
+        && onlyFields([
+          'text', 'completed', 'important', 'order',
+          'dueDate', 'dueTime', 'reminder',
+          'repeat', 'repeatDays', 'repeatOnDay',
+          'repeatOnLastDay', 'repeatEndDate',
+          'note', 'listName', 'listId',
+          'createdAt', 'updatedAt'
+        ])
+        && isString(request.resource.data.text)
+        && lenBetween(request.resource.data.text, 1, 1000)
+        && isBool(request.resource.data.completed)
+        && isBool(request.resource.data.important)
+        && isNumber(request.resource.data.order)
+        && request.resource.data.order >= 0
+        && isValidTimestamp(request.resource.data.createdAt)
+        && isValidTimestamp(request.resource.data.updatedAt);
+
+      allow update: if isAuthed() && isOwner(userId)
+        && request.resource.data.keys().hasAll(['updatedAt'])
+        && isValidTimestamp(request.resource.data.updatedAt)
+        && (
+          // text edits
+          (request.resource.data.keys().hasOnly(['text', 'updatedAt'])
+            && isString(request.resource.data.text)
+            && lenBetween(request.resource.data.text, 1, 1000))
+          ||
+          // completion toggle
+          (request.resource.data.keys().hasOnly(['completed', 'updatedAt'])
+            && isBool(request.resource.data.completed))
+          ||
+          // importance toggle
+          (request.resource.data.keys().hasOnly(['important', 'updatedAt'])
+            && isBool(request.resource.data.important))
+          ||
+          // reorder
+          (request.resource.data.keys().hasOnly(['order', 'updatedAt'])
+            && isNumber(request.resource.data.order)
+            && request.resource.data.order >= 0)
+          ||
+          // full edit
+          (request.resource.data.keys().hasAll(['text', 'updatedAt'])
+            && isString(request.resource.data.text)
+            && lenBetween(request.resource.data.text, 1, 1000))
+        );
+
+      allow delete: if isAuthed() && isOwner(userId);
     }
 
-    // Custom lists subcollection
+    // ── Custom lists ───────────────────────────────────────────────────
+
     match /customLists/{userId}/userLists/{listId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAuthed() && isOwner(userId);
+
+      allow create: if isAuthed() && isOwner(userId)
+        && onlyFields(['name', 'icon', 'color', 'order', 'createdAt'])
+        && isString(request.resource.data.name)
+        && lenBetween(request.resource.data.name, 1, 50)
+        && isString(request.resource.data.icon)
+        && request.resource.data.icon.size() <= 10
+        && isString(request.resource.data.color)
+        && request.resource.data.color.size() <= 7
+        && isValidTimestamp(request.resource.data.createdAt);
+
+      allow update: if isAuthed() && isOwner(userId)
+        && request.resource.data.keys().hasOnly(['name', 'icon', 'color'])
+        && isString(request.resource.data.name)
+        && lenBetween(request.resource.data.name, 1, 50);
+
+      allow delete: if isAuthed() && isOwner(userId);
     }
 
-    // Deny all else
+    // ── Deny all else ──────────────────────────────────────────────────
+
     match /{document=**} {
       allow read, write: if false;
     }

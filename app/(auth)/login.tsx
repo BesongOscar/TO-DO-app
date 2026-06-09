@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthButton } from "@/components/(auth)/authButton";
+import { AuthButton } from "../../features/auth/components/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -24,7 +24,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
 import { createLoginStyles } from "@/styles/app/(auth)/login";
-import { GoogleIcon } from "@/components/(auth)/GoogleIcon";
+import { GoogleIcon } from "../../features/auth/components/GoogleIcon";
 import {
   signInWithGoogle,
   getGoogleSignInErrorMessage,

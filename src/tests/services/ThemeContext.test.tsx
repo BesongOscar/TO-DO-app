@@ -140,11 +140,16 @@ describe("ThemeContext", () => {
 
     fireEvent.press(screen.getByTestId("set-dark"));
 
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith("app_theme_mode", "dark");
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+      "app_theme_mode",
+      JSON.stringify({ state: { themeMode: "dark" }, version: 0 }),
+    );
   });
 
   it("loads saved preference from AsyncStorage on mount", async () => {
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue("dark");
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+      JSON.stringify({ state: { themeMode: "dark" }, version: 0 }),
+    );
     const onRender = jest.fn();
     render(
       <ThemeProvider>

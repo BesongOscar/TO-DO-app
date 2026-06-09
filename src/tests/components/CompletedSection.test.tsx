@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import CompletedSection from "../../../components/CompletedSection";
+import CompletedSection from "../../../features/tasks/components/CompletedSection";
 import { Task } from "../../../types";
 
 const mockTheme = {
@@ -22,7 +22,7 @@ jest.mock("react-i18next", () => ({
   }),
 }));
 
-jest.mock("../../../components/TaskItem", () => {
+jest.mock("../../../features/tasks/components/TaskItem", () => {
   const { View, Text } = jest.requireActual("react-native");
   const MockTaskItem = ({ task }: { task: Task }) => (
     <View><Text>{task.text}</Text></View>

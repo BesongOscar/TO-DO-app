@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react-native";
-import TaskItem from "../../../components/TaskItem";
+import TaskItem from "../../../features/tasks/components/TaskItem";
 
 const mockTheme = {
   background: "#fff", surface: "#fff", surfaceSecondary: "#f0f0f0",

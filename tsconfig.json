@@ -5,15 +5,19 @@
     "jsx": "react-native",
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["./components/*"],
       "@/context/*": ["./context/*"],
       "@/firebase/*": ["./src/firebase/*"],
       "@/src/*": ["./src/*"],
       "@/styles/*": ["./styles/*"],
+      "@/domain/*": ["./src/domain/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/repositories/*": ["./src/repositories/*"],
+      "@features/*": ["./features/*"],
       "assets/*": ["./assets/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "experimentalDecorators": true
   },
   "include": [
     "**/*.ts",
