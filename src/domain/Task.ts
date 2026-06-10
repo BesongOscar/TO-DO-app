@@ -1,9 +1,8 @@
 /**
- * Task domain model with repeat scheduling support
+ * Domain: Task
  * 
- * Supports daily/weekly/monthly/yearly repeats with advanced options:
- * repeatDays (weekly: 0-6), repeatOnDay (monthly: 1-31), repeatOnLastDay,
- * and repeatEndDate for auto-expiry.
+ * Core domain model definition and factory functions.
+ * Uses plain objects for serialization and Firestore compatibility.
  */
 
 export type RepeatType = "daily" | "weekly" | "monthly" | "yearly" | "none";
@@ -28,6 +27,7 @@ export interface Task {
   createdAt?: number;
 }
 
+// Check if a task's due date has passed
 export const isOverdue = (task: Task): boolean => {
   if (!task.dueDate || task.completed) return false;
   const today = new Date();
@@ -36,6 +36,7 @@ export const isOverdue = (task: Task): boolean => {
   return due < today;
 };
 
+// Factory: create a new task with defaults
 export const createTask = (
   text: string,
   overrides?: Partial<Task>,

@@ -1,8 +1,8 @@
 /**
- * AuthService - Business logic for authentication operations
+ * AuthService - Business logic layer for authentication
  * 
- * Orchestrates auth and profile repositories for sign-in, sign-up,
- * verification, and profile management.
+ * Orchestrates auth operations across AuthRepository and ProfileRepository.
+ * Used by authStore for all authentication workflows.
  */
 
 import { AuthRepository, AuthUser } from "../repositories/interfaces/AuthRepository";

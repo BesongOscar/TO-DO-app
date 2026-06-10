@@ -1,7 +1,8 @@
 /**
  * listStore - Zustand store for custom list state
  * 
- * Manages CRUD for user-created lists with debounced Firestore persistence.
+ * Manages user-created task lists with optimistic updates.
+ * Uses repository pattern for Firestore persistence.
  */
 
 import { create } from "zustand";

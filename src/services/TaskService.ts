@@ -1,3 +1,10 @@
+/**
+ * TaskService - Business logic layer for task operations
+ * 
+ * Encapsulates task CRUD with ordering, filtering, and domain logic.
+ * Used by taskStore for all task-related workflows.
+ */
+
 import { Task, createTask, isOverdue } from "../domain/Task";
 import { TaskRepository } from "../repositories/interfaces/TaskRepository";
 import { TaskCounts } from "../../types";

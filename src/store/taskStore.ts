@@ -1,8 +1,8 @@
 /**
  * taskStore - Zustand store for task state management
  * 
- * Handles CRUD, reordering, debounced Firestore persistence,
- * and task counts. Uses repository pattern for data access.
+ * Manages task CRUD with optimistic updates and debounced persistence.
+ * Uses repository pattern for Firestore/WatermelonDB abstraction.
  */
 
 import { create } from "zustand";

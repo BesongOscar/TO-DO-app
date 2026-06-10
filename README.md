@@ -28,6 +28,32 @@ React Native TODO app with Firebase - featuring task management, tab-based navig
 - **Internationalization (i18n)** - English and French support via i18next with device language auto-detection; persisted to AsyncStorage
 - **Optimistic Updates** - UI updates instantly with Firestore sync and rollback on failure
 
+## Architecture
+
+The app follows a **clean architecture** pattern with clear separation of concerns:
+
+```
+┌──────────────────────────────┐
+│   UI Layer (components/app) │  React components + Expo Router
+├──────────────────────────────┤
+│  Store Layer (Zustand)       │  State management (auth, task, list, ui)
+├──────────────────────────────┤
+│  Service Layer               │  Business logic (AuthService, TaskService)
+├──────────────────────────────┤
+│  Repository Layer            │  Data access abstraction
+│  ├── interfaces/            │  Repository contracts
+│  ├── firebase/              │  Firebase Firestore + Storage implementation
+│  └── watermelon/            │  WatermelonDB local implementation
+├──────────────────────────────┤
+│  Domain Layer (src/domain/) │  Core models and business rules
+└──────────────────────────────┘
+```
+
+- **Zustand** stores handle state with optimistic updates (UI updates immediately, syncs async)
+- **Repositories** abstract data sources — currently Firebase (primary) and WatermelonDB (offline)
+- **Services** encapsulate cross-repository business logic
+- **Domain** models are plain objects for serialization
+
 ## Getting Started
 
 1. Install dependencies:

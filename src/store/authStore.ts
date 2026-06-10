@@ -1,8 +1,8 @@
 /**
  * authStore - Zustand store for authentication state
  * 
- * Manages user auth, profile data, and Firebase Storage operations.
- * Initializes via repository provider on app start.
+ * Manages user session, profile data, and auth-related operations.
+ * Delegates all Firebase calls to AuthRepository/ProfileRepository.
  */
 
 import { create } from "zustand";
