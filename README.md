@@ -85,7 +85,7 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 
 ```
 ├── app/                    # Expo Router screens (file-based routing)
-│   ├── (auth)/            # Auth screens (login, signup, forgotPassword, emailVerification)
+│   ├── (auth)/            # Auth screens (login, signup, forgotPassword, emailVerification, welcome)
 │   ├── (protected)/       # Protected screens with bottom tab navigation
 │   │   ├── myDay.tsx      # My Day task screen
 │   │   ├── Planned.tsx    # Planned tasks grouped by date
@@ -95,33 +95,52 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 │   │   │   ├── [listId].tsx  # Individual list tasks (dynamic route)
 │   │   │   └── _layout.tsx   # Lists stack layout
 │   │   └── _layout.tsx    # Tab layout (My Day, Lists, Planned, Profile)
-│   └── _layout.tsx       # Root layout with providers
-├── assets/                # Images and icons
+│   ├── index.tsx          # Root redirect (auth gate)
+│   └── _layout.tsx        # Root layout with providers
+├── assets/                # Images, icons, and SVG assets
 ├── components/            # Reusable React components
-│   ├── Index/             # Components for main index screen
-│   ├── Modals/            # Modal components (calendar, reminder, repeat, note)
-│   ├── (auth)/           # Auth-related components (buttons, GoogleIcon)
-│   ├── ListScreens.tsx    # Shared list view with search, sort, bulk actions
+│   ├── Index/             # Components for main screens
+│   ├── Modals/            # Modal components (calendar, reminder, note)
+│   ├── (auth)/           # Auth components (buttons, GoogleIcon)
+│   ├── AddTaskInput.tsx   # Task creation input
+│   ├── TaskItem.tsx       # Individual task row with drag, edit, menu
+│   ├── TaskList.tsx       # Task list with drag reorder
+│   ├── ListHeader.tsx     # Sortable list header with menu
+│   ├── EmptyState.tsx     # Empty list placeholder
+│   ├── ErrorBoundary.tsx  # Error boundary wrapper
+│   ├── CompletedSection.tsx  # Completed tasks section
+│   ├── PlannedTasksList.tsx  # Planned tasks grouped by date
+│   └── SuggestionBanner.tsx  # Dismissible suggestion banner
 ├── constants/            # App constants (list definitions)
 ├── context/               # React contexts (AuthContext, TasksContext, CustomListsContext, ThemeContext)
-├── hooks/                 # React hooks (useThemeStyles, useDismissibleBanner)
+├── hooks/                 # Custom hooks (useThemeStyles, useDismissibleBanner)
 ├── locales/               # i18n translation files (en.json, fr.json)
-├── src/                   # Firebase, auth utilities
-│   ├── auth/             # Google Sign-In helper
-│   ├── firebase/         # Firestore CRUD operations
-│   ├── hooks/            # App hooks (useTaskNotifications)
-│   ├── i18n/             # i18next initialization and configuration
-│   ├── notifications/    # Notification service and useNotifications hook
-│   └── utils/            # Firestore data normalization helpers
-├── styles/               # Theme-aware style files using Theme type
-│   ├── theme.ts         # Light/dark color palette definitions
-│   ├── app/             # App-level styles
-│   │   ├── (auth)/      # Auth screen styles (based on ThemeContext)
-│   │   └── (protected)/ # Protected screen styles (based on ThemeContext)
+├── src/                   # Clean architecture layers
+│   ├── domain/           # Domain models (Task, List, UserProfile, Reminder)
+│   ├── services/         # Business logic (AuthService, TaskService, ListService, SyncManager)
+│   ├── store/            # Zustand state stores (auth, task, list, ui)
+│   ├── repositories/     # Data access layer
+│   │   ├── interfaces/   # Repository contracts
+│   │   ├── firebase/     # Firebase implementation
+│   │   └── watermelon/  # WatermelonDB local implementation
+│   ├── db/               # WatermelonDB schema and models
+│   ├── hooks/            # App-level hooks (useTaskNotifications)
+│   ├── i18n/             # i18next config
+│   ├── firebase/         # Firebase config
+│   ├── notifications/    # Notification service
+│   ├── utils/            # Utility helpers (date, validation, filters)
+│   └── tests/            # Jest test suites (120+ tests)
+├── styles/               # Theme-aware style files
+│   ├── theme.ts         # Light/dark color palette
+│   ├── app/             # Screen styles
+│   │   ├── (auth)/      # Auth screen styles
+│   │   └── (protected)/ # Protected screen styles
 │   └── components/      # Component styles
 ├── types/                # TypeScript type definitions
-├── firestore.rules      # Firebase Security Rules
-└── android/              # Native Android project
+├── .maestro/             # Maestro E2E test flows (9 flows)
+├── .eas/                 # EAS Build configuration
+├── esling.config.js      # ESLint configuration
+└── firestore.rules      # Firebase Security Rules
 ```
 
 ## Testing
