@@ -46,7 +46,7 @@ export default function ProtectedLayout() {
             backgroundColor: theme.tabBarBackground,
             borderTopWidth: 1,
             borderTopColor: theme.border,
-            paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+            paddingBottom: 10 + insets.bottom,
           },
         }}
       >

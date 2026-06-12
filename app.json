@@ -17,7 +17,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.besongoscar.todoapp"
+      "bundleIdentifier": "com.besongoscar.todoapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-dev-client",
@@ -26,7 +29,23 @@
       "expo-router",
       "expo-font",
       "expo-notifications",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.1.20",
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "minSdkVersion": 24,
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
+            }
+          }
+        }
+      ]
     ],
     "android": {
       "adaptiveIcon": {
@@ -34,12 +53,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "androidWindowSoftInputMode": "adjustNothing",
-      "package": "com.besong_oscar.TODOApp",
-      "notification": {
-        "icon": "./assets/Icon.png",
-        "color": "#0078d4"
-      }
+      "package": "com.besong_oscar.TODOApp"
     },
     "web": {
       "favicon": "./assets/Icon.png"
