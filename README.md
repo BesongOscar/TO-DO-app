@@ -137,8 +137,14 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 │   │   └── (protected)/ # Protected screen styles
 │   └── components/      # Component styles
 ├── types/                # TypeScript type definitions
+├── .github/               # CI/CD workflows
+│   └── workflows/
+│       └── ci.yml        # Lint, typecheck, test, and E2E on PR
 ├── .maestro/             # Maestro E2E test flows (9 flows)
-├── .eas/                 # EAS Build configuration
+├── .eas/                 # EAS Build & OTA update workflows
+│   └── workflows/
+│       ├── preview-update.yml        # OTA updates on push to main
+│       └── create-production-builds.yml  # Android/iOS production builds
 ├── esling.config.js      # ESLint configuration
 └── firestore.rules      # Firebase Security Rules
 ```
@@ -225,9 +231,29 @@ Flows 03-09 require a logged-in user with a **verified email**. For local testin
 2. Verify the email in Firebase Console → Authentication → Users
 3. Update `TEST_EMAIL`/`TEST_PASSWORD` in `.maestro/config.yaml`
 
-#### CI
+## CI/CD
 
-E2E tests run in CI when a PR is labeled `e2e`. Requires:
-- `EXPO_TOKEN` secret for EAS Build
-- Firebase config secrets
-- Maestro CLI installed on the runner
+The project uses **GitHub Actions** for CI and **EAS Workflows** for builds and OTA updates.
+
+### GitHub Actions — `.github/workflows/ci.yml`
+
+Triggered on push/PR to `main`. Runs two jobs:
+
+| Job | What it does | Trigger |
+|-----|-------------|---------|
+| `quality` | `npm ci` → `npm run lint` → `npm run typecheck` → `npm test` | Always on push/PR |
+| `e2e-android` | Builds Android EAS dev build → launches emulator → runs all Maestro E2E flows | PRs labeled `e2e` |
+
+### EAS Workflows — `.eas/workflows/`
+
+| Workflow | Purpose | Trigger |
+|----------|---------|---------|
+| `preview-update.yml` | Publishes an OTA update to the `preview` branch via `expo-updates` | Push to `main` |
+| `create-production-builds.yml` | Creates production builds for Android and iOS | Manual (EAS dashboard) |
+
+### Required Secrets
+
+| Secret | Used by |
+|--------|---------|
+| `EXPO_TOKEN` | EAS Build (CI E2E & production builds) |
+| `EXPO_PUBLIC_FIREBASE_*` | Unit tests (quality job) |
