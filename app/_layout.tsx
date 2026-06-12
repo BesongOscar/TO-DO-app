@@ -8,7 +8,7 @@ LogBox.ignoreLogs(["Unable to activate keep awake"]);
 import { Stack } from "expo-router";
 import { TasksProvider } from "../context/TasksContext";
 import { CustomListsProvider } from "../context/CustomListsContext";
-import ErrorBoundary from "../features/shared/components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import { View, LogBox } from "react-native";
@@ -19,11 +19,11 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
-import { configureGoogleSignIn } from "../features/auth/services/googleAuth";
-import { useNotifications } from "../features/notifications/hooks/useNotifications";
+import { configureGoogleSignIn } from "../src/services/googleAuth";
+import { useNotifications } from "../src/hooks/useNotifications";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import AnimatedSplash from "../features/shared/components/AnimatedSplash";
+import AnimatedSplash from "../components/AnimatedSplash";
 import { initI18n } from "@/src/i18n";
 import { syncManager } from "../src/services/SyncManager";
 

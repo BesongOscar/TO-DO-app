@@ -10,7 +10,7 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import { auth } from "../../firebase/config";
-import { signInWithGoogle as googleSignIn } from "../../../features/auth/services/googleAuth";
+import { signInWithGoogle as googleSignIn } from "../../services/googleAuth";
 import { AuthRepository, AuthUser } from "../interfaces/AuthRepository";
 
 const toAuthUser = (firebaseUser: import("firebase/auth").User): AuthUser => ({
@@ -39,7 +39,7 @@ export class FirebaseAuthRepository implements AuthRepository {
   }
 
   async signOut(): Promise<void> {
-    const { signOutGoogle } = await import("../../../features/auth/services/googleAuth");
+    const { signOutGoogle } = await import("../../services/googleAuth");
     await signOutGoogle();
     await signOut(auth);
   }

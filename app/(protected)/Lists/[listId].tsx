@@ -13,8 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sidebarLists } from "../../../constants/Lists";
 import { useCustomLists } from "../../../context/CustomListsContext";
 import { useTasks } from "../../../context/TasksContext";
-import ListScreens from "../../../features/lists/components/ListScreens";
-import CustomListModal from "../../../features/lists/components/CustomListModal";
+import ListScreens from "../../../components/ListScreens";
+import CustomListModal from "../../../components/CustomListModal";
 import { ListItem } from "../../../types";
 
 export default function ListDetailScreen() {

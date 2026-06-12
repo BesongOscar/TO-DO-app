@@ -9,7 +9,7 @@ import React, {
 import { Task, TaskCounts } from "../types";
 import { useAuth } from "@/context/AuthContext";
 import { useTaskStore } from "../src/store/taskStore";
-import { useTaskNotifications } from "../features/notifications/hooks/useTaskNotifications";
+import { useTaskNotifications } from "../src/hooks/useTaskNotifications";
 
 interface TasksData {
   tasks: Task[];

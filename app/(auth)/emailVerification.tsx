@@ -16,8 +16,8 @@ import { Redirect, useRouter, router as expoRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/firebase/config";
 import { FirebaseError } from "firebase/app";
-import { AuthLoadingScreen } from "../../features/auth/components/AuthLoadingScreen";
-import ArrowBack from "../../features/auth/components/arrowBack";
+import { AuthLoadingScreen } from "../../components/AuthLoadingScreen";
+import ArrowBack from "../../components/arrowBack";
 
 export default function EmailVerification() {
   const { width } = useWindowDimensions();

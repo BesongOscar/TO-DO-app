@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import EmptyState from "../../../features/tasks/components/EmptyState";
+import EmptyState from "../../../components/EmptyState";
 
 const mockTheme = {
   background: "#fff", surface: "#fff", surfaceSecondary: "#f0f0f0",

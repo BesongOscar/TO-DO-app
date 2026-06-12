@@ -18,7 +18,7 @@ React Native TODO app with Firebase - featuring task management, tab-based navig
 - **Local Notifications** - Schedule and cancel task reminders with expo-notifications; handles repeat scheduling natively
 - **Time Picker** - Platform-specific time picker (iOS spinner, Android dialog)
 - **Custom Lists** - Create, edit, and delete custom task lists with custom icons and colors
-- **User Profiles** - Firebase Auth with email/password + Google OAuth via @react-native-google-signin, profile photos via Firebase Storage
+- **User Profiles** - Firebase Auth with email/password + Google OAuth via @react-native-google-signin (native SDK, no web popup), profile photos via Firebase Storage
 - **Bottom Panel** - Slide-up task detail panel with calendar picker, reminder, and note modals
 - **Animated Splash** - Branded animated splash with logo fade-in/scale on app launch
 - **Onboarding** - First-launch walkthrough slides (shown once, persisted to AsyncStorage)
@@ -50,9 +50,10 @@ The app follows a **clean architecture** pattern with clear separation of concer
 ```
 
 - **Zustand** stores handle state with optimistic updates (UI updates immediately, syncs async)
-- **Repositories** abstract data sources — currently Firebase (primary) and WatermelonDB (offline)
-- **Services** encapsulate cross-repository business logic
+- **Repositories** abstract data sources — Firebase (primary) and WatermelonDB (offline fallback)
+- **Services** encapsulate cross-repository business logic (AuthService, TaskService, ListService, SyncService, googleAuth)
 - **Domain** models are plain objects for serialization
+- **Google Sign-In** uses `@react-native-google-signin` native SDK (not web popup), configured via `googleAuth.ts` service
 
 ## Getting Started
 
@@ -73,6 +74,13 @@ Production build: `eas build --profile production --platform all`
 ## Environment
 
 Firebase settings are read from `EXPO_PUBLIC_*` environment variables (see `.env.example`). These are exposed to the app at build time via Expo.
+
+Additional variables for Google OAuth:
+
+| Variable | Description |
+|----------|-------------|
+| `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Web client ID from Google Cloud Console (required for Google Sign-In) |
+| `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` | iOS client ID from Google Cloud Console (required for iOS) |
 
 ## Expo prebuild
 "Check for app config fields that may not be synced in a non-CNG project."
@@ -99,37 +107,45 @@ This project keeps native folders (`android/` and/or `ios/`) and uses `app.json`
 │   └── _layout.tsx        # Root layout with providers
 ├── assets/                # Images, icons, and SVG assets
 ├── components/            # Reusable React components
-│   ├── Index/             # Components for main screens
-│   ├── Modals/            # Modal components (calendar, reminder, note)
-│   ├── (auth)/           # Auth components (buttons, GoogleIcon)
+│   ├── Index/             # Main screen sub-components (BottomPanel, MainContent, BottomSheet)
+│   ├── Modals/            # Modal components (calendar, reminder, repeat, note)
+│   ├── (auth)/           # Auth components (authButton, GoogleIcon)
 │   ├── AddTaskInput.tsx   # Task creation input
-│   ├── TaskItem.tsx       # Individual task row with drag, edit, menu
-│   ├── TaskList.tsx       # Task list with drag reorder
-│   ├── ListHeader.tsx     # Sortable list header with menu
+│   ├── TaskItem.tsx       # Task row with drag handle, inline edit, context menu
+│   ├── TaskList.tsx       # Task list with drag-and-drop reorder
+│   ├── ListHeader.tsx     # Sortable list header
+│   ├── ListHeaderMenu.tsx # Sort/action menu
+│   ├── ListScreens.tsx    # Shared list view (search, sort, bulk actions)
 │   ├── EmptyState.tsx     # Empty list placeholder
 │   ├── ErrorBoundary.tsx  # Error boundary wrapper
-│   ├── CompletedSection.tsx  # Completed tasks section
-│   ├── PlannedTasksList.tsx  # Planned tasks grouped by date
-│   └── SuggestionBanner.tsx  # Dismissible suggestion banner
+│   ├── AnimatedSplash.tsx # Branded splash animation
+│   ├── AuthLoadingScreen.tsx   # Loading state for auth redirects
+│   ├── arrowBack.tsx      # Reusable back button
+│   ├── CompletedSection.tsx    # Completed tasks group
+│   ├── PlannedTasksList.tsx    # Planned tasks grouped by date buckets
+│   ├── SuggestionBanner.tsx    # Dismissible suggestion banner
+│   ├── CustomListModal.tsx     # Create/edit custom list modal
+│   ├── DetailOption.tsx        # Task detail option row
+│   └── TimePicker.tsx          # Platform-specific time picker
 ├── constants/            # App constants (list definitions)
 ├── context/               # React contexts (AuthContext, TasksContext, CustomListsContext, ThemeContext)
 ├── hooks/                 # Custom hooks (useThemeStyles, useDismissibleBanner)
 ├── locales/               # i18n translation files (en.json, fr.json)
 ├── src/                   # Clean architecture layers
 │   ├── domain/           # Domain models (Task, List, UserProfile, Reminder)
-│   ├── services/         # Business logic (AuthService, TaskService, ListService, SyncManager)
+│   ├── services/         # Business logic (AuthService, TaskService, ListService, SyncManager,
+│   │                     #   SyncService, ProfileService, googleAuth, notificationService)
 │   ├── store/            # Zustand state stores (auth, task, list, ui)
 │   ├── repositories/     # Data access layer
 │   │   ├── interfaces/   # Repository contracts
-│   │   ├── firebase/     # Firebase implementation
+│   │   ├── firebase/     # Firebase Firestore + Storage implementation
 │   │   └── watermelon/  # WatermelonDB local implementation
 │   ├── db/               # WatermelonDB schema and models
-│   ├── hooks/            # App-level hooks (useTaskNotifications)
+│   ├── hooks/            # App hooks (useTaskNotifications, useNotifications)
 │   ├── i18n/             # i18next config
-│   ├── firebase/         # Firebase config
-│   ├── notifications/    # Notification service
-│   ├── utils/            # Utility helpers (date, validation, filters)
-│   └── tests/            # Jest test suites (120+ tests)
+│   ├── firebase/         # Firebase config and initialization
+│   ├── utils/            # Utility helpers (date, validation, taskFilters, taskItemHelpers)
+│   └── tests/            # Jest test suites (components, services, store, hooks, utils)
 ├── styles/               # Theme-aware style files
 │   ├── theme.ts         # Light/dark color palette
 │   ├── app/             # Screen styles

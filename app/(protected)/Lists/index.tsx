@@ -20,7 +20,7 @@ import { sidebarLists } from "../../../constants/Lists";
 import { useCustomLists } from "../../../context/CustomListsContext";
 import { useTasks } from "../../../context/TasksContext";
 import { TaskCounts } from "../../../types";
-import CustomListModal from "../../../features/lists/components/CustomListModal";
+import CustomListModal from "../../../components/CustomListModal";
 import { useThemeStyles } from "../../../src/hooks/useThemeStyles";
 import { createListsIndexStyles } from "../../../styles/app/(protected)/Lists/index";
 

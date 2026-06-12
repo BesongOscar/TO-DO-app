@@ -16,7 +16,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import ArrowBack from "../../features/auth/components/arrowBack";
+import ArrowBack from "../../components/arrowBack";
 import { useAuth } from "@/context/AuthContext";
 
 export const forgotPasswordValidationSchema = Yup.object().shape({

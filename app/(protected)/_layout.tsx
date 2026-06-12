@@ -1,13 +1,21 @@
+/**
+ * ProtectedLayout - Tab navigator for authenticated users
+ * 
+ * Bottom tabs: My Day, Lists, Planned, Profile.
+ * Includes a shared BottomSheet for task details accessible from any tab.
+ * Redirects unauthenticated/unverified users to auth screens.
+ */
+
 import { Redirect, Tabs } from "expo-router";
 import { View, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/context/AuthContext";
-import { AuthLoadingScreen } from "../../features/auth/components/AuthLoadingScreen";
+import { AuthLoadingScreen } from "../../components/AuthLoadingScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTasks } from "../../context/TasksContext";
 import { useTheme } from "../../context/ThemeContext";
-import BottomSheet from "../../features/tasks/components/BottomSheet";
-import BottomPanel from "../../features/tasks/components/BottomPanel";
+import BottomSheet from "../../components/Index/BottomSheet";
+import BottomPanel from "../../components/Index/BottomPanel";
 import { fontSemi, androidPoppinsExtras } from "@/styles/common";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

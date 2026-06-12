@@ -1,4 +1,4 @@
-import { getDateCategory, groupTasksByDate } from "../../../features/tasks/components/PlannedTasksList";
+import { getDateCategory, groupTasksByDate } from "../../../components/PlannedTasksList";
 import { Task } from "../../../types";
 
 jest.mock("@/src/i18n", () => ({
@@ -35,7 +35,7 @@ jest.mock("../../../styles/components/PlannedTasksList", () => ({
   createPlannedTasksListStyles: () => ({}),
 }));
 
-jest.mock("../../../features/tasks/components/TaskItem", () => () => null);
+jest.mock("../../../components/TaskItem", () => () => null);
 
 const setFakeDate = (iso: string) => {
   jest.useFakeTimers({ now: new Date(iso) });

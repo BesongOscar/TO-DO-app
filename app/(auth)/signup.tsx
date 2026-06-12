@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthButton } from "../../features/auth/components/authButton";
+import { AuthButton } from "../../components/(auth)/authButton";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Formik } from "formik";
@@ -16,11 +16,11 @@ import { useThemeStyles } from "../../src/hooks/useThemeStyles";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { createSignupStyles } from "@/styles/app/(auth)/signup";
-import { GoogleIcon } from "../../features/auth/components/GoogleIcon";
+import { GoogleIcon } from "../../components/(auth)/GoogleIcon";
 import {
   signInWithGoogle,
   getGoogleSignInErrorMessage,
-} from "@features/auth/services/googleAuth";
+} from "@/src/services/googleAuth";
 import { signupValidationSchema } from "../../src/utils/validationSchemas";
 
 /**
